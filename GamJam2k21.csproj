@@ -1,10 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
+    <RootNamespace>GamJam2k21</RootNamespace>
+    <AssemblyName>GamJam2k21</AssemblyName>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="Data/**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.5.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />

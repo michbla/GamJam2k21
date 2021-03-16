@@ -13,7 +13,7 @@ namespace GamJam2k21
             //Ustawienia okna
             var nativeWindowSettings = new NativeWindowSettings()
             {
-                Size = new Vector2i(800, 600),
+                Size = new Vector2i(1280, 720),
                 Title = "Gam Jam Lato 2K21",
             };
             //Ustawienia odswiezania
@@ -22,6 +22,11 @@ namespace GamJam2k21
                 //RenderFrequency = 60,
                 //UpdateFrequency = 60,
             };
+            //Odpalanie okna
+            using (var game = new Game(gameWindowSettings, nativeWindowSettings))
+            {
+                game.Run();
+            }
         }
     }
 }

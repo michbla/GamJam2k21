@@ -16,7 +16,7 @@ namespace GamJam2k21
                 Size = new Vector2i(800, 600),
                 Title = "Gam Jam Lato 2K21",
             };
-            //Ustawienia odswierzania
+            //Ustawienia odswiezania
             var gameWindowSettings = new GameWindowSettings()
             {
                 //RenderFrequency = 60,

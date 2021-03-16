@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>GamJam</RootNamespace>
+    <AssemblyName>GamJam</AssemblyName>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Assets/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Shaders/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Textures/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Levels/**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTK" Version="4.5.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
+    <Folder Include="Textures\" />
+  </ItemGroup>
+
+</Project>

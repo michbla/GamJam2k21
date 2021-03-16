@@ -23,7 +23,7 @@ namespace GamJam2k21
 
         //WIDOK (Kamera):
         private Matrix4 projection;
-        private Vector3 viewPos;
+        private Vector2 viewPos;
 
         //Sprite renderer do rysowania obiektow
         private SpriteRenderer spriteRenderer;
@@ -44,16 +44,16 @@ namespace GamJam2k21
             GL.Disable(EnableCap.DepthTest);
 
             //Pozycja widoku ustawiona tak, by lewy dolny rog mial wspolrzedne (0,0)
-            viewPos = new Vector3(-256.0f, -144.0f, 0.0f);
-            //Generuje projekcje ortograficzna
-            projection = Matrix4.CreateOrthographic(512, 288, -1.0f, 1.0f);
+            viewPos = new Vector2(-8.0f, -4.5f);
+            //Generuje projekcje ortograficzna 16/9
+            projection = Matrix4.CreateOrthographic(16, 9, -1.0f, 1.0f);
             //Generowanie ResourcesManagera
             ResourceManager.GetInstance();
             //LADOWANIE SHADEROW
             ResourceManager.LoadShader("Data/Resources/Shaders/spriteShader/spriteShader.vert", "Data/Resources/Shaders/spriteShader/spriteShader.frag", "sprite");
             ResourceManager.GetShader("sprite").Use();
             ResourceManager.GetShader("sprite").SetInt("texture0", 0);
-            ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(viewPos));
+            ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(viewPos.X,viewPos.Y,0.0f));
             ResourceManager.GetShader("sprite").SetMatrix4("projection", projection);
 
             spriteRenderer = new SpriteRenderer(ResourceManager.GetShader("sprite"));
@@ -79,11 +79,11 @@ namespace GamJam2k21
 
             if (KeyboardState.IsKeyDown(Keys.Down))
             {
-                viewPos.Y += (float)e.Time * 40;
+                viewPos.Y += (float)e.Time * 100;
             }
             else if (KeyboardState.IsKeyDown(Keys.Up))
             {
-                viewPos.Y -= (float)e.Time * 40;
+                viewPos.Y -= (float)e.Time * 100;
             }
             //TUTAJ KOD
 
@@ -97,18 +97,18 @@ namespace GamJam2k21
 
             //TEST
             //ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(viewPos));
-            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (-256.0f, -144.0f, 0.0f), (0, 0, 0), (512, 288), 0);
-            for (var i = 0; i < 9; i++)
+            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (-8.0f, -4.5f), (0, 0), (16, 9), 0);
+            for (var i = 0; i < 100; i++)
             {
                 for (var j = 0; j < 16; j++)
                 {
                     if (i == 0)
                     {
-                        spriteRenderer.DrawSprite(ResourceManager.GetTexture("grass"), viewPos, (j * 32, -i * 32, 0), (32, 32), 0);
+                        spriteRenderer.DrawSprite(ResourceManager.GetTexture("grass"), viewPos, (j, -i), (1, 1), 0);
                     }
                     else
                     {
-                        spriteRenderer.DrawSprite(ResourceManager.GetTexture("dirt"), viewPos, (j * 32, -i * 32, 0), (32, 32), 0);
+                        spriteRenderer.DrawSprite(ResourceManager.GetTexture("dirt"), viewPos, (j, -i), (1, 1), 0);
                     }
                 }
             }
@@ -123,6 +123,12 @@ namespace GamJam2k21
         protected override void OnUnload()
         {
             //Czyszczenie pamieci itp.
+            //Czyszczenie bufferow
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindVertexArray(0);
+            GL.UseProgram(0);
+            //Czyszczenie zasobow
+            ResourceManager.Clear();
             base.OnUnload();
         }
         //Obsluga zmiany rozmiaru okna

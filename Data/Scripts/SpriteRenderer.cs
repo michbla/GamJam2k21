@@ -55,8 +55,11 @@ namespace GamJam2k21
             GL.DeleteVertexArray(quadVAO);
         }
         //Rysowanie sprite'a
-        public void DrawSprite(Texture tex,Vector3 viewPos, Vector3 pos, Vector2 size, float rotate, Vector3 color)
+        public void DrawSprite(Texture tex,Vector2 viewPos, Vector2 pos, Vector2 size, float rotate, Vector3 color)
         {
+            //OPTYMALIZACJA /przeniesc do gameobject.draw
+            if (pos.Y > viewPos.Y + 10 || pos.Y > -viewPos.Y + 8)
+                return;
             shader.Use();
             Matrix4 model = Matrix4.Identity;
             //Skalowanie
@@ -66,10 +69,10 @@ namespace GamJam2k21
             model *= Matrix4.CreateRotationZ((float)MathHelper.DegreesToRadians(-rotate));
             model *= Matrix4.CreateTranslation(0.5f * size.X, 0.5f * size.Y, 0.0f);
             //Przemieszczanie
-            model *= Matrix4.CreateTranslation(pos.X, pos.Y, pos.Z);
+            model *= Matrix4.CreateTranslation(pos.X, pos.Y, 0.0f);
             //Ustawianie wartosci shadera
             shader.SetMatrix4("model", model);
-            shader.SetMatrix4("view", Matrix4.CreateTranslation(viewPos));
+            shader.SetMatrix4("view", Matrix4.CreateTranslation(viewPos.X,viewPos.Y,0.0f));
             shader.SetVector3("spriteColor", color);
             //Uzywanie tekstury
             tex.Use(TextureUnit.Texture0);
@@ -79,6 +82,6 @@ namespace GamJam2k21
             GL.BindVertexArray(0);
         }
         //Rysowanie ze standardowym kolorem
-        public void DrawSprite(Texture tex, Vector3 viewPos, Vector3 pos, Vector2 size, float rotate) { DrawSprite(tex,viewPos, pos, size, rotate, (1.0f, 1.0f, 1.0f)); }
+        public void DrawSprite(Texture tex, Vector2 viewPos, Vector2 pos, Vector2 size, float rotate) { DrawSprite(tex,viewPos, pos, size, rotate, (1.0f, 1.0f, 1.0f)); }
     }
 }

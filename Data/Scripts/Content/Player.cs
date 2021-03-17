@@ -9,63 +9,64 @@ namespace GamJam2k21
     public class Player : GameObject
     {
         //Predkosc gracza
-        public float playerSpeed = 8f;
-
-        public float jumpForce = 10.0f;
-        public float jumpingTime = 0.0f;
-
+        private float playerSpeed = 8f;
+        //Sila skoku
+        private float jumpForce = 10.0f;
+        //Zmienne do plynnego skoku
         private float fallMultiplier = 0.01f;
         private float lowJumpMultiplier = 0.5f;
+
+        private float rememberGrounded = 0.0f;
 
         //Flagi
         public bool canMove = true;
         public bool isGrounded = true;
-
-        public bool cDown = false;
-        public bool cUp = false;
-        public bool cLeft = false;
-        public bool cRight = false;
 
         //Rozmiar collidera gracza
         private Vector2 colliderSize = (0.9f, 1.8f);
 
         //Grawitacja
         private float gravity = 30.0f;
-
+        //Ostatnia pozycja gracza
         private Vector2 lastPlayerPos;
-
+        //Kostruktor
         public Player(Vector2 pos, Vector2 size, Texture sprite) : base(pos, size, sprite)
         {
             lastPlayerPos = pos;
             velocity = (0.0f, 0.0f);
         }
-
         //Logika gracza
         public override void Update(KeyboardState input, float deltaTime)
         {
-
             if (canMove)
             {
                 float vel = playerSpeed * deltaTime;
                 if (!isGrounded)
-                    vel = vel * 0.8f;
+                {
+                    vel *= 0.8f;
+                    if (rememberGrounded > 0.0f)
+                        rememberGrounded -= deltaTime;
+                }
+                else
+                {
+                    rememberGrounded = 0.2f;
+                }
 
                 if (input.IsKeyDown(Keys.A))
                 {
-                    //MOVE LEFT
                     position.X -= vel;
                 }
                 else if (input.IsKeyDown(Keys.D))
                 {
-                    //MOVE RIGHT
                     position.X += vel;
                 }
 
-                if (isGrounded && input.IsKeyDown(Keys.Space))
+                if (rememberGrounded > 0.0f && input.IsKeyDown(Keys.Space))
                 {
                     velocity.Y = 1.0f * jumpForce;
                 }
             }
+            //Grawitacja tylko jesli w powietrzu
             if (!isGrounded)
             {
                 velocity.Y -= gravity * deltaTime;
@@ -83,8 +84,15 @@ namespace GamJam2k21
 
             lastPlayerPos = position;
         }
+
         //Sprawdzenie kolizji z obiektem <collider>
         //Tymczasowo tylko na graczu, poniewaz tylko gracz moze sie ruszac
+        //BUG:: Kolizje maja jakis problem ze soba
+        //Pomysl na rozwiazanie:
+        //-policzyc pozycje gracza w nastepnej klatce
+        //-sprawdzic jej kolicje
+        //-jesli koliduje z obiektem
+        //-zabronic graczowi sie ruszac w tym kierunku za pomoca booli albo czegos w tym stylu
         public void CheckCollision(GameObject collider)
         {
             bool collisionX = position.X + colliderSize.X >= collider.position.X &&
@@ -122,7 +130,6 @@ namespace GamJam2k21
                 }
             }
         }
-
         enum Direction
         {
             up,

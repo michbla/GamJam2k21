@@ -33,6 +33,12 @@ namespace GamJam2k21
 
         }
         //TEMP:
+        public void Update(Vector2 playerPos)
+        {
+            foreach (var block in currentBlocks)
+                if (!block.isDestroyed)
+                    block.distanceToPlayer = (block.position - playerPos).Length;
+        }
         public void Draw(SpriteRenderer rend, Vector2 viewPos)
         {
             foreach (var block in currentBlocks)

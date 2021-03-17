@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -24,6 +25,12 @@ namespace GamJam2k21
         //WIDOK (Kamera):
         private Matrix4 projection;
         private Vector2 viewPos;
+        private float cameraFollowSpeed = 5.0f;
+
+        //Pozycja myszy na ekranie
+        private Vector2 mousePos;
+        //Pozycja myszy w swiecie
+        private Vector2 mouseWorldPos;
 
         //Sprite renderer do rysowania obiektow
         private SpriteRenderer spriteRenderer;
@@ -48,6 +55,7 @@ namespace GamJam2k21
             //Wlaczanie mieszania dla tekstur z alpha
             GL.Enable(EnableCap.Blend);
             GL.Disable(EnableCap.DepthTest);
+            CenterWindow();
 
             //Pozycja widoku ustawiona tak, by lewy dolny rog mial wspolrzedne (0,0)
             viewPos = new Vector2(8.0f, 4.5f);
@@ -59,7 +67,7 @@ namespace GamJam2k21
             ResourceManager.LoadShader("Data/Resources/Shaders/spriteShader/spriteShader.vert", "Data/Resources/Shaders/spriteShader/spriteShader.frag", "sprite");
             ResourceManager.GetShader("sprite").Use();
             ResourceManager.GetShader("sprite").SetInt("texture0", 0);
-            ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X,-viewPos.Y,0.0f));
+            ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X, -viewPos.Y, 0.0f));
             ResourceManager.GetShader("sprite").SetMatrix4("projection", projection);
 
             spriteRenderer = new SpriteRenderer(ResourceManager.GetShader("sprite"));
@@ -68,8 +76,11 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/grass_side.png", "grass");
             ResourceManager.LoadTexture("Data/Resources/Textures/sky2.png", "sky");
             ResourceManager.LoadTexture("Data/Resources/Textures/char.png", "char");
+            ResourceManager.LoadTexture("Data/Resources/Textures/cursor2.png", "cursor");
 
+            //Gracz
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
+            //Poziom
             level = new GameLevel(16, 100);
 
             //TUTAJ KOD
@@ -79,6 +90,10 @@ namespace GamJam2k21
         //Obsluga logiki w kazdej klatce, dt - deltaTime (czas pomiedzy klatkami)
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
+            //Wylaczenie widoku kursora, mamy wlasny
+            CursorVisible = false;
+            //Delta Czas
+            float deltaTime = (float)e.Time;
             //Nie obsluguje logiki jesli okno dziala w tle
             if (!IsFocused)
                 return;
@@ -86,35 +101,74 @@ namespace GamJam2k21
             if (KeyboardState.IsKeyDown(Keys.Escape))
                 Close();
 
+            //Zmienne inputowe
+            var mouseInput = MouseState;
             var input = KeyboardState;
 
+            //Obliczanie pozycji myszy
+            float mouseScale = 16.0f / Size.X;
+            mousePos.X = mouseInput.Position.X * mouseScale;
+            mousePos.Y = -(mouseInput.Position.Y - Size.Y) * mouseScale;
+            mouseWorldPos = mousePos + viewPos - (8.0f, 4.5f);
+
             //Aktualizacja logiki gracza
-            player.Update(input, (float)e.Time);
+            player.Update(input, deltaTime);
 
             player.isGrounded = false;
             //Kolizja
+            //BUG:: jak sie skoczy na krawedz bloku to postac sie w niego wtapia i wraca
+            //      widac to przez chwile, ale niesmak pozostaje
             foreach (var block in level.currentBlocks)
             {
-                player.CheckCollision(block);
+                //Tylko jesli blok nie jest zniszczony i znajduje sie w zasiegu gracza
+                if (block.distanceToPlayer <= 2f && !block.isDestroyed)
+                    player.CheckCollision(block);
+            }
+            //TEMP:: Testowe kopanie
+            if (mouseInput.IsButtonDown(MouseButton.Left))
+            {
+                foreach (var block in level.currentBlocks)
+                {
+                    if (block.distanceToPlayer <= 1.5f && !block.isDestroyed)
+                    {
+                        double mPX = Math.Floor(mouseWorldPos.X);
+                        double mPY= Math.Floor(mouseWorldPos.Y);
+                        Debug.WriteLine($"{mPX} , {mPY}");
+                        if(block.position.X == mPX && block.position.Y == mPY)
+                        {
+                            block.isDestroyed = true;
+                        }
+                    }
+                }
             }
 
-            //Ruch kamery
+            //Plynne podazanie kamery za graczem
+            float desiredViewX = MathHelper.Lerp(viewPos.X, player.position.X + player.size.X / 2.0f, deltaTime * cameraFollowSpeed);
+            float desiredViewY = MathHelper.Lerp(viewPos.Y, player.position.Y + player.size.Y * 0.7f, deltaTime * cameraFollowSpeed);
+            viewPos.X = desiredViewX;
+            viewPos.Y = desiredViewY;
+
+            //TEMP:: Ruch kamery przez przypadek dziala jak rozgladanie (feature?)
             if (KeyboardState.IsKeyDown(Keys.Down))
             {
-                viewPos.Y -= (float)e.Time * 10;
+                viewPos.Y -= deltaTime * 10;
             }
             else if (KeyboardState.IsKeyDown(Keys.Up))
             {
-                viewPos.Y += (float)e.Time * 10;
+                viewPos.Y += deltaTime * 10;
             }
             if (KeyboardState.IsKeyDown(Keys.Left))
             {
-                viewPos.X -= (float)e.Time * 10;
+                viewPos.X -= deltaTime * 10;
             }
             else if (KeyboardState.IsKeyDown(Keys.Right))
             {
-                viewPos.X += (float)e.Time * 10;
+                viewPos.X += deltaTime * 10;
             }
+
+            //Aktualizacja poziomu (glownie chodzi o obliczanie dystansu od gracza dla kazdego bloku)
+            level.Update(player.position);
+
             //TUTAJ KOD
 
             base.OnUpdateFrame(e);
@@ -127,25 +181,15 @@ namespace GamJam2k21
 
             //TEST
             //Rysowanie tla
-            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (8.0f,4.5f), (0, 0), (16, 9), 0);
+            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (8.0f, 4.5f), (0.0f, 0.0f), (16.0f, 9.0f), 0.0f);
             //Rysowanie poziomu
             level.Draw(spriteRenderer, viewPos);
-            //for (var i = 0; i < 100; i++)
-            //{
-            //    for (var j = 0; j < 16; j++)
-            //    {
-            //        if (i == 0)
-            //        {
-            //            spriteRenderer.DrawSprite(ResourceManager.GetTexture("grass"), viewPos, (j, -i), (1, 1), 0);
-            //        }
-            //        else
-            //        {
-            //            spriteRenderer.DrawSprite(ResourceManager.GetTexture("dirt"), viewPos, (j, -i), (1, 1), 0);
-            //        }
-            //    }
-            //}
+
             //Rysowanie gracza
-            player.Draw(spriteRenderer,viewPos);
+            player.Draw(spriteRenderer, viewPos);
+
+            //Rysowanie kursora
+            spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (8.0f, 4.5f), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
 
             //TUTAJ KOD
 

@@ -11,9 +11,11 @@ namespace GamJam2k21
 
         public float endurance;
 
+        public float distanceToPlayer;
+
         public Block(Vector2 pos, Texture sprite) : base(pos, (1.0f,1.0f), sprite)
         {
-
+            distanceToPlayer = 100.0f;
         }
     }
 }

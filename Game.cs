@@ -28,6 +28,9 @@ namespace GamJam2k21
         //Sprite renderer do rysowania obiektow
         private SpriteRenderer spriteRenderer;
 
+        //Gracz
+        private Player player;
+
         //Konstruktor okna gry
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
         {
@@ -60,8 +63,10 @@ namespace GamJam2k21
             //LADOWANIE TEKSTUR
             ResourceManager.LoadTexture("Data/Resources/Textures/dirt.png", "dirt");
             ResourceManager.LoadTexture("Data/Resources/Textures/grass_side.png", "grass");
-            ResourceManager.LoadTexture("Data/Resources/Textures/sky.png", "sky");
+            ResourceManager.LoadTexture("Data/Resources/Textures/sky2.png", "sky");
+            ResourceManager.LoadTexture("Data/Resources/Textures/char.png", "char");
 
+            player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
 
             //TUTAJ KOD
 
@@ -77,13 +82,19 @@ namespace GamJam2k21
             if (KeyboardState.IsKeyDown(Keys.Escape))
                 Close();
 
+            var input = KeyboardState;
+
+            //Aktualizacja logiki gracza
+            player.Update(input, (float)e.Time);
+
+            //Ruch kamery
             if (KeyboardState.IsKeyDown(Keys.Down))
             {
-                viewPos.Y += (float)e.Time * 100;
+                viewPos.Y += (float)e.Time * 10;
             }
             else if (KeyboardState.IsKeyDown(Keys.Up))
             {
-                viewPos.Y -= (float)e.Time * 100;
+                viewPos.Y -= (float)e.Time * 10;
             }
             //TUTAJ KOD
 
@@ -96,8 +107,9 @@ namespace GamJam2k21
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             //TEST
-            //ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(viewPos));
+            //Rysowanie tla
             spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (-8.0f, -4.5f), (0, 0), (16, 9), 0);
+            //Rysowanie poziomu
             for (var i = 0; i < 100; i++)
             {
                 for (var j = 0; j < 16; j++)
@@ -112,7 +124,8 @@ namespace GamJam2k21
                     }
                 }
             }
-            //spriteRenderer.DrawSprite(ResourceManager.GetTexture("dirt"), viewPos, (0, 0, 0), (32, 32), 0);
+            //Rysowanie gracza
+            player.Draw(spriteRenderer,viewPos);
 
             //TUTAJ KOD
 

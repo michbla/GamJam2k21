@@ -57,9 +57,8 @@ namespace GamJam2k21
         //Rysowanie sprite'a
         public void DrawSprite(Texture tex,Vector2 viewPos, Vector2 pos, Vector2 size, float rotate, Vector3 color)
         {
-            //OPTYMALIZACJA /przeniesc do gameobject.draw
-            if (pos.Y > viewPos.Y + 10 || pos.Y > -viewPos.Y + 8)
-                return;
+            //if (pos.Y > viewPos.Y + 10 || pos.Y > -viewPos.Y + 8)
+            //    return;
             shader.Use();
             Matrix4 model = Matrix4.Identity;
             //Skalowanie

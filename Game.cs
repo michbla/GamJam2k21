@@ -31,6 +31,9 @@ namespace GamJam2k21
         //Gracz
         private Player player;
 
+        //Poziom gry
+        private GameLevel level;
+
         //Konstruktor okna gry
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
         {
@@ -47,7 +50,7 @@ namespace GamJam2k21
             GL.Disable(EnableCap.DepthTest);
 
             //Pozycja widoku ustawiona tak, by lewy dolny rog mial wspolrzedne (0,0)
-            viewPos = new Vector2(-8.0f, -4.5f);
+            viewPos = new Vector2(8.0f, 4.5f);
             //Generuje projekcje ortograficzna 16/9
             projection = Matrix4.CreateOrthographic(16, 9, -1.0f, 1.0f);
             //Generowanie ResourcesManagera
@@ -56,7 +59,7 @@ namespace GamJam2k21
             ResourceManager.LoadShader("Data/Resources/Shaders/spriteShader/spriteShader.vert", "Data/Resources/Shaders/spriteShader/spriteShader.frag", "sprite");
             ResourceManager.GetShader("sprite").Use();
             ResourceManager.GetShader("sprite").SetInt("texture0", 0);
-            ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(viewPos.X,viewPos.Y,0.0f));
+            ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X,-viewPos.Y,0.0f));
             ResourceManager.GetShader("sprite").SetMatrix4("projection", projection);
 
             spriteRenderer = new SpriteRenderer(ResourceManager.GetShader("sprite"));
@@ -67,6 +70,7 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/char.png", "char");
 
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
+            level = new GameLevel(16, 100);
 
             //TUTAJ KOD
 
@@ -87,14 +91,29 @@ namespace GamJam2k21
             //Aktualizacja logiki gracza
             player.Update(input, (float)e.Time);
 
+            player.isGrounded = false;
+            //Kolizja
+            foreach (var block in level.currentBlocks)
+            {
+                player.CheckCollision(block);
+            }
+
             //Ruch kamery
             if (KeyboardState.IsKeyDown(Keys.Down))
             {
-                viewPos.Y += (float)e.Time * 10;
+                viewPos.Y -= (float)e.Time * 10;
             }
             else if (KeyboardState.IsKeyDown(Keys.Up))
             {
-                viewPos.Y -= (float)e.Time * 10;
+                viewPos.Y += (float)e.Time * 10;
+            }
+            if (KeyboardState.IsKeyDown(Keys.Left))
+            {
+                viewPos.X -= (float)e.Time * 10;
+            }
+            else if (KeyboardState.IsKeyDown(Keys.Right))
+            {
+                viewPos.X += (float)e.Time * 10;
             }
             //TUTAJ KOD
 
@@ -108,22 +127,23 @@ namespace GamJam2k21
 
             //TEST
             //Rysowanie tla
-            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (-8.0f, -4.5f), (0, 0), (16, 9), 0);
+            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (8.0f,4.5f), (0, 0), (16, 9), 0);
             //Rysowanie poziomu
-            for (var i = 0; i < 100; i++)
-            {
-                for (var j = 0; j < 16; j++)
-                {
-                    if (i == 0)
-                    {
-                        spriteRenderer.DrawSprite(ResourceManager.GetTexture("grass"), viewPos, (j, -i), (1, 1), 0);
-                    }
-                    else
-                    {
-                        spriteRenderer.DrawSprite(ResourceManager.GetTexture("dirt"), viewPos, (j, -i), (1, 1), 0);
-                    }
-                }
-            }
+            level.Draw(spriteRenderer, viewPos);
+            //for (var i = 0; i < 100; i++)
+            //{
+            //    for (var j = 0; j < 16; j++)
+            //    {
+            //        if (i == 0)
+            //        {
+            //            spriteRenderer.DrawSprite(ResourceManager.GetTexture("grass"), viewPos, (j, -i), (1, 1), 0);
+            //        }
+            //        else
+            //        {
+            //            spriteRenderer.DrawSprite(ResourceManager.GetTexture("dirt"), viewPos, (j, -i), (1, 1), 0);
+            //        }
+            //    }
+            //}
             //Rysowanie gracza
             player.Draw(spriteRenderer,viewPos);
 

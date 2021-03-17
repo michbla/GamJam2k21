@@ -71,7 +71,7 @@ namespace GamJam2k21
             model *= Matrix4.CreateTranslation(pos.X, pos.Y, 0.0f);
             //Ustawianie wartosci shadera
             shader.SetMatrix4("model", model);
-            shader.SetMatrix4("view", Matrix4.CreateTranslation(viewPos.X,viewPos.Y,0.0f));
+            shader.SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X,-viewPos.Y,0.0f));
             shader.SetVector3("spriteColor", color);
             //Uzywanie tekstury
             tex.Use(TextureUnit.Texture0);

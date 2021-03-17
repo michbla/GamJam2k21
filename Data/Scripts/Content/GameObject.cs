@@ -45,7 +45,7 @@ namespace GamJam2k21
         public virtual void Draw(SpriteRenderer rend, Vector2 viewPos)
         {
             //OPTYMALIZACJA - nie renderuj obiektow poza ekranem
-            if (position.Y < -viewPos.Y -4.5f - size.Y || position.Y > -viewPos.Y + 4.5f)
+            if (position.Y + size.Y < viewPos.Y - 4.5f || position.Y > viewPos.Y + 4.5f)
                 return;
             rend.DrawSprite(sprite, viewPos, position, size, rotation, color);
         }

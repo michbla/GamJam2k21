@@ -114,7 +114,7 @@ namespace GamJam2k21
             //Aktualizacja logiki gracza
             player.Update(input, deltaTime);
 
-            player.isGrounded = false;
+            player.ResetBounds();
             //Kolizja
             //BUG:: jak sie skoczy na krawedz bloku to postac sie w niego wtapia i wraca
             //      widac to przez chwile, ale niesmak pozostaje
@@ -129,7 +129,7 @@ namespace GamJam2k21
             {
                 foreach (var block in level.currentBlocks)
                 {
-                    if (block.distanceToPlayer <= 1.5f && !block.isDestroyed)
+                    if (block.distanceToPlayer <= 2.0f && !block.isDestroyed)
                     {
                         double mPX = Math.Floor(mouseWorldPos.X);
                         double mPY= Math.Floor(mouseWorldPos.Y);
@@ -167,7 +167,7 @@ namespace GamJam2k21
             }
 
             //Aktualizacja poziomu (glownie chodzi o obliczanie dystansu od gracza dla kazdego bloku)
-            level.Update(player.position);
+            level.Update(player.playerCenter);
 
             //TUTAJ KOD
 

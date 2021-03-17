@@ -8,10 +8,11 @@ namespace GamJam2k21
     /// </summary>
     public class Player : GameObject
     {
+        public Vector2 playerCenter;
         //Predkosc gracza
-        private float playerSpeed = 8f;
+        private float playerSpeed = 8.0f;
         //Sila skoku
-        private float jumpForce = 10.0f;
+        private float jumpForce = 8.0f;
         //Zmienne do plynnego skoku
         private float fallMultiplier = 0.01f;
         private float lowJumpMultiplier = 0.5f;
@@ -22,8 +23,15 @@ namespace GamJam2k21
         public bool canMove = true;
         public bool isGrounded = true;
 
-        //Rozmiar collidera gracza
-        private Vector2 colliderSize = (0.9f, 1.8f);
+        //Collidery
+        private CircleCollider groundChecker;
+        private CircleCollider ceilingChecker;
+
+        private float minY = float.MinValue;
+        private float maxY = float.MaxValue;
+
+        private float minX = float.MinValue;
+        private float maxX = float.MaxValue;
 
         //Grawitacja
         private float gravity = 30.0f;
@@ -34,10 +42,18 @@ namespace GamJam2k21
         {
             lastPlayerPos = pos;
             velocity = (0.0f, 0.0f);
+            playerCenter = new Vector2(position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
+            groundChecker = new CircleCollider(this, new Vector2(this.size.X / 2.0f, 0.2f), 0.25f);
+            ceilingChecker = new CircleCollider(this, new Vector2(this.size.X / 2.0f, 1.8f), 0.25f);
         }
         //Logika gracza
         public override void Update(KeyboardState input, float deltaTime)
         {
+            playerCenter = (position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
+
+            groundChecker.Update();
+            ceilingChecker.Update();
+
             if (canMove)
             {
                 float vel = playerSpeed * deltaTime;
@@ -49,7 +65,7 @@ namespace GamJam2k21
                 }
                 else
                 {
-                    rememberGrounded = 0.2f;
+                    rememberGrounded = 0.1f;
                 }
 
                 if (input.IsKeyDown(Keys.A))
@@ -82,7 +98,20 @@ namespace GamJam2k21
             }
             position.Y += velocity.Y * deltaTime;
 
+            position.Y = MathHelper.Clamp(position.Y, minY, maxY);
+
+            //groundChecker.Update();
+
             lastPlayerPos = position;
+        }
+
+        public void ResetBounds()
+        {
+            minY = float.MinValue;
+            maxY = float.MaxValue;
+            minX = float.MinValue;
+            maxX = float.MaxValue;
+            isGrounded = false;
         }
 
         //Sprawdzenie kolizji z obiektem <collider>
@@ -94,6 +123,21 @@ namespace GamJam2k21
         //-jesli koliduje z obiektem
         //-zabronic graczowi sie ruszac w tym kierunku za pomoca booli albo czegos w tym stylu
         public void CheckCollision(GameObject collider)
+        {
+            (bool, Direction, Vector2) groundRes = Collider.CheckCircleCollision(groundChecker, collider);
+            if (groundRes.Item1 == true)
+            {
+                //Is grounded
+                isGrounded = true;
+                minY = collider.position.Y + collider.size.Y;
+            }
+            (bool, Direction, Vector2) ceilRes = Collider.CheckCircleCollision(ceilingChecker, collider);
+            if (ceilRes.Item1 == true)
+            {
+                maxY = collider.position.Y - size.Y;
+            }
+        }
+        /*public void CheckCollision(GameObject collider)
         {
             bool collisionX = position.X + colliderSize.X >= collider.position.X &&
                 collider.position.X + collider.size.X >= position.X + 1.0f - colliderSize.X;
@@ -129,8 +173,39 @@ namespace GamJam2k21
                     position.X = position.X + diff - size.X + colliderSize.X;
                 }
             }
+        }*/
+        /*
+        public (bool, Direction, Vector2) CheckCircleCollision(Vector2 circleCenter, float radius, GameObject collider)
+        {
+            Vector2 center = new Vector2(circleCenter.X + radius, circleCenter.Y + radius);
+            Vector2 aabbHalfExtents = new Vector2(collider.size.X / 2f, collider.size.Y / 2f);
+            Vector2 aabbCenter = new Vector2(
+                collider.position.X + aabbHalfExtents.X,
+                collider.position.Y + aabbHalfExtents.Y
+                );
+            Vector2 difference = center - aabbCenter;
+            Vector2 clamped = new Vector2(MathHelper.Clamp(difference.X, -aabbHalfExtents.X, aabbHalfExtents.X), MathHelper.Clamp(difference.Y, -aabbHalfExtents.Y, aabbHalfExtents.Y));
+            Vector2 closest = aabbCenter + clamped;
+            difference = closest - center;
+            if (difference.Length < radius)
+                return (true, VectorDirection(difference), difference);
+            else
+                return (false, Direction.up, (0.0f, 0.0f));
         }
-        enum Direction
+        public (bool, Direction, Vector2) CheckBoxCollision(Vector2 boxPos, Vector2 boxSize, GameObject collider)
+        {
+            bool collisionX = boxPos.X + boxSize.X >= collider.position.X &&
+                collider.position.X + collider.size.X >= boxPos.X + boxSize.X;
+            bool collisionY = boxPos.Y + boxSize.Y >= collider.position.Y &&
+                collider.position.Y + collider.size.Y >= boxPos.Y;
+            if(!collisionX || !collisionY)
+                return (false, Direction.up, (0.0f, 0.0f));
+            Vector2 center = new Vector2(boxPos.X + boxSize.X / 2.0f, boxPos.Y + boxSize.Y / 2.0f);
+            Vector2 collCenter = new Vector2(collider.position.X + collider.size.X / 2.0f, collider.position.Y + collider.size.Y / 2.0f);
+            Vector2 difference = center - collCenter;
+            return (true, VectorDirection(difference), difference);
+        }
+        public enum Direction
         {
             up,
             right,
@@ -159,6 +234,6 @@ namespace GamJam2k21
                 }
             }
             return (Direction)bestMatch;
-        }
+        }*/
     }
 }

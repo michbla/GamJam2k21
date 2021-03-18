@@ -168,6 +168,13 @@ namespace GamJam2k21
 
             if (hasColl[2] && position.Y < collisionPos.Y)
                 position.Y = collisionPos.Y;
+
+            if (input.IsKeyDown(Keys.F))
+            {
+                isFlipped = true;
+            }
+            else
+                isFlipped = false;
         }
         //Sprawdz wszystkie kolizje
         private void DoCollisions()
@@ -224,11 +231,12 @@ namespace GamJam2k21
             //OPTYMALIZACJA - nie renderuj obiektow poza ekranem
             if (position.Y + size.Y < viewPos.Y - 18f || position.Y > viewPos.Y + 18f || position.X + size.X < viewPos.X - 36f || position.X > viewPos.X + 36f)
                 return;
+            //Sprite flip
             if(!isFlipped)
                 rend.DrawSprite(sprite, viewPos, position, size, rotation, color);
             else
             {
-                rend.DrawSprite(sprite, viewPos, position, (size.X,size.Y), rotation, color);
+                rend.DrawSprite(sprite, viewPos, (position.X + size.X,position.Y), (size.X * -1,size.Y), rotation, color);
             }
         }
     }

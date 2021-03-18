@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Collections.Generic;
 
 namespace GamJam2k21
 {
@@ -39,6 +40,8 @@ namespace GamJam2k21
 
         private bool isJumping = false;
 
+        List<Block> blocks;
+
         //Grawitacja
         private float gravity = 30.0f;
         //Ostatnia pozycja gracza
@@ -50,16 +53,26 @@ namespace GamJam2k21
             velocity = (0.0f, 0.0f);
             playerCenter = new Vector2(position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
 
-            bottomBox = new BoxCollider(this, new Vector2(0.25f, 0.0f), new Vector2(0.5f, 0.1f));
-            upperBox = new BoxCollider(this, new Vector2(0.25f, 1.7f), new Vector2(0.5f, 0.1f));
-            leftBox = new BoxCollider(this, new Vector2(0.15f, 0.05f), new Vector2(0.2f, 1.75f));
-            rightBox = new BoxCollider(this, new Vector2(0.65f, 0.05f), new Vector2(0.2f, 1.75f));
+            bottomBox = new BoxCollider(this, new Vector2(0.3f, 0.0f), new Vector2(0.4f, 0.2f));
+            upperBox = new BoxCollider(this, new Vector2(0.3f, 1.6f), new Vector2(0.4f, 0.2f));
+            leftBox = new BoxCollider(this, new Vector2(0.00f, 0.05f), new Vector2(0.4f, 1.75f));
+            rightBox = new BoxCollider(this, new Vector2(0.6f, 0.05f), new Vector2(0.4f, 1.75f));
 
             collisionPos = pos;
+        }
+        public void SetBlocks(List<Block> b)
+        {
+            blocks = b;
         }
         //Logika gracza
         public override void Update(KeyboardState input, float deltaTime)
         {
+            foreach (var block in blocks)
+            {
+                if (block.distanceToPlayer <= 2f && !block.isDestroyed)
+                    CheckCollision(block);
+            }
+
             playerCenter = (position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
 
 
@@ -112,6 +125,12 @@ namespace GamJam2k21
                 }
             }
 
+            foreach (var block in blocks)
+            {
+                if (block.distanceToPlayer <= 2f && !block.isDestroyed)
+                    CheckCollision(block);
+            }
+
             if (hasTopColl && velocity.Y > 0.0f)
                 velocity.Y = -gravity * deltaTime;
             if (!isJumping && hasBotColl)
@@ -135,6 +154,15 @@ namespace GamJam2k21
             leftBox.Update();
 
             lastPlayerPos = position;
+
+            foreach (var block in blocks)
+            {
+                if (block.distanceToPlayer <= 2f && !block.isDestroyed)
+                    CheckCollision(block);
+            }
+
+            if (hasBotColl && position.Y < collisionPos.Y)
+                position.Y = collisionPos.Y;
         }
 
         public void ResetBounds()

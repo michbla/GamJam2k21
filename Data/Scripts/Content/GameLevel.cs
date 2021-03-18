@@ -125,7 +125,7 @@ namespace GamJam2k21
 
             for (var i = 0; i < height; i++)
                 for (var j = 0; j < width; j++)
-                    this.data[j, i] = (data[i, j] - min) / (max - min);
+                    this.data[j, i] = MathHelper.Clamp((data[i, j] - min) / (max - min),0.0f,1.0f);
         }
     }
 }

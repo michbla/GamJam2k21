@@ -36,7 +36,7 @@ namespace GamJam2k21
         {
             position = parent.position + offset;
         }
-
+        //Kierunki w kole sa odwrotne do kierunkow boxu
         public static (bool, Direction, Vector2) CheckCircleCollision(CircleCollider circle, GameObject collider)
         {
             Vector2 center = new Vector2(circle.position.X, circle.position.Y);

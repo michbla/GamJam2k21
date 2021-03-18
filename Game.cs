@@ -42,7 +42,7 @@ namespace GamJam2k21
         private GameLevel level;
 
         //TEST::
-        float scale = 1.0f;
+        float scale = 2.0f;
 
         //Konstruktor okna gry
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
@@ -116,24 +116,11 @@ namespace GamJam2k21
             mouseWorldPos = mousePos + viewPos - (16.0f * scale / 2.0f, 9.0f * scale/2.0f);
 
             player.ResetBounds();
-            //Kolizja
-            foreach (var block in level.currentBlocks)
-            {
-                //Tylko jesli blok nie jest zniszczony i znajduje sie w zasiegu gracza
-                if (block.distanceToPlayer <= 2f && !block.isDestroyed)
-                    player.CheckCollision(block);
-            }
-
+            //Kolizja TESTOWANA U GRACZA
+            //Przekazuje bloki do gracza dla kolizji
+            player.SetBlocks(level.currentBlocks);
             //Aktualizacja logiki gracza
             player.Update(input, deltaTime);
-
-            //Kolizja znowu dla wiekszej dokladnosci
-            foreach (var block in level.currentBlocks)
-            {
-                //Tylko jesli blok nie jest zniszczony i znajduje sie w zasiegu gracza
-                if (block.distanceToPlayer <= 3f && !block.isDestroyed)
-                    player.CheckCollision(block);
-            }
 
             //TEMP:: Testowe kopanie
             if (mouseInput.IsButtonDown(MouseButton.Left))

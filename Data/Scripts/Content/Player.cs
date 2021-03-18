@@ -1,9 +1,12 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Collections.Generic;
+using System;
+
 
 namespace GamJam2k21
 {
+    
     /// <summary>
     /// Klasa obiektu gracza
     /// </summary>
@@ -19,6 +22,9 @@ namespace GamJam2k21
         private float lowJumpMultiplier = 0.5f;
 
         private float rememberGrounded = 0.0f;
+
+        private int playerPoints = 0;
+        private int lastPointChange = 0;
 
         //Flagi
         public bool canMove = true;
@@ -62,6 +68,7 @@ namespace GamJam2k21
             rightBox = new BoxCollider(this, new Vector2(0.6f, 0.05f), new Vector2(0.4f, 1.75f));
 
             collisionPos = pos;
+            
         }
         public void SetBlocks(ref List<Block> b)
         {
@@ -70,6 +77,19 @@ namespace GamJam2k21
         //Logika gracza
         public override void Update(KeyboardState input, float deltaTime)
         {
+            
+            playerPoints = MathHelper.Abs((int)lastPlayerPos.Y);
+            if (playerPoints != lastPointChange && !isGrounded)
+            {
+                lastPointChange = playerPoints;
+                Console.WriteLine(playerPoints);
+            }
+            
+            foreach (var block in blocks)
+            {
+                if (block.distanceToPlayer <= 2f && !block.isDestroyed)
+                    CheckCollision(block);
+            }
             ResetBounds();
             DoCollisions();
 
@@ -138,6 +158,7 @@ namespace GamJam2k21
                 velocity.X = 0.0f;
             if (hasColl[3] && velocity.X < 0.0f)
                 velocity.X = 0.0f;
+
 
             position.X += velocity.X * deltaTime;
             position.Y += velocity.Y * deltaTime;

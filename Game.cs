@@ -41,6 +41,9 @@ namespace GamJam2k21
         //Poziom gry
         private GameLevel level;
 
+        //TEST::
+        float scale = 1.0f;
+
         //Konstruktor okna gry
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
         {
@@ -58,9 +61,9 @@ namespace GamJam2k21
             CenterWindow();
 
             //Pozycja widoku ustawiona tak, by lewy dolny rog mial wspolrzedne (0,0)
-            viewPos = new Vector2(8.0f, 4.5f);
+            viewPos = new Vector2(8.0f , 4.5f );
             //Generuje projekcje ortograficzna 16/9
-            projection = Matrix4.CreateOrthographic(16, 9, -1.0f, 1.0f);
+            projection = Matrix4.CreateOrthographic(16 * scale, 9 * scale, -1.0f, 1.0f);
             //Generowanie ResourcesManagera
             ResourceManager.GetInstance();
             //LADOWANIE SHADEROW
@@ -72,8 +75,9 @@ namespace GamJam2k21
 
             spriteRenderer = new SpriteRenderer(ResourceManager.GetShader("sprite"));
             //LADOWANIE TEKSTUR
-            ResourceManager.LoadTexture("Data/Resources/Textures/dirt.png", "dirt");
-            ResourceManager.LoadTexture("Data/Resources/Textures/grass_side.png", "grass");
+            ResourceManager.LoadTexture("Data/Resources/Textures/dirt1.png", "dirt");
+            ResourceManager.LoadTexture("Data/Resources/Textures/grass1.png", "grass");
+            ResourceManager.LoadTexture("Data/Resources/Textures/stone1.png", "stone");
             ResourceManager.LoadTexture("Data/Resources/Textures/sky2.png", "sky");
             ResourceManager.LoadTexture("Data/Resources/Textures/char.png", "char");
             ResourceManager.LoadTexture("Data/Resources/Textures/cursor2.png", "cursor");
@@ -81,7 +85,7 @@ namespace GamJam2k21
             //Gracz
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
             //Poziom
-            level = new GameLevel(16, 100);
+            level = new GameLevel(64, 200);
 
             //TUTAJ KOD
 
@@ -106,10 +110,10 @@ namespace GamJam2k21
             var input = KeyboardState;
 
             //Obliczanie pozycji myszy
-            float mouseScale = 16.0f / Size.X;
+            float mouseScale = (16.0f * scale) / Size.X;
             mousePos.X = mouseInput.Position.X * mouseScale;
             mousePos.Y = -(mouseInput.Position.Y - Size.Y) * mouseScale;
-            mouseWorldPos = mousePos + viewPos - (8.0f, 4.5f);
+            mouseWorldPos = mousePos + viewPos - (16.0f * scale / 2.0f, 9.0f * scale/2.0f);
 
             player.ResetBounds();
             //Kolizja
@@ -140,7 +144,6 @@ namespace GamJam2k21
                     {
                         double mPX = Math.Floor(mouseWorldPos.X);
                         double mPY= Math.Floor(mouseWorldPos.Y);
-                        Debug.WriteLine($"{mPX} , {mPY}");
                         if(block.position.X == mPX && block.position.Y == mPY)
                         {
                             block.isDestroyed = true;
@@ -188,7 +191,7 @@ namespace GamJam2k21
 
             //TEST
             //Rysowanie tla
-            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (8.0f, 4.5f), (0.0f, 0.0f), (16.0f, 9.0f), 0.0f);
+            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (8.0f * scale, 4.5f * scale), (0.0f, 0.0f), (16.0f * scale, 9.0f * scale), 0.0f);
             //Rysowanie poziomu
             level.Draw(spriteRenderer, viewPos);
 
@@ -196,7 +199,7 @@ namespace GamJam2k21
             player.Draw(spriteRenderer, viewPos);
 
             //Rysowanie kursora
-            spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (8.0f, 4.5f), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
+            spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (8.0f * scale, 4.5f * scale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
 
             //TUTAJ KOD
 

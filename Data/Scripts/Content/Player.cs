@@ -78,18 +78,13 @@ namespace GamJam2k21
         public override void Update(KeyboardState input, float deltaTime)
         {
             
-            playerPoints = MathHelper.Abs((int)lastPlayerPos.Y);
+            playerPoints = MathHelper.Abs((int)position.Y);
             if (playerPoints != lastPointChange && !isGrounded)
             {
                 lastPointChange = playerPoints;
                 Console.WriteLine(playerPoints);
             }
             
-            foreach (var block in blocks)
-            {
-                if (block.distanceToPlayer <= 2f && !block.isDestroyed)
-                    CheckCollision(block);
-            }
             ResetBounds();
             DoCollisions();
 

@@ -37,7 +37,7 @@ namespace GamJam2k21
         {
             foreach (var block in currentBlocks)
                 if (!block.isDestroyed)
-                    block.distanceToPlayer = (block.position + (block.size/2.0f) - playerPos).Length;
+                    block.distanceToPlayer = (playerPos - (block.position + (block.size.X/2f,block.size.Y/2f))).Length;
         }
         public void Draw(SpriteRenderer rend, Vector2 viewPos)
         {

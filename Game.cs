@@ -111,19 +111,26 @@ namespace GamJam2k21
             mousePos.Y = -(mouseInput.Position.Y - Size.Y) * mouseScale;
             mouseWorldPos = mousePos + viewPos - (8.0f, 4.5f);
 
-            //Aktualizacja logiki gracza
-            player.Update(input, deltaTime);
-
             player.ResetBounds();
             //Kolizja
-            //BUG:: jak sie skoczy na krawedz bloku to postac sie w niego wtapia i wraca
-            //      widac to przez chwile, ale niesmak pozostaje
             foreach (var block in level.currentBlocks)
             {
                 //Tylko jesli blok nie jest zniszczony i znajduje sie w zasiegu gracza
                 if (block.distanceToPlayer <= 2f && !block.isDestroyed)
                     player.CheckCollision(block);
             }
+
+            //Aktualizacja logiki gracza
+            player.Update(input, deltaTime);
+
+            //Kolizja znowu dla wiekszej dokladnosci
+            foreach (var block in level.currentBlocks)
+            {
+                //Tylko jesli blok nie jest zniszczony i znajduje sie w zasiegu gracza
+                if (block.distanceToPlayer <= 3f && !block.isDestroyed)
+                    player.CheckCollision(block);
+            }
+
             //TEMP:: Testowe kopanie
             if (mouseInput.IsButtonDown(MouseButton.Left))
             {

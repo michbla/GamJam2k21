@@ -57,7 +57,7 @@ namespace GamJam2k21
         public static (bool, Direction, Vector2) CheckBoxCollision(BoxCollider box, GameObject collider)
         {
             bool collisionX = box.position.X + box.size.X >= collider.position.X &&
-                collider.position.X + collider.size.X >= box.position.X + box.size.X;
+                collider.position.X + collider.size.X >= box.position.X;
             bool collisionY = box.position.Y + box.size.Y >= collider.position.Y &&
                 collider.position.Y + collider.size.Y >= box.position.Y;
             if (!collisionX || !collisionY)

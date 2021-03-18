@@ -23,9 +23,6 @@ namespace GamJam2k21
 
         private float rememberGrounded = 0.0f;
 
-        private int playerPoints = 0;
-        private int lastPointChange = 0;
-
         //Flagi
         public bool canMove = true;
         public bool isGrounded = true;
@@ -78,17 +75,11 @@ namespace GamJam2k21
         public override void Update(KeyboardState input, float deltaTime)
         {
             
-            playerPoints = MathHelper.Abs((int)position.Y);
-            if (playerPoints != lastPointChange && !isGrounded)
-            {
-                lastPointChange = playerPoints;
-                Console.WriteLine(playerPoints);
-            }
-            
             ResetBounds();
             DoCollisions();
 
             playerCenter = (position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
+
 
             if (canMove)
             {

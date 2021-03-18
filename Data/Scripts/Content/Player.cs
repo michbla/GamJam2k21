@@ -30,26 +30,29 @@ namespace GamJam2k21
         private BoxCollider rightBox;
         private BoxCollider leftBox;
 
+        //Porzadana pozycja gracza wzgledem obiektu kolizji
         private Vector2 collisionPos;
 
-        private bool hasBotColl = false;
-        private bool hasTopColl = false;
-        private bool hasLeftColl = false;
-        private bool hasRightColl = false;
+        //Flaga posiadania kolizji
+        private bool[] hasColl = { false, false, false, false };
+        //0 - top, 1 - right, 2 - bottom, 3 - left
 
-
+        //Flaga do sprawdzenia czy w danej klatce rozpoczety zostal skok
         private bool isJumping = false;
 
-        List<Block> blocks;
+        //Lista blokow z poziomu przekazana jako referencja
+        //Do liczenia kolizji
+        private List<Block> blocks;
 
         //Grawitacja
         private float gravity = 30.0f;
-        //Ostatnia pozycja gracza
-        private Vector2 lastPlayerPos;
+
+        //Czy gracz ma byc rysowany odwrotnie
+        public bool isFlipped = false;
+
         //Kostruktor
         public Player(Vector2 pos, Vector2 size, Texture sprite) : base(pos, size, sprite)
         {
-            lastPlayerPos = pos;
             velocity = (0.0f, 0.0f);
             playerCenter = new Vector2(position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
 
@@ -60,21 +63,17 @@ namespace GamJam2k21
 
             collisionPos = pos;
         }
-        public void SetBlocks(List<Block> b)
+        public void SetBlocks(ref List<Block> b)
         {
             blocks = b;
         }
         //Logika gracza
         public override void Update(KeyboardState input, float deltaTime)
         {
-            foreach (var block in blocks)
-            {
-                if (block.distanceToPlayer <= 2f && !block.isDestroyed)
-                    CheckCollision(block);
-            }
+            ResetBounds();
+            DoCollisions();
 
             playerCenter = (position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
-
 
             if (canMove)
             {
@@ -125,23 +124,19 @@ namespace GamJam2k21
                 }
             }
 
-            foreach (var block in blocks)
-            {
-                if (block.distanceToPlayer <= 2f && !block.isDestroyed)
-                    CheckCollision(block);
-            }
+            DoCollisions();
 
-            if (hasTopColl && velocity.Y > 0.0f)
+            if (hasColl[0] && velocity.Y > 0.0f)
                 velocity.Y = -gravity * deltaTime;
-            if (!isJumping && hasBotColl)
+            if (!isJumping && hasColl[2])
             {
-                    position.Y = collisionPos.Y;
-                    velocity.Y = 0.0f;
+                position.Y = collisionPos.Y;
+                velocity.Y = 0.0f;
             }
 
-            if (hasRightColl && velocity.X > 0.0f)
+            if (hasColl[1] && velocity.X > 0.0f)
                 velocity.X = 0.0f;
-            if (hasLeftColl && velocity.X < 0.0f)
+            if (hasColl[3] && velocity.X < 0.0f)
                 velocity.X = 0.0f;
 
             position.X += velocity.X * deltaTime;
@@ -153,56 +148,71 @@ namespace GamJam2k21
             rightBox.Update();
             leftBox.Update();
 
-            lastPlayerPos = position;
+            DoCollisions();
 
+            if (hasColl[2] && position.Y < collisionPos.Y)
+                position.Y = collisionPos.Y;
+        }
+        //Sprawdz wszystkie kolizje
+        private void DoCollisions()
+        {
             foreach (var block in blocks)
             {
                 if (block.distanceToPlayer <= 2f && !block.isDestroyed)
                     CheckCollision(block);
             }
-
-            if (hasBotColl && position.Y < collisionPos.Y)
-                position.Y = collisionPos.Y;
         }
-
+        //Reset przed sprawdzeniem kolizji
         public void ResetBounds()
         {
             isGrounded = false;
             collisionPos = position;
-            hasBotColl = false;
-            hasTopColl = false;
-            hasLeftColl = false;
-            hasRightColl = false;
+            for (var i = 0; i < 4; i++)
+                hasColl[i] = false;
         }
 
         //Sprawdzenie kolizji z obiektem <collider>
         public void CheckCollision(GameObject collider)
         {
-
-            (bool, Direction, Vector2) botRes = Collider.CheckBoxCollision(bottomBox, collider);
-            if (botRes.Item1 == true)
-            {
-                    hasBotColl = true;
-                    isGrounded = true;
-                    collisionPos.Y = collider.position.Y + collider.size.Y;
-
-            }
-            (bool, Direction, Vector2) rRes = Collider.CheckBoxCollision(rightBox, collider);
-            if (rRes.Item1 == true)
-            {
-                hasRightColl = true;
-            }
-
-            (bool, Direction, Vector2) lRes = Collider.CheckBoxCollision(leftBox, collider);
-            if (lRes.Item1 == true)
-            {
-                hasLeftColl = true;
-            }
-
+            //Gorna kolizja
             (bool, Direction, Vector2) upRes = Collider.CheckBoxCollision(upperBox, collider);
             if (upRes.Item1 == true)
             {
-                hasTopColl = true;
+                hasColl[0] = true;
+            }
+            //Prawa kolizja
+            (bool, Direction, Vector2) rRes = Collider.CheckBoxCollision(rightBox, collider);
+            if (rRes.Item1 == true)
+            {
+                hasColl[1] = true;
+            }
+            //Dolna kolizja
+            (bool, Direction, Vector2) botRes = Collider.CheckBoxCollision(bottomBox, collider);
+            if (botRes.Item1 == true)
+            {
+                isGrounded = true;
+                collisionPos.Y = collider.position.Y + collider.size.Y;
+                hasColl[2] = true;
+
+            }
+            //Lewa kolizja
+            (bool, Direction, Vector2) lRes = Collider.CheckBoxCollision(leftBox, collider);
+            if (lRes.Item1 == true)
+            {
+                hasColl[3] = true;
+            }
+        }
+
+        public override void Draw(SpriteRenderer rend, Vector2 viewPos)
+        {
+            //OPTYMALIZACJA - nie renderuj obiektow poza ekranem
+            if (position.Y + size.Y < viewPos.Y - 18f || position.Y > viewPos.Y + 18f || position.X + size.X < viewPos.X - 36f || position.X > viewPos.X + 36f)
+                return;
+            if(!isFlipped)
+                rend.DrawSprite(sprite, viewPos, position, size, rotation, color);
+            else
+            {
+                rend.DrawSprite(sprite, viewPos, position, (size.X,size.Y), rotation, color);
             }
         }
     }

@@ -21,7 +21,7 @@ namespace GamJam2k21
         public bool isDestroyed;
 
         //Tekstura
-        Texture sprite;
+        public Texture sprite;
 
         //Konstruktor bezparametrowy
         //Ustawia wartosci domyslne

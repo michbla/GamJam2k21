@@ -115,10 +115,9 @@ namespace GamJam2k21
             mousePos.Y = -(mouseInput.Position.Y - Size.Y) * mouseScale;
             mouseWorldPos = mousePos + viewPos - (16.0f * scale / 2.0f, 9.0f * scale/2.0f);
 
-            player.ResetBounds();
             //Kolizja TESTOWANA U GRACZA
             //Przekazuje bloki do gracza dla kolizji
-            player.SetBlocks(level.currentBlocks);
+            player.SetBlocks(ref level.currentBlocks);
             //Aktualizacja logiki gracza
             player.Update(input, deltaTime);
 

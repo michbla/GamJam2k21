@@ -23,6 +23,10 @@ namespace GamJam2k21
 
         private float rememberGrounded = 0.0f;
 
+        private int lowestPosition = 1;
+
+        public PlayerStatistics PlayerStatistics;
+
         //Flagi
         public bool canMove = true;
         public bool isGrounded = true;
@@ -65,7 +69,7 @@ namespace GamJam2k21
             rightBox = new BoxCollider(this, new Vector2(0.6f, 0.05f), new Vector2(0.4f, 1.75f));
 
             collisionPos = pos;
-            
+            PlayerStatistics = new PlayerStatistics(0, 0, 0);
         }
         public void SetBlocks(ref List<Block> b)
         {
@@ -80,6 +84,8 @@ namespace GamJam2k21
 
             playerCenter = (position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
 
+            //sprawdza wysokość
+            SetMaxPlayerDepth();
 
             if (canMove)
             {
@@ -230,5 +236,15 @@ namespace GamJam2k21
                 rend.DrawSprite(sprite, viewPos, (position.X + size.X,position.Y), (size.X * -1,size.Y), rotation, color);
             }
         }
+
+        private void SetMaxPlayerDepth()
+        {
+            if (lowestPosition > position.Y && isGrounded)
+            {
+                lowestPosition = (int)position.Y ;
+                PlayerStatistics.addLevelReached();
+            }
+        }
+
     }
 }

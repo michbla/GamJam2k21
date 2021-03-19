@@ -133,6 +133,8 @@ namespace GamJam2k21
                         if(block.position.X == mPX && block.position.Y == mPY)
                         {
                             block.isDestroyed = true;
+                            player.PlayerStatistics.SetBlocksDestroyed();
+                            Console.WriteLine("points:" + player.PlayerStatistics.getExp());
                         }
                     }
                 }

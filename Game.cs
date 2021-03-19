@@ -35,6 +35,9 @@ namespace GamJam2k21
         //Sprite renderer do rysowania obiektow
         private SpriteRenderer spriteRenderer;
 
+        //textRenderer do napisów (może zadziała)
+        private TextRenderer textRenderer;
+
         //Gracz
         private Player player;
 
@@ -86,7 +89,9 @@ namespace GamJam2k21
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
             //Poziom
             level = new GameLevel(64, 200);
-
+            //Tekst
+            textRenderer = new TextRenderer(1280,720);
+            textRenderer.Load("Data/Resources/Fonts/OCRAEXT.TTF", 56);
             //TUTAJ KOD
 
             base.OnLoad();
@@ -188,7 +193,7 @@ namespace GamJam2k21
 
             //Rysowanie kursora
             spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (8.0f * scale, 4.5f * scale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
-
+            textRenderer.RenderText("chuj", 5f, 5f, 1, new Vector3(1f,1f,1f));
             //TUTAJ KOD
 
             SwapBuffers();

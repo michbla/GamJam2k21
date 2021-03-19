@@ -9,8 +9,11 @@ using OpenTK.Mathematics;
 /// ładuje .ttf i zapełnia słownik(??)
 /// dalej już tak średnio
 /// ważna kolejność instalacji nugetów
-/// 1. dependecies
+/// 1. sharpfont dependecies
 /// 2. spacewizards.sharpfont
+/// 3. w user/.nuget/packages/sharpfont.dependencies/2.6.0/build 
+/// dać <Content Include="$(MSBuildThisFileDirectory)..\bin\msvc10\x64\freetype6.dll">
+/// 4. w bin wyjebać wszystko poza msvc10/x64
 /// </summary>
 
 namespace GamJam2k21

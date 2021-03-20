@@ -6,7 +6,7 @@ using System;
 
 namespace GamJam2k21
 {
-    
+
     /// <summary>
     /// Klasa obiektu gracza
     /// </summary>
@@ -54,8 +54,10 @@ namespace GamJam2k21
         //Grawitacja
         private float gravity = 30.0f;
 
-        //Czy gracz ma byc rysowany odwrotnie
-        public bool isFlipped = false;
+        //ANIMACJE
+        private Animator playerAnimator;
+        private string currentState;
+        private float animFrameRate = 4.0f;
 
         //Kostruktor
         public Player(Vector2 pos, Vector2 size, Texture sprite) : base(pos, size, sprite)
@@ -70,15 +72,31 @@ namespace GamJam2k21
 
             collisionPos = pos;
             PlayerStatistics = new PlayerStatistics(0, 0, 0);
+
+            playerAnimator = new Animator(this, ResourceManager.GetShader("sprite"), (2, 1), animFrameRate);
+
+            playerAnimator.AddAnimation("idle", new Animation(ResourceManager.GetTexture("charIdle1"),2));
+
+            currentState = "idle";
         }
         public void SetBlocks(ref List<Block> b)
         {
             blocks = b;
         }
+        //Rysowanie gracza
+        public override void Draw(SpriteRenderer rend, Vector2 viewPos)
+        {
+            //OPTYMALIZACJA - nie renderuj obiektow poza ekranem
+            if (position.Y + size.Y < viewPos.Y - 18f || position.Y > viewPos.Y + 18f || position.X + size.X < viewPos.X - 36f || position.X > viewPos.X + 36f)
+                return;
+            //Rysowanie z animatora
+            playerAnimator.Draw(currentState, viewPos);
+        }
+
         //Logika gracza
         public override void Update(KeyboardState input, float deltaTime)
         {
-            
+
             ResetBounds();
             DoCollisions();
 
@@ -168,10 +186,13 @@ namespace GamJam2k21
 
             if (input.IsKeyDown(Keys.F))
             {
-                isFlipped = true;
+                playerAnimator.isFlipped = true;
             }
             else
-                isFlipped = false;
+                playerAnimator.isFlipped = false;
+
+            //Update animatora
+            playerAnimator.Update(currentState,deltaTime);
         }
         //Sprawdz wszystkie kolizje
         private void DoCollisions()
@@ -223,25 +244,11 @@ namespace GamJam2k21
             }
         }
 
-        public override void Draw(SpriteRenderer rend, Vector2 viewPos)
-        {
-            //OPTYMALIZACJA - nie renderuj obiektow poza ekranem
-            if (position.Y + size.Y < viewPos.Y - 18f || position.Y > viewPos.Y + 18f || position.X + size.X < viewPos.X - 36f || position.X > viewPos.X + 36f)
-                return;
-            //Sprite flip
-            if(!isFlipped)
-                rend.DrawSprite(sprite, viewPos, position, size, rotation, color);
-            else
-            {
-                rend.DrawSprite(sprite, viewPos, (position.X + size.X,position.Y), (size.X * -1,size.Y), rotation, color);
-            }
-        }
-
         private void SetMaxPlayerDepth()
         {
             if (lowestPosition > position.Y && isGrounded)
             {
-                lowestPosition = (int)position.Y ;
+                lowestPosition = (int)position.Y;
                 PlayerStatistics.addLevelReached();
             }
         }

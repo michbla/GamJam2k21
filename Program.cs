@@ -19,8 +19,8 @@ namespace GamJam2k21
             //Ustawienia odswiezania
             var gameWindowSettings = new GameWindowSettings()
             {
-               // RenderFrequency = 60,
-                //UpdateFrequency = 60,
+               //RenderFrequency = 60,
+               //UpdateFrequency = 60,
             };
             //Odpalanie okna
             using (var game = new Game(gameWindowSettings, nativeWindowSettings))

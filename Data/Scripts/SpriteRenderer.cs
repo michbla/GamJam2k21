@@ -25,16 +25,6 @@ namespace GamJam2k21
             //o ksztalcie bryly
             int vbo;
             int texB;
-            //float[] verts = {
-            ////pos       //tex
-            //0.0f, 1.0f, 0.0f, 0.0f, //lewy gorny
-            //1.0f, 0.0f, 1.0f, 1.0f, //prawy dolny
-            //0.0f, 0.0f, 0.0f, 1.0f, //lewy dolny
-
-            //0.0f, 1.0f, 0.0f, 0.0f, //lewy gorny
-            //1.0f, 1.0f, 1.0f, 0.0f, //prawy gorny
-            //1.0f, 0.0f, 1.0f, 1.0f  //prawy dolny
-            //};
 
             float[] vertPos = {
             //pos       //tex

@@ -55,8 +55,12 @@ namespace GamJam2k21
         private float gravity = 30.0f;
 
         //ANIMACJE
+        //Animator TODO:: oddzielna klasa playerAnimator dziedziczaca po animatorze
+        //                dla dokladniejszego zarzadzania animacjami gracza i przekazywania do niej zmiennych
         private Animator playerAnimator;
+        //Aktualny stan, do wyrzucenia do klasy wyzej
         private string currentState;
+        //Klatki na sekunde, jak wyzej
         private float animFrameRate = 4.0f;
 
         //Kostruktor
@@ -73,12 +77,15 @@ namespace GamJam2k21
             collisionPos = pos;
             PlayerStatistics = new PlayerStatistics(0, 0, 0);
 
-            playerAnimator = new Animator(this, ResourceManager.GetShader("sprite"), (2, 1), animFrameRate);
-
-            playerAnimator.AddAnimation("idle", new Animation(ResourceManager.GetTexture("charIdle1"),2));
-
+            //Robie nowy animator
+            playerAnimator = new Animator(this, ResourceManager.GetShader("sprite"), (4, 1), animFrameRate);
+            //Dodaje do niego animacje
+            playerAnimator.AddAnimation("idle", ResourceManager.GetTexture("charIdle1"));
+            playerAnimator.AddAnimation("walk", ResourceManager.GetTexture("charWalk1"));
+            //Settuje poczatkowy stan
             currentState = "idle";
         }
+        //Przekazywanie do gracza blokow z poziomu
         public void SetBlocks(ref List<Block> b)
         {
             blocks = b;
@@ -191,8 +198,18 @@ namespace GamJam2k21
             else
                 playerAnimator.isFlipped = false;
 
-            //Update animatora
+            //Update animatora---
+            if(velocity.X >= 0.0f)
+                playerAnimator.isFlipped = false;
+            else
+                playerAnimator.isFlipped = true;
+
+            if (MathHelper.Abs( velocity.X) > 0.0f)
+                currentState = "walk";
+            else
+                currentState = "idle";
             playerAnimator.Update(currentState,deltaTime);
+            //--------------------
         }
         //Sprawdz wszystkie kolizje
         private void DoCollisions()

@@ -35,8 +35,6 @@ namespace GamJam2k21
         //Sprite renderer do rysowania obiektow
         private SpriteRenderer spriteRenderer;
 
-        private SpriteRenderer spriteSheet2x1;
-
         //textRenderer do napisów (może zadziała)
         //private TextRenderer textRenderer;
 
@@ -47,7 +45,7 @@ namespace GamJam2k21
         private GameLevel level;
 
         //TEST::
-        float scale = 2.0f;
+        float scale = 1.0f;
 
         //Konstruktor okna gry
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
@@ -86,7 +84,8 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/sky2.png", "sky");
             ResourceManager.LoadTexture("Data/Resources/Textures/char.png", "char");
             ResourceManager.LoadTexture("Data/Resources/Textures/cursor2.png", "cursor");
-            ResourceManager.LoadTexture("Data/Resources/Textures/char_idle1.png", "charIdle1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/charIdle1.png", "charIdle1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/charWalk1.png", "charWalk1");
 
             //Gracz
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
@@ -96,14 +95,11 @@ namespace GamJam2k21
             //textRenderer = new TextRenderer(1280,720);
             //textRenderer.Load("Data/Resources/Fonts/OCRAEXT.TTF", 56);
 
-            spriteSheet2x1 = new SpriteRenderer(ResourceManager.GetShader("sprite"),(2,1));
-
             //TUTAJ KOD
 
             base.OnLoad();
         }
         //Obsluga logiki w kazdej klatce, dt - deltaTime (czas pomiedzy klatkami)
-        float sum = 0;
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             //Wylaczenie widoku kursora, mamy wlasny
@@ -116,11 +112,6 @@ namespace GamJam2k21
             //TEMP:: [ESC] zamyka okno
             if (KeyboardState.IsKeyDown(Keys.Escape))
                 Close();
-
-
-            sum += deltaTime;
-            Console.WriteLine(sum);
-
 
             //Zmienne inputowe
             var mouseInput = MouseState;
@@ -164,19 +155,19 @@ namespace GamJam2k21
             viewPos.Y = desiredViewY;
 
             //TEMP:: Ruch kamery przez przypadek dziala jak rozgladanie (feature?)
-            if (KeyboardState.IsKeyDown(Keys.Down))
+            if (KeyboardState.IsKeyDown(Keys.S))
             {
                 viewPos.Y -= deltaTime * 10;
             }
-            else if (KeyboardState.IsKeyDown(Keys.Up))
+            else if (KeyboardState.IsKeyDown(Keys.W))
             {
                 viewPos.Y += deltaTime * 10;
             }
-            if (KeyboardState.IsKeyDown(Keys.Left))
+            if (KeyboardState.IsKeyDown(Keys.A))
             {
                 viewPos.X -= deltaTime * 10;
             }
-            else if (KeyboardState.IsKeyDown(Keys.Right))
+            else if (KeyboardState.IsKeyDown(Keys.D))
             {
                 viewPos.X += deltaTime * 10;
             }

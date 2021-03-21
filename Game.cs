@@ -83,10 +83,12 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/grass1.png", "grass");
             ResourceManager.LoadTexture("Data/Resources/Textures/stone1.png", "stone");
             ResourceManager.LoadTexture("Data/Resources/Textures/sky2.png", "sky");
-            ResourceManager.LoadTexture("Data/Resources/Textures/char.png", "char");
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero1.png", "char");
             ResourceManager.LoadTexture("Data/Resources/Textures/cursor2.png", "cursor");
-            ResourceManager.LoadTexture("Data/Resources/Textures/charIdle1.png", "charIdle1");
-            ResourceManager.LoadTexture("Data/Resources/Textures/charWalk1.png", "charWalk1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero_idle.png", "charIdle1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalk1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero_arm1.png", "charArm1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe1.png", "pickaxe1");
 
             //Gracz
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
@@ -128,7 +130,7 @@ namespace GamJam2k21
             //Przekazuje bloki do gracza dla kolizji
             player.SetBlocks(ref level.currentBlocks);
             //Aktualizacja logiki gracza
-            player.Update(input, deltaTime);
+            player.Update(input, mouseInput, deltaTime);
 
             //TEMP:: Testowe kopanie
             if (mouseInput.IsButtonDown(MouseButton.Left))

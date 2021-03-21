@@ -49,9 +49,9 @@ namespace GamJam2k21
                 animations[state].Play(ref renderer, ref parent, viewPos, isFlipped);
         }
         //Dodawanie animacji do slownika
-        public void AddAnimation(string name, Texture tex)
+        public void AddAnimation(string name, Texture tex, int frames)
         {
-            animations.Add(name, new Animation(tex,sheetSize.X));
+            animations.Add(name, new Animation(tex,frames));
         }
     }
 }

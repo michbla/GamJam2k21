@@ -61,7 +61,19 @@ namespace GamJam2k21
         //Aktualny stan, do wyrzucenia do klasy wyzej
         private string currentState;
         //Klatki na sekunde, jak wyzej
-        private float animFrameRate = 4.0f;
+        private float animFrameRate = 8.0f;
+
+        private GameObject playerArm;
+        private Vector2 armOffsetR = (-0.7f, 0.35f);
+        private Vector2 armOffsetL = (1.7f, 0.35f);
+        private float initialArmRot = 0.0f;
+        private float stoppingArmRot = 0.0f;
+        private float armSpeed = 500.0f;
+
+        private bool isDigging = false;
+
+        private GameObject pickaxe;
+        private GameObject backPickaxe;
 
         //Kostruktor
         public Player(Vector2 pos, Vector2 size, Texture sprite) : base(pos, size, sprite)
@@ -78,12 +90,18 @@ namespace GamJam2k21
             PlayerStatistics = new PlayerStatistics(0, 0, 0);
 
             //Robie nowy animator
-            playerAnimator = new Animator(this, ResourceManager.GetShader("sprite"), (4, 1), animFrameRate);
+            playerAnimator = new Animator(this, ResourceManager.GetShader("sprite"), (16, 1), animFrameRate);
             //Dodaje do niego animacje
-            playerAnimator.AddAnimation("idle", ResourceManager.GetTexture("charIdle1"));
-            playerAnimator.AddAnimation("walk", ResourceManager.GetTexture("charWalk1"));
+            playerAnimator.AddAnimation("idle", ResourceManager.GetTexture("charIdle1"),16);
+            playerAnimator.AddAnimation("walk", ResourceManager.GetTexture("charWalk1"),8);
             //Settuje poczatkowy stan
             currentState = "idle";
+
+            playerArm = new GameObject((0.0f, 0.0f), (2.0f, 2.0f), ResourceManager.GetTexture("charArm1"));
+
+            pickaxe = new GameObject((0.0f, 0.0f), (4.0f, 4.0f), ResourceManager.GetTexture("pickaxe1"));
+
+            backPickaxe = new GameObject((0.0f, 0.0f), (4.0f, 4.0f), ResourceManager.GetTexture("pickaxe1"));
         }
         //Przekazywanie do gracza blokow z poziomu
         public void SetBlocks(ref List<Block> b)
@@ -96,12 +114,20 @@ namespace GamJam2k21
             //OPTYMALIZACJA - nie renderuj obiektow poza ekranem
             if (position.Y + size.Y < viewPos.Y - 18f || position.Y > viewPos.Y + 18f || position.X + size.X < viewPos.X - 36f || position.X > viewPos.X + 36f)
                 return;
+
+            if(!isDigging)
+                backPickaxe.Draw(rend,viewPos);
+
             //Rysowanie z animatora
             playerAnimator.Draw(currentState, viewPos);
+
+            if(isDigging)
+                pickaxe.Draw(rend, viewPos);
+            playerArm.Draw(rend, viewPos);
         }
 
         //Logika gracza
-        public override void Update(KeyboardState input, float deltaTime)
+        public override void Update(KeyboardState input, MouseState mouseInput, float deltaTime)
         {
 
             ResetBounds();
@@ -191,25 +217,75 @@ namespace GamJam2k21
             if (hasColl[2] && position.Y < collisionPos.Y)
                 position.Y = collisionPos.Y;
 
-            if (input.IsKeyDown(Keys.F))
+            if (mouseInput.IsButtonDown(MouseButton.Button1))
             {
-                playerAnimator.isFlipped = true;
+                isDigging = true;
             }
             else
-                playerAnimator.isFlipped = false;
+                isDigging = false;
 
             //Update animatora---
-            if(velocity.X >= 0.0f)
+            if (velocity.X > 0.0f)
                 playerAnimator.isFlipped = false;
-            else
+            if (velocity.X < 0.0f)
                 playerAnimator.isFlipped = true;
 
-            if (MathHelper.Abs( velocity.X) > 0.0f)
+            if (MathHelper.Abs(velocity.X) > 0.0f)
                 currentState = "walk";
             else
                 currentState = "idle";
-            playerAnimator.Update(currentState,deltaTime);
+            playerAnimator.Update(currentState, deltaTime);
             //--------------------
+            UpdateArm(deltaTime);
+        }
+        private void UpdateArm(float deltaTime)
+        {
+            if (playerAnimator.isFlipped)
+            {
+                backPickaxe.position = position + (-1.8f, -0.65f);
+                backPickaxe.rotation = -35.0f;
+
+                playerArm.size.X = -2.0f;
+                playerArm.position = position + armOffsetL;
+
+                pickaxe.size.X = -4.0f;
+                pickaxe.position = playerArm.position + (1.0f, -1.0f);
+                if (isDigging)
+                {
+                    initialArmRot = 135.0f;
+                    stoppingArmRot = 15.0f;
+                    playerArm.rotation -= rotation + deltaTime * armSpeed;
+                    if (playerArm.rotation < stoppingArmRot)
+                        playerArm.rotation = initialArmRot + rotation;
+                }
+                else
+                {
+                    playerArm.rotation = rotation;
+                }
+            }
+            else
+            {
+                backPickaxe.position = position + (-2.2f, -0.9f);
+                backPickaxe.rotation = -65.0f;
+
+                playerArm.size.X = 2.0f;
+                playerArm.position = position + armOffsetR;
+                pickaxe.size.X = 4.0f;
+                pickaxe.position = playerArm.position + (-1.0f, -1.0f);
+                if (isDigging)
+                {
+                    initialArmRot = -135.0f;
+                    stoppingArmRot = -15.0f;
+                    playerArm.rotation += rotation + deltaTime * armSpeed;
+                    if (playerArm.rotation > stoppingArmRot)
+                        playerArm.rotation = initialArmRot + rotation;
+                }
+                else
+                {
+                    playerArm.rotation = rotation;
+                }
+            }
+            pickaxe.rotation = playerArm.rotation;
         }
         //Sprawdz wszystkie kolizje
         private void DoCollisions()

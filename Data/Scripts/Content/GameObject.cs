@@ -50,7 +50,7 @@ namespace GamJam2k21
             rend.DrawSprite(sprite, viewPos, position, size, rotation, color);
         }
         //Metoda obslugujaca logike
-        public virtual void Update(KeyboardState input, float deltaTime)
+        public virtual void Update(KeyboardState input, MouseState mouseInput, float deltaTime)
         {
 
         }

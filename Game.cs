@@ -45,7 +45,8 @@ namespace GamJam2k21
         private GameLevel level;
 
         //TEST::
-        float scale = 1.0f;
+        private float scale = 1.0f;
+        private Vector2 screenSize = new Vector2(24.0f, 13.5f);
 
         //Konstruktor okna gry
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
@@ -64,9 +65,9 @@ namespace GamJam2k21
             CenterWindow();
 
             //Pozycja widoku ustawiona tak, by lewy dolny rog mial wspolrzedne (0,0)
-            viewPos = new Vector2(8.0f , 4.5f );
+            viewPos = new Vector2(8.0f, 4.5f);
             //Generuje projekcje ortograficzna 16/9
-            projection = Matrix4.CreateOrthographic(16 * scale, 9 * scale, -1.0f, 1.0f);
+            projection = Matrix4.CreateOrthographic(screenSize.X * scale, screenSize.Y * scale, -1.0f, 1.0f);
             //Generowanie ResourcesManagera
             ResourceManager.GetInstance();
             //LADOWANIE SHADEROW
@@ -90,7 +91,7 @@ namespace GamJam2k21
             //Gracz
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
             //Poziom
-            level = new GameLevel(64, 200);
+            level = new GameLevel(128, 1000);
             //Tekst
             //textRenderer = new TextRenderer(1280,720);
             //textRenderer.Load("Data/Resources/Fonts/OCRAEXT.TTF", 56);
@@ -118,10 +119,10 @@ namespace GamJam2k21
             var input = KeyboardState;
 
             //Obliczanie pozycji myszy
-            float mouseScale = (16.0f * scale) / Size.X;
+            float mouseScale = (screenSize.X * scale) / Size.X;
             mousePos.X = mouseInput.Position.X * mouseScale;
             mousePos.Y = -(mouseInput.Position.Y - Size.Y) * mouseScale;
-            mouseWorldPos = mousePos + viewPos - (16.0f * scale / 2.0f, 9.0f * scale/2.0f);
+            mouseWorldPos = mousePos + viewPos - (screenSize.X * scale / 2.0f, screenSize.Y * scale / 2.0f);
 
             //Kolizja TESTOWANA U GRACZA
             //Przekazuje bloki do gracza dla kolizji
@@ -132,19 +133,12 @@ namespace GamJam2k21
             //TEMP:: Testowe kopanie
             if (mouseInput.IsButtonDown(MouseButton.Left))
             {
-                foreach (var block in level.currentBlocks)
+                double mPX = Math.Floor(mouseWorldPos.X);
+                double mPY = Math.Floor(mouseWorldPos.Y);
+                if (level.DestroyBlock((int)mPX, -(int)mPY))
                 {
-                    if (block.distanceToPlayer <= 2.0f && !block.isDestroyed)
-                    {
-                        double mPX = Math.Floor(mouseWorldPos.X);
-                        double mPY= Math.Floor(mouseWorldPos.Y);
-                        if(block.position.X == mPX && block.position.Y == mPY)
-                        {
-                            block.isDestroyed = true;
-                            player.PlayerStatistics.SetBlocksDestroyed();
-                            Console.WriteLine("points:" + player.PlayerStatistics.getExp());
-                        }
-                    }
+                    player.PlayerStatistics.SetBlocksDestroyed();
+                    Console.WriteLine("points:" + player.PlayerStatistics.getExp());
                 }
             }
 
@@ -187,7 +181,7 @@ namespace GamJam2k21
 
             //TEST
             //Rysowanie tla
-            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (8.0f * scale, 4.5f * scale), (0.0f, 0.0f), (16.0f * scale, 9.0f * scale), 0.0f);
+            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (screenSize.X / 2.0f * scale, screenSize.Y / 2.0f * scale), (0.0f, 0.0f), (screenSize.X * scale, screenSize.Y * scale), 0.0f);
 
             //Rysowanie poziomu
             level.Draw(spriteRenderer, viewPos);
@@ -196,7 +190,7 @@ namespace GamJam2k21
             player.Draw(spriteRenderer, viewPos);
 
             //Rysowanie kursora
-            spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (8.0f * scale, 4.5f * scale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
+            spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (screenSize.X / 2.0f * scale, screenSize.Y / 2.0f * scale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
             //textRenderer.RenderText("chuj", 5f, 5f, 1, new Vector3(1f,1f,1f));
 
             //TUTAJ KOD

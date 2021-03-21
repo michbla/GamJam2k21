@@ -15,7 +15,7 @@ namespace GamJam2k21
     {
         //Dane przechowujace rodzaj bloku w danej pozycji
         //na dwuwymiarowej siatce
-        public float[,] data;
+        public int[,] mapData;
 
         //Rozmiar siatki
         private int width;
@@ -23,77 +23,217 @@ namespace GamJam2k21
 
         public List<Block> currentBlocks;
 
+        private Vector2i playerChunk;
+        private Vector2i lastPlayerChunk;
+
         //Kostruktor poziomu
         public GameLevel(int w, int h)
         {
             width = w;
             height = h;
-            data = new float[width, height];
+            mapData = new int[width, height];
             for (var i = 0; i < height; i++)
                 for (var j = 0; j < width; j++)
-                    data[j, i] = 1;
+                {
+                    mapData[j, i] = 0;
+                }
             currentBlocks = new List<Block>();
             Init();
-
         }
         //TEMP:
         public void Update(Vector2 playerPos)
         {
-            foreach (var block in currentBlocks)
+            playerChunk = ((int)playerPos.X / 16, -(int)playerPos.Y / 16);
+            if (playerChunk.X != lastPlayerChunk.X)
+            {
+                if (playerChunk.X < lastPlayerChunk.X)
+                {
+                    DespawnChunk(playerChunk.X + 2, playerChunk.Y);
+                    DespawnChunk(playerChunk.X + 2, playerChunk.Y - 1);
+                    DespawnChunk(playerChunk.X + 2, playerChunk.Y + 1);
+
+                    SpawnChunk(playerChunk.X - 1, playerChunk.Y);
+                    SpawnChunk(playerChunk.X - 1, playerChunk.Y - 1);
+                    SpawnChunk(playerChunk.X - 1, playerChunk.Y + 1);
+
+                }
+                else
+                {
+                    DespawnChunk(playerChunk.X - 2, playerChunk.Y);
+                    DespawnChunk(playerChunk.X - 2, playerChunk.Y - 1);
+                    DespawnChunk(playerChunk.X - 2, playerChunk.Y + 1);
+
+                    SpawnChunk(playerChunk.X + 1, playerChunk.Y);
+                    SpawnChunk(playerChunk.X + 1, playerChunk.Y - 1);
+                    SpawnChunk(playerChunk.X + 1, playerChunk.Y + 1);
+
+                }
+            }
+            else if (playerChunk.Y != lastPlayerChunk.Y)
+            {
+                if (playerChunk.Y < lastPlayerChunk.Y)
+                {
+                    DespawnChunk(playerChunk.X, playerChunk.Y + 2);
+                    DespawnChunk(playerChunk.X - 1, playerChunk.Y + 2);
+                    DespawnChunk(playerChunk.X + 1, playerChunk.Y + 2);
+
+                    SpawnChunk(playerChunk.X, playerChunk.Y - 1);
+                    SpawnChunk(playerChunk.X - 1, playerChunk.Y - 1);
+                    SpawnChunk(playerChunk.X + 1, playerChunk.Y - 1);
+
+                }
+                else
+                {
+                    DespawnChunk(playerChunk.X, playerChunk.Y - 2);
+                    DespawnChunk(playerChunk.X - 1, playerChunk.Y - 2);
+                    DespawnChunk(playerChunk.X + 1, playerChunk.Y - 2);
+
+                    SpawnChunk(playerChunk.X, playerChunk.Y + 1);
+                    SpawnChunk(playerChunk.X - 1, playerChunk.Y + 1);
+                    SpawnChunk(playerChunk.X + 1, playerChunk.Y + 1);
+
+                }
+            }
+
+            for (var i = 0; i < currentBlocks.Count; i++)
+            {
+                var block = currentBlocks[i];
                 if (!block.isDestroyed)
-                    block.distanceToPlayer = (playerPos - (block.position + (block.size.X / 2f, block.size.Y / 2f))).Length;
+                {
+                    float distance = (playerPos - (block.position + (block.size.X / 2f, block.size.Y / 2f))).Length;
+                    if (distance < 5.0f)
+                        block.distanceToPlayer = distance;
+                }
+            }
+            lastPlayerChunk = playerChunk;
         }
+
+        private void SpawnChunk(int x, int y)
+        {
+            int posX = x * 16;
+            int posY = y * 16;
+            for (var i = posY; i < posY + 16; i++)
+            {
+                for (var j = posX; j < posX + 16; j++)
+                {
+                    if (j < 0 || i < 0 || j >= width || i >= height)
+                        return;
+                    SpawnBlock(j, i);
+                }
+            }
+        }
+        private void DespawnChunk(int x, int y)
+        {
+            double posX = x * 16.0f;
+            double posY = -y * 16.0f;
+            for (var i = 0; i < currentBlocks.Count; i++)
+            {
+                var block = currentBlocks[i];
+                if (block.position.X >= posX && block.position.X < posX + 16.0f && block.position.Y <= posY && block.position.Y > posY - 16.0f)
+                {
+                    currentBlocks.Remove(block);
+                    i--;
+                }
+            }
+        }
+
+        public bool DestroyBlock(int x, int y)
+        {
+            if (x < 0 || y < 0 || x > width || y > height)
+                return false;
+            for (var i = 0; i < currentBlocks.Count; i++)
+            {
+                var block = currentBlocks[i];
+                if (block.distanceToPlayer <= 2.0f && block.position.X == x && block.position.Y == -y)
+                {
+                    currentBlocks.Remove(block);
+                    mapData[x, y] = 0;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void SpawnBlock(int x, int y)
+        {
+            if (mapData[x, y] == 0)
+            {
+                //Powietrze
+            }
+            else if (mapData[x, y] == 1)
+            {
+                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("grass")));
+            }
+            else if (mapData[x, y] == 2)
+            {
+                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("dirt")));
+            }
+            else if (mapData[x, y] == 3)
+            {
+                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("stone")));
+            }
+        }
+
         public void Draw(SpriteRenderer rend, Vector2 viewPos)
         {
-            foreach (var block in currentBlocks)
-                if (!block.isDestroyed)
-                    block.Draw(rend, viewPos);
+            for (var i = 0; i < currentBlocks.Count; i++)
+            {
+                currentBlocks[i].Draw(rend, viewPos);
+            }
         }
         public void Init()
         {
-            GenerateNoiseMap(this.width, this.height, 1, 10.0f);
+            float[,] data = GenerateNoiseMap(this.width * 2, this.height, 5, 30.0f);
 
-                for (var j = 0; j < width; j++)
+            for (var j = 0; j < width; j++)
+            {
+                var i = 0;
+                while (data[j, i] < 0.3f && i < height)
                 {
-                    var i = 0;
-                    while(data[j,i] < 0.3f && i < height)
-                    {
-                        i++;
-                    }
+                    i++;
+                }
                 data[j, i] = 2.0f;
 
                 Random rand = new Random();
-                int l = rand.Next(4,7);
+                int l = rand.Next(4, 7);
                 for (var k = 1; k < l; k++)
                 {
-                    if(data[j, i + k] > 0.3f)
+                    if (data[j, i + k] > 0.3f)
                         data[j, i + k] = 1.0f;
                 }
             }
 
             for (var i = 0; i < height; i++)
+            {
                 for (var j = 0; j < width; j++)
                 {
                     if (data[j, i] > 1.5f)
                     {
-                        currentBlocks.Add(new Block((j, -i), ResourceManager.GetTexture("grass")));
+                        mapData[j, i] = 1;
                     }
                     else if (data[j, i] < 0.3f)
                     {
-                        //Powietrze
+                        mapData[j, i] = 0;
                     }
                     else if (data[j, i] < 0.7f)
                     {
-                        currentBlocks.Add(new Block((j, -i), ResourceManager.GetTexture("stone")));
+                        mapData[j, i] = 3;
                     }
                     else
                     {
-                        currentBlocks.Add(new Block((j, -i), ResourceManager.GetTexture("dirt")));
+                        mapData[j, i] = 2;
                     }
                 }
+            }
+
+            SpawnChunk(0, 0);
+            SpawnChunk(1, 0);
+            SpawnChunk(0, 1);
+            SpawnChunk(1, 1);
+
         }
 
-        private void GenerateNoiseMap(int width, int height, int octaves, float freq)
+        private float[,] GenerateNoiseMap(int width, int height, int octaves, float freq)
         {
             var data = new float[height, width];
 
@@ -122,10 +262,12 @@ namespace GamJam2k21
                 frequency *= 4;
                 amplitude /= 10;
             }
-
+            float[,] result = new float[width,height];
             for (var i = 0; i < height; i++)
                 for (var j = 0; j < width; j++)
-                    this.data[j, i] = MathHelper.Clamp((data[i, j] - min) / (max - min),0.0f,1.0f);
+                    result[j, i] = MathHelper.Clamp((data[i, j] - min) / (max - min), 0.0f, 1.0f);
+
+            return result;
         }
     }
 }

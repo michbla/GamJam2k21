@@ -137,6 +137,21 @@ namespace GamJam2k21
             }
         }
 
+        public string getBlockName(int x, int y)
+        {
+            if (x < 0 || y < 0 || x > width || y > height)
+                return null;
+            for (var i = 0; i < currentBlocks.Count; i++)
+            {
+                var block = currentBlocks[i];
+                if (block.distanceToPlayer <= 2.0f && block.position.X == x && block.position.Y == -y)
+                {
+                    //Console.WriteLine(block.name);
+                    return block.name;
+                }
+            }
+            return null;
+        }
         public bool DestroyBlock(int x, int y)
         {
             if (x < 0 || y < 0 || x > width || y > height)
@@ -162,15 +177,15 @@ namespace GamJam2k21
             }
             else if (mapData[x, y] == 1)
             {
-                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("grass")));
+                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("grass"), "grass"));
             }
             else if (mapData[x, y] == 2)
             {
-                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("dirt")));
+                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("dirt"), "dirt"));
             }
             else if (mapData[x, y] == 3)
             {
-                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("stone")));
+                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("stone"), "stone"));
             }
         }
 

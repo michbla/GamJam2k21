@@ -18,19 +18,9 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.5.0" />
-    <PackageReference Include="SharpFont.Dependencies" Version="2.6.0" />
-    <PackageReference Include="SpaceWizards.SharpFont" Version="1.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="SharpFont">
-      <HintPath>SharpFont.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\Resources\Fonts\" />
-  </ItemGroup>
 
 </Project>

@@ -6,7 +6,8 @@ namespace GamJam2k21
 {
 
     /// <summary>
-    /// Klasa zlicza doświadczenie, ilość zniszczonych bloków i max głębokość
+    /// Klasa zlicza doswiadczenie, ilosc zniszczonych blokow i max glebokosc
+    /// TODO: przekazac liste blokow do addToExpList i wyliczac expo na podstawie hardnessa
     /// </summary>
     /// 
     public class PlayerStatistics
@@ -14,19 +15,21 @@ namespace GamJam2k21
         private int levelReached = 0;
         private int blocksDestroyed = 0;
         private float exp = 0;
-        private const int BLOCK_EXP = 10;
+        Dictionary<string, int> expList= new Dictionary<string, int>();
+        
 
         public PlayerStatistics(int levelReached, int blocksDestroyed, float exp)
         {
             this.levelReached = levelReached;
             this.blocksDestroyed = blocksDestroyed;
             this.exp = exp;
+            addToExpList();
         }
 
-        public void SetBlocksDestroyed()
+        public void SetBlocksDestroyed(string name)
         {
             blocksDestroyed += 1;
-            exp += BLOCK_EXP;
+            exp += expList[name];
         }
 
         public void addLevelReached()
@@ -41,6 +44,14 @@ namespace GamJam2k21
         public int getLevelReached()
         {
             return levelReached;
+        }
+
+        public void addToExpList()
+        {
+            expList.Add("grass",10  );
+            expList.Add("dirt",10  );
+            expList.Add("stone",15  );
+            
         }
     }
 

@@ -35,8 +35,6 @@ namespace GamJam2k21
         //Sprite renderer do rysowania obiektow
         private SpriteRenderer spriteRenderer;
 
-        //textRenderer do napisów (może zadziała)
-        //private TextRenderer textRenderer;
 
         //Gracz
         private Player player;
@@ -94,9 +92,6 @@ namespace GamJam2k21
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
             //Poziom
             level = new GameLevel(128, 1000);
-            //Tekst
-            //textRenderer = new TextRenderer(1280,720);
-            //textRenderer.Load("Data/Resources/Fonts/OCRAEXT.TTF", 56);
 
             //TUTAJ KOD
 
@@ -131,15 +126,15 @@ namespace GamJam2k21
             player.SetBlocks(ref level.currentBlocks);
             //Aktualizacja logiki gracza
             player.Update(input, mouseInput, deltaTime);
-
             //TEMP:: Testowe kopanie
             if (mouseInput.IsButtonDown(MouseButton.Left))
             {
                 double mPX = Math.Floor(mouseWorldPos.X);
                 double mPY = Math.Floor(mouseWorldPos.Y);
+                var blockName = level.getBlockName((int)mPX, -(int)mPY);
                 if (level.DestroyBlock((int)mPX, -(int)mPY))
                 {
-                    player.PlayerStatistics.SetBlocksDestroyed();
+                    player.PlayerStatistics.SetBlocksDestroyed(blockName);
                     Console.WriteLine("points:" + player.PlayerStatistics.getExp());
                 }
             }
@@ -193,7 +188,6 @@ namespace GamJam2k21
 
             //Rysowanie kursora
             spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (screenSize.X / 2.0f * scale, screenSize.Y / 2.0f * scale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
-            //textRenderer.RenderText("chuj", 5f, 5f, 1, new Vector3(1f,1f,1f));
 
             //TUTAJ KOD
 

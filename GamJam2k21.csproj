@@ -16,6 +16,7 @@
     <None Include="Data/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.5.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />

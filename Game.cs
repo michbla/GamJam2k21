@@ -34,7 +34,8 @@ namespace GamJam2k21
 
         //Sprite renderer do rysowania obiektow
         private SpriteRenderer spriteRenderer;
-
+        private SpriteRenderer text;
+        private TextRenderer textRenderer;
 
         //Gracz
         private Player player;
@@ -76,6 +77,8 @@ namespace GamJam2k21
             ResourceManager.GetShader("sprite").SetMatrix4("projection", projection);
 
             spriteRenderer = new SpriteRenderer(ResourceManager.GetShader("sprite"));
+            text = new SpriteRenderer(ResourceManager.GetShader("sprite"),new Vector2i(16,8));
+            textRenderer = new TextRenderer(text);
             //LADOWANIE TEKSTUR
             ResourceManager.LoadTexture("Data/Resources/Textures/dirt1.png", "dirt");
             ResourceManager.LoadTexture("Data/Resources/Textures/grass1.png", "grass");
@@ -84,6 +87,7 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/hero1.png", "char");
             ResourceManager.LoadTexture("Data/Resources/Textures/cursor2.png", "cursor");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_idle.png", "charIdle1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap.png", "textBitmap"); //xd
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalk1");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_arm1.png", "charArm1");
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe1.png", "pickaxe1");
@@ -135,7 +139,6 @@ namespace GamJam2k21
                 if (level.DestroyBlock((int)mPX, -(int)mPY))
                 {
                     player.PlayerStatistics.SetBlocksDestroyed(blockName);
-                    Console.WriteLine("points:" + player.PlayerStatistics.getExp());
                 }
             }
 
@@ -188,10 +191,10 @@ namespace GamJam2k21
 
             //Rysowanie kursora
             spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (screenSize.X / 2.0f * scale, screenSize.Y / 2.0f * scale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
-
+            //rysowanie tekstu
+            textRenderer.PrintText("EXPO:" + player.PlayerStatistics.getExp(), ResourceManager.GetTexture("textBitmap"), viewPos, viewPos + (-12,6), (0.4f, 0.4f), (1, 1, 1)) ;
             //TUTAJ KOD
-
-            SwapBuffers();
+            //SwapBuffers();
             base.OnRenderFrame(e);
         }
         //Metoda finalizujaca dzialanie okna
@@ -199,6 +202,7 @@ namespace GamJam2k21
         {
             //Czyszczenie pamieci itp.
             //Czyszczenie bufferow
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindVertexArray(0);
             GL.UseProgram(0);

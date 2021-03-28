@@ -48,9 +48,9 @@ namespace GamJam2k21
 
         public void addToExpList()
         {
-            expList.Add("grass",10  );
-            expList.Add("dirt",10  );
-            expList.Add("stone",15  );
+            expList.Add("Grass",10  );
+            expList.Add("Dirt",10  );
+            expList.Add("Stone",15  );
             
         }
     }

@@ -21,7 +21,8 @@ namespace GamJam2k21
         private int width;
         private int height;
 
-        public List<Block> currentBlocks;
+        public List<Block> currentBlocks = new List<Block>();
+        public List<GameObject> backgrounds = new List<GameObject>();
 
         private Vector2i playerChunk;
         private Vector2i lastPlayerChunk;
@@ -37,11 +38,10 @@ namespace GamJam2k21
                 {
                     mapData[j, i] = 0;
                 }
-            currentBlocks = new List<Block>();
             Init();
         }
         //TEMP:
-        public void Update(Vector2 playerPos)
+        public void Update(Vector2 playerPos, float deltaTime)
         {
             playerChunk = ((int)playerPos.X / 16, -(int)playerPos.Y / 16);
             if (playerChunk.X != lastPlayerChunk.X)
@@ -103,6 +103,7 @@ namespace GamJam2k21
                     float distance = (playerPos - (block.position + (block.size.X / 2f, block.size.Y / 2f))).Length;
                     if (distance < 5.0f)
                         block.distanceToPlayer = distance;
+                    block.Update(deltaTime);
                 }
             }
             lastPlayerChunk = playerChunk;
@@ -112,6 +113,8 @@ namespace GamJam2k21
         {
             int posX = x * 16;
             int posY = y * 16;
+            if(posY >= 0)
+                backgrounds.Add( new GameObject((posX,-posY - 15),(16.0f, 16.0f), ResourceManager.GetTexture("backgroundDirt")));
             for (var i = posY; i < posY + 16; i++)
             {
                 for (var j = posX; j < posX + 16; j++)
@@ -135,6 +138,14 @@ namespace GamJam2k21
                     i--;
                 }
             }
+            for(var i = 0; i < backgrounds.Count; i++){
+                var bg = backgrounds[i];
+                if(bg.position.X == posX && bg.position.Y == posY)
+                {
+                    backgrounds.Remove(bg);
+                    i--;
+                }
+            }
         }
 
         public string getBlockName(int x, int y)
@@ -152,7 +163,8 @@ namespace GamJam2k21
             }
             return null;
         }
-        public bool DestroyBlock(int x, int y)
+
+        public bool DamageBlock(int x, int y, Player player)
         {
             if (x < 0 || y < 0 || x > width || y > height)
                 return false;
@@ -161,9 +173,17 @@ namespace GamJam2k21
                 var block = currentBlocks[i];
                 if (block.distanceToPlayer <= 2.0f && block.position.X == x && block.position.Y == -y)
                 {
-                    currentBlocks.Remove(block);
-                    mapData[x, y] = 0;
-                    return true;
+                    if (player.isReadyToDamage && player.isDamaging)
+                    {
+                        if (block.Damage(player))
+                        {
+                            currentBlocks.Remove(block);
+                            mapData[x, y] = 0;
+                            return true;
+
+                        }
+                    }
+
                 }
             }
             return false;
@@ -171,30 +191,21 @@ namespace GamJam2k21
 
         private void SpawnBlock(int x, int y)
         {
-            if (mapData[x, y] == 0)
-            {
-                //Powietrze
-            }
-            else if (mapData[x, y] == 1)
-            {
-                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("grass"), "grass"));
-            }
-            else if (mapData[x, y] == 2)
-            {
-                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("dirt"), "dirt"));
-            }
-            else if (mapData[x, y] == 3)
-            {
-                currentBlocks.Add(new Block((x, -y), ResourceManager.GetTexture("stone"), "stone"));
-            }
+            if (mapData[x, y] != 0)
+                currentBlocks.Add(new Block(ResourceManager.GetBlockByID(mapData[x,y]), (x, -y)));
         }
 
         public void Draw(SpriteRenderer rend, Vector2 viewPos)
         {
+            foreach(var bg in backgrounds)
+            {
+                bg.Draw(rend,viewPos);
+            }
             for (var i = 0; i < currentBlocks.Count; i++)
             {
                 currentBlocks[i].Draw(rend, viewPos);
             }
+
         }
         public void Init()
         {

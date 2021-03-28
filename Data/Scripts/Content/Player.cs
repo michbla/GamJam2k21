@@ -75,6 +75,9 @@ namespace GamJam2k21
         private GameObject pickaxe;
         private GameObject backPickaxe;
 
+        public bool isReadyToDamage = true;
+        public bool isDamaging = false;
+
         //Kostruktor
         public Player(Vector2 pos, Vector2 size, Texture sprite) : base(pos, size, sprite)
         {
@@ -92,8 +95,9 @@ namespace GamJam2k21
             //Robie nowy animator
             playerAnimator = new Animator(this, ResourceManager.GetShader("sprite"), (16, 1), animFrameRate);
             //Dodaje do niego animacje
-            playerAnimator.AddAnimation("idle", ResourceManager.GetTexture("charIdle1"),16);
-            playerAnimator.AddAnimation("walk", ResourceManager.GetTexture("charWalk1"),8);
+            playerAnimator.AddAnimation("idle", ResourceManager.GetTexture("charIdle1"), 16);
+            playerAnimator.AddAnimation("walk", ResourceManager.GetTexture("charWalk1"), 8);
+            playerAnimator.AddAnimation("walkBackwards", ResourceManager.GetTexture("charWalkBack1"), 8);
             //Settuje poczatkowy stan
             currentState = "idle";
 
@@ -115,13 +119,13 @@ namespace GamJam2k21
             if (position.Y + size.Y < viewPos.Y - 18f || position.Y > viewPos.Y + 18f || position.X + size.X < viewPos.X - 36f || position.X > viewPos.X + 36f)
                 return;
 
-            if(!isDigging)
-                backPickaxe.Draw(rend,viewPos);
+            if (!isDigging)
+                backPickaxe.Draw(rend, viewPos);
 
             //Rysowanie z animatora
             playerAnimator.Draw(currentState, viewPos);
 
-            if(isDigging)
+            if (isDigging)
                 pickaxe.Draw(rend, viewPos);
             playerArm.Draw(rend, viewPos);
         }
@@ -129,10 +133,11 @@ namespace GamJam2k21
         //Logika gracza
         public override void Update(KeyboardState input, MouseState mouseInput, float deltaTime)
         {
-
+            //Reset
             ResetBounds();
+            //Kolizje
             DoCollisions();
-
+            //Liczenie centrum gracza
             playerCenter = (position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
 
             //sprawdza wysokość
@@ -186,7 +191,7 @@ namespace GamJam2k21
                     velocity.Y += gravity * (lowJumpMultiplier - 1) * deltaTime;
                 }
             }
-
+            //Kolizje x2
             DoCollisions();
 
             if (hasColl[0] && velocity.Y > 0.0f)
@@ -202,8 +207,7 @@ namespace GamJam2k21
             if (hasColl[3] && velocity.X < 0.0f)
                 velocity.X = 0.0f;
 
-
-            position.X += velocity.X * deltaTime;
+            position.X = Math.Clamp(position.X + velocity.X * deltaTime, 0.0f, 127.0f);
             position.Y += velocity.Y * deltaTime;
 
             //Aktualizuj pozycje colliderow
@@ -211,7 +215,7 @@ namespace GamJam2k21
             bottomBox.Update();
             rightBox.Update();
             leftBox.Update();
-
+            //Kolizje x3
             DoCollisions();
 
             if (hasColl[2] && position.Y < collisionPos.Y)
@@ -224,20 +228,28 @@ namespace GamJam2k21
             else
                 isDigging = false;
 
-            //Update animatora---
-            if (velocity.X > 0.0f)
-                playerAnimator.isFlipped = false;
-            if (velocity.X < 0.0f)
-                playerAnimator.isFlipped = true;
-
             if (MathHelper.Abs(velocity.X) > 0.0f)
-                currentState = "walk";
+            {
+                if((playerAnimator.isFlipped && velocity.X > 0.0f) || (!playerAnimator.isFlipped && velocity.X < 0.0f))
+                {
+                    currentState = "walkBackwards";
+                }
+                else
+                {
+                    currentState = "walk";
+                }
+            }
             else
                 currentState = "idle";
             playerAnimator.Update(currentState, deltaTime);
-            //--------------------
+
             UpdateArm(deltaTime);
         }
+        public void SetFlip(bool flip)
+        {
+            playerAnimator.isFlipped = flip;
+        }
+        //Update ramienia
         private void UpdateArm(float deltaTime)
         {
             if (playerAnimator.isFlipped)
@@ -255,8 +267,14 @@ namespace GamJam2k21
                     initialArmRot = 135.0f;
                     stoppingArmRot = 15.0f;
                     playerArm.rotation -= rotation + deltaTime * armSpeed;
+                    if (playerArm.rotation < (initialArmRot + stoppingArmRot) / 2.0f)
+                        isDamaging = true;
                     if (playerArm.rotation < stoppingArmRot)
+                    {
                         playerArm.rotation = initialArmRot + rotation;
+                        isReadyToDamage = true;
+                        isDamaging = false;
+                    }
                 }
                 else
                 {
@@ -277,8 +295,14 @@ namespace GamJam2k21
                     initialArmRot = -135.0f;
                     stoppingArmRot = -15.0f;
                     playerArm.rotation += rotation + deltaTime * armSpeed;
+                    if (playerArm.rotation > (initialArmRot + stoppingArmRot) / 2.0f)
+                        isDamaging = true;
                     if (playerArm.rotation > stoppingArmRot)
+                    {
                         playerArm.rotation = initialArmRot + rotation;
+                        isReadyToDamage = true;
+                        isDamaging = false;
+                    }
                 }
                 else
                 {
@@ -304,7 +328,6 @@ namespace GamJam2k21
             for (var i = 0; i < 4; i++)
                 hasColl[i] = false;
         }
-
         //Sprawdzenie kolizji z obiektem <collider>
         public void CheckCollision(GameObject collider)
         {
@@ -336,7 +359,6 @@ namespace GamJam2k21
                 hasColl[3] = true;
             }
         }
-
         private void SetMaxPlayerDepth()
         {
             if (lowestPosition > position.Y && isGrounded)
@@ -344,6 +366,11 @@ namespace GamJam2k21
                 lowestPosition = (int)position.Y;
                 PlayerStatistics.addLevelReached();
             }
+        }
+        public float GetDamage()
+        {
+            //TODO: Pickaxe damage
+            return 10.0f;
         }
 
     }

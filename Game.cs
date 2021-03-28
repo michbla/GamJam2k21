@@ -89,8 +89,16 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_idle.png", "charIdle1");
             ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap.png", "textBitmap"); //xd
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalk1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalkBack1");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_arm1.png", "charArm1");
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe1.png", "pickaxe1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/dest.png", "dest");
+            ResourceManager.LoadTexture("Data/Resources/Textures/bgDirt01.png", "backgroundDirt");
+            //LADOWANIE TYPOW BLOKOW
+            //ID 0 zarezerwowane dla powietrza
+            ResourceManager.AddBlock(1, ResourceManager.GetTexture("grass"), "Grass", (0.17f, 0.06f, 0.01f));
+            ResourceManager.AddBlock(2, ResourceManager.GetTexture("dirt"), "Dirt", (0.17f, 0.06f, 0.01f));
+            ResourceManager.AddBlock(3, ResourceManager.GetTexture("stone"), "Stone", (0.2f, 0.2f, 0.2f));
 
             //Gracz
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
@@ -130,13 +138,18 @@ namespace GamJam2k21
             player.SetBlocks(ref level.currentBlocks);
             //Aktualizacja logiki gracza
             player.Update(input, mouseInput, deltaTime);
+            if (mouseWorldPos.X < player.playerCenter.X)
+                player.SetFlip(true);
+            else
+                player.SetFlip(false);
+
             //TEMP:: Testowe kopanie
-            if (mouseInput.IsButtonDown(MouseButton.Left))
+            if (mouseInput.IsButtonDown(MouseButton.Button1))
             {
                 double mPX = Math.Floor(mouseWorldPos.X);
                 double mPY = Math.Floor(mouseWorldPos.Y);
                 var blockName = level.getBlockName((int)mPX, -(int)mPY);
-                if (level.DestroyBlock((int)mPX, -(int)mPY))
+                if (level.DamageBlock((int)mPX, -(int)mPY, player))
                 {
                     player.PlayerStatistics.SetBlocksDestroyed(blockName);
                 }
@@ -145,7 +158,7 @@ namespace GamJam2k21
             //Plynne podazanie kamery za graczem
             float desiredViewX = MathHelper.Lerp(viewPos.X, player.position.X + player.size.X / 2.0f, deltaTime * cameraFollowSpeed);
             float desiredViewY = MathHelper.Lerp(viewPos.Y, player.position.Y + player.size.Y * 0.7f, deltaTime * cameraFollowSpeed);
-            viewPos.X = desiredViewX;
+            //viewPos.X = desiredViewX;
             viewPos.Y = desiredViewY;
 
             //TEMP:: Ruch kamery przez przypadek dziala jak rozgladanie (feature?)
@@ -159,15 +172,16 @@ namespace GamJam2k21
             }
             if (KeyboardState.IsKeyDown(Keys.A))
             {
-                viewPos.X -= deltaTime * 10;
+                desiredViewX -= deltaTime * 10;
             }
             else if (KeyboardState.IsKeyDown(Keys.D))
             {
-                viewPos.X += deltaTime * 10;
+                desiredViewX += deltaTime * 10;
             }
+            viewPos.X = Math.Clamp(desiredViewX, 0.0f + screenSize.X/2.0f, 128.0f - screenSize.X/2.0f);
 
-            //Aktualizacja poziomu (glownie chodzi o obliczanie dystansu od gracza dla kazdego bloku)
-            level.Update(player.playerCenter);
+            //Aktualizacja poziomu
+            level.Update(player.playerCenter, deltaTime);
 
             //TUTAJ KOD
 
@@ -194,7 +208,7 @@ namespace GamJam2k21
             //rysowanie tekstu
             textRenderer.PrintText("EXPO:" + player.PlayerStatistics.getExp(), ResourceManager.GetTexture("textBitmap"), viewPos, viewPos + (-12,6), (0.4f, 0.4f), (1, 1, 1)) ;
             //TUTAJ KOD
-            //SwapBuffers();
+            SwapBuffers();
             base.OnRenderFrame(e);
         }
         //Metoda finalizujaca dzialanie okna

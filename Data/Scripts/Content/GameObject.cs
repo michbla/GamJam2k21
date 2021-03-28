@@ -17,8 +17,8 @@ namespace GamJam2k21
 
         public float rotation;
         //Flagi
-        public bool isSolid;
-        public bool isDestroyed;
+        public bool isSolid = false;
+        public bool isDestroyed = false;
 
         //Tekstura
         public Texture sprite;
@@ -38,8 +38,6 @@ namespace GamJam2k21
             this.sprite = sprite;
             this.color = col;
             this.velocity = vel;
-            isSolid = false;
-            isDestroyed = false;
         }
         //Wirtualna funkcja rysujaca
         public virtual void Draw(SpriteRenderer rend, Vector2 viewPos)
@@ -51,6 +49,11 @@ namespace GamJam2k21
         }
         //Metoda obslugujaca logike
         public virtual void Update(KeyboardState input, MouseState mouseInput, float deltaTime)
+        {
+
+        }
+
+        public virtual void Update(float deltaTime)
         {
 
         }

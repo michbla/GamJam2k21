@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace GamJam2k21
 {
@@ -14,6 +15,8 @@ namespace GamJam2k21
         private static Dictionary<string, Shader> shaders;
         //Slownik przechowujacy textury
         private static Dictionary<string, Texture> textures;
+        //Slownik przechowujacy bloki
+        private static Dictionary<int, Block> blocks;
         //Singleton zapewniajacy, ze istnieje tylko jeden obiekt tej klasy
         #region Singleton
         private ResourceManager() { }
@@ -25,11 +28,21 @@ namespace GamJam2k21
                 instance = new ResourceManager();
                 shaders = new Dictionary<string, Shader>();
                 textures = new Dictionary<string, Texture>();
+                blocks = new Dictionary<int, Block>();
             }
             return instance;
         }
         #endregion Singleton
-
+        //Dodawanie bloku do slownika
+        public static void AddBlock(int id, Texture _sprite, string _name,Vector3 _color)
+        {
+            blocks.Add(id, new Block((0.0f, 0.0f), _sprite, _name, _color));
+        }
+        //Pobieranie bloku przez ID
+        public static Block GetBlockByID(int id)
+        {
+            return blocks[id];
+        }
         //Ladowanie shadera z plikow
         public static Shader LoadShader(string vertShaderPath, string fragShaderPath, string name)
         {

@@ -113,8 +113,8 @@ namespace GamJam2k21
         {
             int posX = x * 16;
             int posY = y * 16;
-            if(posY >= 0)
-                backgrounds.Add( new GameObject((posX,-posY - 15),(16.0f, 16.0f), ResourceManager.GetTexture("backgroundDirt")));
+            if (posY >= 0)
+                backgrounds.Add(new GameObject((posX, -posY - 15), (16.0f, 16.0f), ResourceManager.GetTexture("backgroundDirt")));
             for (var i = posY; i < posY + 16; i++)
             {
                 for (var j = posX; j < posX + 16; j++)
@@ -138,9 +138,10 @@ namespace GamJam2k21
                     i--;
                 }
             }
-            for(var i = 0; i < backgrounds.Count; i++){
+            for (var i = 0; i < backgrounds.Count; i++)
+            {
                 var bg = backgrounds[i];
-                if(bg.position.X == posX && bg.position.Y == posY)
+                if (bg.position.X == posX && bg.position.Y == posY)
                 {
                     backgrounds.Remove(bg);
                     i--;
@@ -173,17 +174,13 @@ namespace GamJam2k21
                 var block = currentBlocks[i];
                 if (block.distanceToPlayer <= 2.0f && block.position.X == x && block.position.Y == -y)
                 {
-                    if (player.isReadyToDamage && player.isDamaging)
+                    if (block.Damage(player))
                     {
-                        if (block.Damage(player))
-                        {
-                            currentBlocks.Remove(block);
-                            mapData[x, y] = 0;
-                            return true;
+                        currentBlocks.Remove(block);
+                        mapData[x, y] = 0;
+                        return true;
 
-                        }
                     }
-
                 }
             }
             return false;
@@ -192,14 +189,14 @@ namespace GamJam2k21
         private void SpawnBlock(int x, int y)
         {
             if (mapData[x, y] != 0)
-                currentBlocks.Add(new Block(ResourceManager.GetBlockByID(mapData[x,y]), (x, -y)));
+                currentBlocks.Add(new Block(ResourceManager.GetBlockByID(mapData[x, y]), (x, -y)));
         }
 
         public void Draw(SpriteRenderer rend, Vector2 viewPos)
         {
-            foreach(var bg in backgrounds)
+            foreach (var bg in backgrounds)
             {
-                bg.Draw(rend,viewPos);
+                bg.Draw(rend, viewPos);
             }
             for (var i = 0; i < currentBlocks.Count; i++)
             {
@@ -288,7 +285,7 @@ namespace GamJam2k21
                 frequency *= 4;
                 amplitude /= 10;
             }
-            float[,] result = new float[width,height];
+            float[,] result = new float[width, height];
             for (var i = 0; i < height; i++)
                 for (var j = 0; j < width; j++)
                     result[j, i] = MathHelper.Clamp((data[i, j] - min) / (max - min), 0.0f, 1.0f);

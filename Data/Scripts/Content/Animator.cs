@@ -34,7 +34,7 @@ namespace GamJam2k21
             animations = new Dictionary<string, Animation>();
         }
         //Update logiki
-        public void Update(string state, float deltaTime)
+        public virtual void Update(string state, float deltaTime)
         {
             timeSum += deltaTime;
             if (timeSum >= 1.0f / frameRate)
@@ -44,7 +44,7 @@ namespace GamJam2k21
             }
         }
         //Rysowanie
-        public void Draw(string state, Vector2 viewPos)
+        public virtual void Draw(string state, Vector2 viewPos)
         {
                 animations[state].Play(ref renderer, ref parent, viewPos, isFlipped);
         }

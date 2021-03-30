@@ -77,7 +77,7 @@ namespace GamJam2k21
             ResourceManager.GetShader("sprite").SetMatrix4("projection", projection);
 
             spriteRenderer = new SpriteRenderer(ResourceManager.GetShader("sprite"));
-            text = new SpriteRenderer(ResourceManager.GetShader("sprite"),new Vector2i(16,8));
+            text = new SpriteRenderer(ResourceManager.GetShader("sprite"), new Vector2i(16, 8));
             textRenderer = new TextRenderer(text);
             //LADOWANIE TEKSTUR
             ResourceManager.LoadTexture("Data/Resources/Textures/dirt1.png", "dirt");
@@ -96,9 +96,12 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/bgDirt01.png", "backgroundDirt");
             //LADOWANIE TYPOW BLOKOW
             //ID 0 zarezerwowane dla powietrza
-            ResourceManager.AddBlock(1, ResourceManager.GetTexture("grass"), "Grass", (0.17f, 0.06f, 0.01f));
-            ResourceManager.AddBlock(2, ResourceManager.GetTexture("dirt"), "Dirt", (0.17f, 0.06f, 0.01f));
-            ResourceManager.AddBlock(3, ResourceManager.GetTexture("stone"), "Stone", (0.2f, 0.2f, 0.2f));
+            ResourceManager.AddBlock(1, ResourceManager.GetTexture("grass"), "Grass", (0.17f, 0.06f, 0.01f), 0, 100.0f);
+            ResourceManager.AddBlock(2, ResourceManager.GetTexture("dirt"), "Dirt", (0.17f, 0.06f, 0.01f), 0, 100.0f);
+            ResourceManager.AddBlock(3, ResourceManager.GetTexture("stone"), "Stone", (0.1f, 0.1f, 0.1f), 1, 150.0f);
+
+            //LADOWANIE KILOFOW
+            ResourceManager.AddPickaxe(1, ResourceManager.GetTexture("pickaxe1"), "Stone Pickaxe", 500.0f, 1, 15.0f);
 
             //Gracz
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
@@ -138,12 +141,15 @@ namespace GamJam2k21
             player.SetBlocks(ref level.currentBlocks);
             //Aktualizacja logiki gracza
             player.Update(input, mouseInput, deltaTime);
-            if (mouseWorldPos.X < player.playerCenter.X)
-                player.SetFlip(true);
-            else
-                player.SetFlip(false);
+            if (player.IsDigging())
+            {
+                if (mouseWorldPos.X < player.playerCenter.X)
+                    player.SetFlip(true);
+                else
+                    player.SetFlip(false);
+            }
 
-            //TEMP:: Testowe kopanie
+            //Kopanie
             if (mouseInput.IsButtonDown(MouseButton.Button1))
             {
                 double mPX = Math.Floor(mouseWorldPos.X);
@@ -178,7 +184,7 @@ namespace GamJam2k21
             {
                 desiredViewX += deltaTime * 10;
             }
-            viewPos.X = Math.Clamp(desiredViewX, 0.0f + screenSize.X/2.0f, 128.0f - screenSize.X/2.0f);
+            viewPos.X = Math.Clamp(desiredViewX, 0.0f + screenSize.X / 2.0f, 128.0f - screenSize.X / 2.0f);
 
             //Aktualizacja poziomu
             level.Update(player.playerCenter, deltaTime);
@@ -203,10 +209,10 @@ namespace GamJam2k21
             //Rysowanie gracza
             player.Draw(spriteRenderer, viewPos);
 
+            //rysowanie tekstu
+            textRenderer.PrintText("EXPO:" + player.PlayerStatistics.getExp(), ResourceManager.GetTexture("textBitmap"), viewPos, viewPos + (-12, 6), (0.4f, 0.4f), (1, 1, 1));
             //Rysowanie kursora
             spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (screenSize.X / 2.0f * scale, screenSize.Y / 2.0f * scale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
-            //rysowanie tekstu
-            textRenderer.PrintText("EXPO:" + player.PlayerStatistics.getExp(), ResourceManager.GetTexture("textBitmap"), viewPos, viewPos + (-12,6), (0.4f, 0.4f), (1, 1, 1)) ;
             //TUTAJ KOD
             SwapBuffers();
             base.OnRenderFrame(e);

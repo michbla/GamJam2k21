@@ -17,6 +17,8 @@ namespace GamJam2k21
         private static Dictionary<string, Texture> textures;
         //Slownik przechowujacy bloki
         private static Dictionary<int, Block> blocks;
+        //Slownik przechowujacy kilofy
+        private static Dictionary<int, Pickaxe> pickaxes;
         //Singleton zapewniajacy, ze istnieje tylko jeden obiekt tej klasy
         #region Singleton
         private ResourceManager() { }
@@ -29,14 +31,25 @@ namespace GamJam2k21
                 shaders = new Dictionary<string, Shader>();
                 textures = new Dictionary<string, Texture>();
                 blocks = new Dictionary<int, Block>();
+                pickaxes = new Dictionary<int, Pickaxe>();
             }
             return instance;
         }
         #endregion Singleton
         //Dodawanie bloku do slownika
-        public static void AddBlock(int id, Texture _sprite, string _name,Vector3 _color)
+        public static void AddPickaxe(int id, Texture _sprite, string _name, float _speed, int _hardness, float _damage)
         {
-            blocks.Add(id, new Block((0.0f, 0.0f), _sprite, _name, _color));
+            pickaxes.Add(id, new Pickaxe(_name, _sprite, _speed, _hardness, _damage));
+        }
+        //Pobieranie bloku przez ID
+        public static Pickaxe GetPickaxeByID(int id)
+        {
+            return pickaxes[id];
+        }
+        //Dodawanie bloku do slownika
+        public static void AddBlock(int id, Texture _sprite, string _name,Vector3 _color, int _hardness, float _endurance)
+        {
+            blocks.Add(id, new Block((0.0f, 0.0f), _sprite, _name, _color,_hardness,_endurance));
         }
         //Pobieranie bloku przez ID
         public static Block GetBlockByID(int id)

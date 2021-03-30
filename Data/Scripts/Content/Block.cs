@@ -30,16 +30,22 @@ namespace GamJam2k21
         private float regenCooldown = 0.0f;
 
         //Konstruktor
-        public Block(Vector2 pos, Texture sprite, string _name, Vector3 _color) : base(pos, (1.0f,1.0f), sprite)
+        public Block(Vector2 pos, Texture sprite, string _name, Vector3 _color, int _hardness, float _endurance) : base(pos, (1.0f,1.0f), sprite)
         {
             name = _name;
             blockColor = _color;
+            hardness = _hardness;
+            baseEndurance = _endurance;
+            endurance = baseEndurance;
         }
         //Konstruktor kopiujacy
         public Block(Block copy, Vector2 pos) : base(pos,(1.0f,1.0f), copy.sprite)
         {
             this.name = copy.name;
             this.blockColor = copy.blockColor;
+            this.hardness = copy.hardness;
+            this.baseEndurance = copy.baseEndurance;
+            endurance = baseEndurance;
         }
         //Rysowanie
         public override void Draw(SpriteRenderer rend, Vector2 viewPos)
@@ -61,15 +67,15 @@ namespace GamJam2k21
         //Zadawanie obrazen
         public bool Damage(Player player)
         {
-            regenCooldown = 0.3f;
+            regenCooldown = 0.5f;
             if (player.isReadyToDamage)
             {
                 endurance -= player.GetDamage();
-                player.isReadyToDamage = false;
+                player.ResetCooldown();
             }
             if(endurance <= 0.0f)
             {
-                //Play destruction particles
+                //TODO:: Play destruction particles
                 return true;
             }
 

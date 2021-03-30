@@ -65,10 +65,10 @@ namespace GamJam2k21
                 Regenerate();
         }
         //Zadawanie obrazen
-        public bool Damage(Player player)
+        public bool Damage(Player player, int _hardness)
         {
             regenCooldown = 0.5f;
-            if (player.isReadyToDamage)
+            if (player.isReadyToDamage && _hardness >= hardness)
             {
                 endurance -= player.GetDamage();
                 player.ResetCooldown();

@@ -19,11 +19,13 @@ namespace GamJam2k21
         public bool isDigging = false;
         public bool inAir = false;
         public bool isWalkingBackwards = false;
-        public bool hasPickaxe = false;
 
         private string currentState = "idle";
 
-        public PlayerAnimator(GameObject p, Shader sha, Vector2i size, float rate) : base(p, sha, size, rate) {
+        public float diffAngle = 0.0f;
+
+        public PlayerAnimator(GameObject p, Shader sha, Vector2i size, float rate) : base(p, sha, size, rate)
+        {
             AddAnimation("idle", ResourceManager.GetTexture("charIdle1"), 16);
             AddAnimation("walk", ResourceManager.GetTexture("charWalk1"), 8);
             AddAnimation("walkBackwards", ResourceManager.GetTexture("charWalkBack1"), 8);
@@ -31,13 +33,13 @@ namespace GamJam2k21
         //Rysowanie tla
         public void DrawBack(SpriteRenderer rend, Vector2 viewPos)
         {
-            if (hasPickaxe && !isDigging)
+            if (!isDigging)
                 backPickaxe.Draw(rend, viewPos);
         }
         //Rysowanie frontu
         public void DrawFront(SpriteRenderer rend, Vector2 viewPos)
         {
-            if (hasPickaxe && isDigging)
+            if (isDigging)
                 pickaxe.Draw(rend, viewPos);
             playerArm.Draw(rend, viewPos);
         }
@@ -77,13 +79,17 @@ namespace GamJam2k21
             base.Update(currentState, deltaTime);
             UpdateArm(deltaTime);
         }
+        public void UpdateDiffAngle(float angle)
+        {
+                diffAngle = angle;
+        }
         //Update reki
         private void UpdateArm(float deltaTime)
         {
             if (isFlipped)
             {
                 backPickaxe.position = parent.position + (-1.8f, -0.65f);
-                backPickaxe.rotation = -35.0f;
+                backPickaxe.rotation = -40.0f;
 
                 playerArm.size.X = -2.0f;
                 playerArm.position = parent.position + armOffsetL;
@@ -92,9 +98,9 @@ namespace GamJam2k21
                 pickaxe.position = playerArm.position + (1.0f, -1.0f);
                 if (isDigging)
                 {
-                    initialArmRot = 135.0f;
-                    stoppingArmRot = 15.0f;
-                    playerArm.rotation -= parent.rotation + deltaTime * armSpeed;
+                    initialArmRot = 225.0f + diffAngle;
+                    stoppingArmRot = 105.0f + diffAngle;
+                    playerArm.rotation -= parent.rotation + deltaTime * armSpeed / 1.5f;
                     if (playerArm.rotation < stoppingArmRot)
                     {
                         playerArm.rotation = initialArmRot + parent.rotation;
@@ -107,8 +113,8 @@ namespace GamJam2k21
             }
             else
             {
-                backPickaxe.position = parent.position + (-2.2f, -0.9f);
-                backPickaxe.rotation = -65.0f;
+                backPickaxe.position = parent.position + (-2.25f, -0.75f);
+                backPickaxe.rotation = -50.0f;
 
                 playerArm.size.X = 2.0f;
                 playerArm.position = parent.position + armOffsetR;
@@ -116,9 +122,9 @@ namespace GamJam2k21
                 pickaxe.position = playerArm.position + (-1.0f, -1.0f);
                 if (isDigging)
                 {
-                    initialArmRot = -135.0f;
-                    stoppingArmRot = -15.0f;
-                    playerArm.rotation += parent.rotation + deltaTime * armSpeed;
+                    initialArmRot = -225.0f + diffAngle;
+                    stoppingArmRot = -105.0f + diffAngle;
+                    playerArm.rotation += parent.rotation + deltaTime * armSpeed / 1.5f;
                     if (playerArm.rotation > stoppingArmRot)
                     {
                         playerArm.rotation = initialArmRot + parent.rotation;

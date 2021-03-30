@@ -47,10 +47,13 @@ namespace GamJam2k21
         private float scale = 1.0f;
         private Vector2 screenSize = new Vector2(24.0f, 13.5f);
 
+        private bool isFullscreen = false;
+
         //Konstruktor okna gry
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
         {
             state = GameState.active;
+            WindowBorder = WindowBorder.Hidden;
         }
 
         //Metoda inicjalizujaca
@@ -91,7 +94,12 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalk1");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalkBack1");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_arm1.png", "charArm1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe0.png", "pickaxe0");
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe1.png", "pickaxe1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe2.png", "pickaxe2");
+            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe3.png", "pickaxe3");
+            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe4.png", "pickaxe4");
+            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe5.png", "pickaxe5");
             ResourceManager.LoadTexture("Data/Resources/Textures/dest.png", "dest");
             ResourceManager.LoadTexture("Data/Resources/Textures/bgDirt01.png", "backgroundDirt");
             //LADOWANIE TYPOW BLOKOW
@@ -101,7 +109,12 @@ namespace GamJam2k21
             ResourceManager.AddBlock(3, ResourceManager.GetTexture("stone"), "Stone", (0.1f, 0.1f, 0.1f), 1, 150.0f);
 
             //LADOWANIE KILOFOW
+            ResourceManager.AddPickaxe(0, ResourceManager.GetTexture("pickaxe0"), "Fists", 500.0f, 0, 10.0f);
             ResourceManager.AddPickaxe(1, ResourceManager.GetTexture("pickaxe1"), "Stone Pickaxe", 500.0f, 1, 15.0f);
+            ResourceManager.AddPickaxe(2, ResourceManager.GetTexture("pickaxe2"), "Copper Pickaxe", 600.0f, 2, 25.0f);
+            ResourceManager.AddPickaxe(3, ResourceManager.GetTexture("pickaxe3"), "Iron Pickaxe", 700.0f, 3, 40.0f);
+            ResourceManager.AddPickaxe(4, ResourceManager.GetTexture("pickaxe4"), "GoldenPickaxe", 800.0f, 4, 60.0f);
+            ResourceManager.AddPickaxe(5, ResourceManager.GetTexture("pickaxe5"), "Diamond Pickaxe", 900.0f, 5, 85.0f);
 
             //Gracz
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
@@ -140,7 +153,7 @@ namespace GamJam2k21
             //Przekazuje bloki do gracza dla kolizji
             player.SetBlocks(ref level.currentBlocks);
             //Aktualizacja logiki gracza
-            player.Update(input, mouseInput, deltaTime);
+            player.UpdatePlayer(input, mouseInput, deltaTime,mouseWorldPos);
             if (player.IsDigging())
             {
                 if (mouseWorldPos.X < player.playerCenter.X)
@@ -189,6 +202,12 @@ namespace GamJam2k21
             //Aktualizacja poziomu
             level.Update(player.playerCenter, deltaTime);
 
+
+            if (input.IsKeyPressed(Keys.F4))
+            {
+                SwitchFullscreen();
+            }
+
             //TUTAJ KOD
 
             base.OnUpdateFrame(e);
@@ -235,6 +254,21 @@ namespace GamJam2k21
         {
             GL.Viewport(0, 0, Size.X, Size.Y);
             base.OnResize(e);
+        }
+
+        private void SwitchFullscreen()
+        {
+            if (isFullscreen)
+            {
+                isFullscreen = false;
+                WindowState = WindowState.Normal;
+            }
+            else
+            {
+                isFullscreen = true;
+                WindowState = WindowState.Fullscreen;
+            }
+            GL.Viewport(0, 0, Size.X, Size.Y);
         }
     }
 }

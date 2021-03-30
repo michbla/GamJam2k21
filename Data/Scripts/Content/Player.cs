@@ -52,7 +52,6 @@ namespace GamJam2k21
         private float animFrameRate = 8.0f;
 
         private float diggingSpeed = 0.0f;
-        private float baseArmSpeed = 500.0f;
 
         public bool isReadyToDamage = true;
 
@@ -61,7 +60,7 @@ namespace GamJam2k21
 
         private bool isFloating = false;
 
-        public Pickaxe equippedPickaxe = null;
+        public Pickaxe equippedPickaxe = ResourceManager.GetPickaxeByID(0);
 
         //Kostruktor
         public Player(Vector2 pos, Vector2 size, Texture sprite) : base(pos, size, sprite)
@@ -78,6 +77,7 @@ namespace GamJam2k21
             PlayerStatistics = new PlayerStatistics(0, 0, 0);
             //Init Player Animator
             playerAnimator = new PlayerAnimator(this, ResourceManager.GetShader("sprite"), (16, 1), animFrameRate);
+            SetPickaxe(0);
         }
         //Przekazywanie do gracza blokow z poziomu
         public void SetBlocks(ref List<Block> b)
@@ -93,7 +93,7 @@ namespace GamJam2k21
             playerAnimator.DrawFront(rend, viewPos);
         }
         //Logika gracza
-        public override void Update(KeyboardState input, MouseState mouseInput, float deltaTime)
+        public void UpdatePlayer(KeyboardState input, MouseState mouseInput, float deltaTime, Vector2 mousePos)
         {
             //TEMP:: Klawisze do testowania
             //-------------------------------------------------------------
@@ -114,6 +114,22 @@ namespace GamJam2k21
             {
                 SetPickaxe(1);
             }
+            else if (input.IsKeyDown(Keys.D2))
+            {
+                SetPickaxe(2);
+            }
+            else if (input.IsKeyDown(Keys.D3))
+            {
+                SetPickaxe(3);
+            }
+            else if (input.IsKeyDown(Keys.D4))
+            {
+                SetPickaxe(4);
+            }
+            else if (input.IsKeyDown(Keys.D5))
+            {
+                SetPickaxe(5);
+            }
             //-------------------------------------------------------------
 
             //Reset
@@ -125,16 +141,9 @@ namespace GamJam2k21
             //sprawdza wysokość
             SetMaxPlayerDepth();
             //Update predkosci kopania
-            if (equippedPickaxe != null)
-            {
-                playerAnimator.armSpeed = equippedPickaxe.speed;
-                diggingSpeed = equippedPickaxe.speed;
-            }
-            else
-            {
-                playerAnimator.armSpeed = baseArmSpeed;
-                diggingSpeed = baseArmSpeed;
-            }
+            playerAnimator.armSpeed = equippedPickaxe.speed;
+            diggingSpeed = equippedPickaxe.speed;
+
             //Ruch
             if (canMove)
             {
@@ -229,6 +238,10 @@ namespace GamJam2k21
                     position.Y -= deltaTime * 10.0f;
                 }
             }
+            //Obliczanie kata miedzy kurosrem a graczem
+            Vector2 diffVec = mousePos - playerCenter;
+            double angle = MathHelper.Atan2(diffVec.X, diffVec.Y);
+            playerAnimator.UpdateDiffAngle((float)MathHelper.Floor(MathHelper.RadiansToDegrees(angle)));
             //Setter kopania w animatorze
             if (mouseInput.IsButtonDown(MouseButton.Button1))
             {
@@ -316,32 +329,19 @@ namespace GamJam2k21
         }
         public float GetDamage()
         {
-            if (equippedPickaxe != null)
-                return equippedPickaxe.damage;
-            return 10.0f;
+            return equippedPickaxe.damage;
         }
 
         public int GetHardness()
         {
-            if (equippedPickaxe != null)
-                return equippedPickaxe.hardness;
-            return 0;
+            return equippedPickaxe.hardness;
         }
 
         public void SetPickaxe(int id)
         {
-            if (id == 0)
-            {
-                equippedPickaxe = null;
-                playerAnimator.hasPickaxe = false;
-            }
-            else
-            {
-                equippedPickaxe = ResourceManager.GetPickaxeByID(id);
-                playerAnimator.pickaxe.sprite = equippedPickaxe.sprite;
-                playerAnimator.backPickaxe.sprite = equippedPickaxe.sprite;
-                playerAnimator.hasPickaxe = true;
-            }
+            equippedPickaxe = ResourceManager.GetPickaxeByID(id);
+            playerAnimator.pickaxe.sprite = equippedPickaxe.sprite;
+            playerAnimator.backPickaxe.sprite = equippedPickaxe.sprite;
         }
         public bool IsDigging()
         {

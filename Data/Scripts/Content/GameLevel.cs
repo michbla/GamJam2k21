@@ -174,7 +174,7 @@ namespace GamJam2k21
                 var block = currentBlocks[i];
                 if (block.distanceToPlayer <= 2.0f && block.position.X == x && block.position.Y == -y)
                 {
-                    if (block.Damage(player))
+                    if (block.Damage(player, player.equippedPickaxe.hardness))
                     {
                         currentBlocks.Remove(block);
                         mapData[x, y] = 0;

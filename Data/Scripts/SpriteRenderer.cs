@@ -103,7 +103,7 @@ namespace GamJam2k21
             shader.SetMatrix4("model", model);
             shader.SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X, -viewPos.Y, 0.0f));
             shader.SetVector3("spriteColor", color);
-            shader.SetVector2("texOffset", (offset.X*(1.0f/dim.X), offset.Y*(1.0f/dim.Y)));
+            shader.SetVector2("texOffset", (offset.X * (1.0f / dim.X), offset.Y * (1.0f / dim.Y)));
             //Uzywanie tekstury
             tex.Use(TextureUnit.Texture0);
             //Rysowanie geometrii
@@ -113,6 +113,6 @@ namespace GamJam2k21
         }
         //Rysowanie ze standardowym kolorem
         public void DrawSprite(Texture tex, Vector2 viewPos, Vector2 pos, Vector2 size, float rotate) { DrawSprite((0, 0), tex, viewPos, pos, size, rotate, (1.0f, 1.0f, 1.0f)); }
-        public void DrawSprite(Texture tex, Vector2 viewPos, Vector2 pos, Vector2 size, float rotate,Vector3 color) { DrawSprite((0, 0), tex, viewPos, pos, size, rotate, color); }
+        public void DrawSprite(Texture tex, Vector2 viewPos, Vector2 pos, Vector2 size, float rotate, Vector3 color) { DrawSprite((0, 0), tex, viewPos, pos, size, rotate, color); }
     }
 }

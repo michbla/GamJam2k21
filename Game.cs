@@ -49,6 +49,7 @@ namespace GamJam2k21
 
         private bool isFullscreen = false;
 
+
         //Konstruktor okna gry
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
         {
@@ -64,6 +65,7 @@ namespace GamJam2k21
             //Wlaczanie mieszania dla tekstur z alpha
             GL.Enable(EnableCap.Blend);
             GL.Disable(EnableCap.DepthTest);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             CenterWindow();
 
             //Pozycja widoku ustawiona tak, by lewy dolny rog mial wspolrzedne (0,0)
@@ -78,6 +80,12 @@ namespace GamJam2k21
             ResourceManager.GetShader("sprite").SetInt("texture0", 0);
             ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X, -viewPos.Y, 0.0f));
             ResourceManager.GetShader("sprite").SetMatrix4("projection", projection);
+
+            ResourceManager.LoadShader("Data/Resources/Shaders/particleShader/particleShader.vert", "Data/Resources/Shaders/particleShader/particleShader.frag", "particle");
+            ResourceManager.GetShader("particle").Use();
+            ResourceManager.GetShader("particle").SetInt("texture0", 0);
+            ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X, -viewPos.Y, 0.0f));
+            ResourceManager.GetShader("particle").SetMatrix4("projection", projection);
 
             spriteRenderer = new SpriteRenderer(ResourceManager.GetShader("sprite"));
             text = new SpriteRenderer(ResourceManager.GetShader("sprite"), new Vector2i(16, 8));
@@ -102,6 +110,7 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe5.png", "pickaxe5");
             ResourceManager.LoadTexture("Data/Resources/Textures/dest.png", "dest");
             ResourceManager.LoadTexture("Data/Resources/Textures/bgDirt01.png", "backgroundDirt");
+            ResourceManager.LoadTexture("Data/Resources/Textures/particle.png", "particle");
             //LADOWANIE TYPOW BLOKOW
             //ID 0 zarezerwowane dla powietrza
             ResourceManager.AddBlock(1, ResourceManager.GetTexture("grass"), "Grass", (0.17f, 0.06f, 0.01f), 0, 100.0f);
@@ -232,6 +241,7 @@ namespace GamJam2k21
             textRenderer.PrintText("EXPO:" + player.PlayerStatistics.getExp(), ResourceManager.GetTexture("textBitmap"), viewPos, viewPos + (-12, 6), (0.4f, 0.4f), (1, 1, 1));
             //Rysowanie kursora
             spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (screenSize.X / 2.0f * scale, screenSize.Y / 2.0f * scale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
+            
             //TUTAJ KOD
             SwapBuffers();
             base.OnRenderFrame(e);

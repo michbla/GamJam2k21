@@ -177,6 +177,7 @@ namespace GamJam2k21
                 {
                     velocity.Y = 1.0f * jumpForce;
                     isJumping = true;
+                    playerAnimator.Jump();
                 }
             }
             //Grawitacja tylko jesli w powietrzu
@@ -252,6 +253,8 @@ namespace GamJam2k21
             //Update bycia w powietrzu
             if (!isGrounded)
                 playerAnimator.inAir = true;
+            else
+                playerAnimator.inAir = false;
             //Update animatora
             playerAnimator.UpdatePlayerAnimator(deltaTime);
             //Update cooldownu kopania

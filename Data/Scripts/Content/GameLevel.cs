@@ -27,6 +27,12 @@ namespace GamJam2k21
         private Vector2i playerChunk;
         private Vector2i lastPlayerChunk;
 
+
+        private Vector2 damagedBlockPosition = (0.0f, 0.0f);
+        private Vector3 damagedBlockColor = (1.0f, 1.0f, 1.0f);
+        private ParticleEmmiter damageParticles;
+        private ParticleEmmiter destructionParticles;
+
         //Kostruktor poziomu
         public GameLevel(int w, int h)
         {
@@ -38,9 +44,10 @@ namespace GamJam2k21
                 {
                     mapData[j, i] = 0;
                 }
+            damageParticles = new ParticleEmmiter(ResourceManager.GetShader("particle"), ResourceManager.GetTexture("particle"), 128);
+            destructionParticles = new ParticleEmmiter(ResourceManager.GetShader("particle"), ResourceManager.GetTexture("particle"), 128);
             Init();
         }
-        //TEMP:
         public void Update(Vector2 playerPos, float deltaTime)
         {
             playerChunk = ((int)playerPos.X / 16, -(int)playerPos.Y / 16);
@@ -107,6 +114,9 @@ namespace GamJam2k21
                 }
             }
             lastPlayerChunk = playerChunk;
+
+            damageParticles.Update(deltaTime);
+            destructionParticles.Update(deltaTime);
         }
 
         private void SpawnChunk(int x, int y)
@@ -176,10 +186,16 @@ namespace GamJam2k21
                 {
                     if (block.Damage(player, player.equippedPickaxe.hardness))
                     {
-                        currentBlocks.Remove(block);
-                        mapData[x, y] = 0;
-                        return true;
-
+                        damagedBlockPosition = block.position;
+                        damagedBlockColor = block.GetBlockColor();
+                        damageParticles.SpawnParticles(damagedBlockPosition, 8, (0.5f, 0.5f), damagedBlockColor, (0.0f, -1.0f), (1.0f, 1.0f), false, true, true);
+                        if (block.IsDestroyed())
+                        {
+                            destructionParticles.SpawnParticles(damagedBlockPosition, 32, (0.5f, 0.5f), damagedBlockColor, (0.0f, 0.0f), (2.0f, 2.0f), true, true, true);
+                            currentBlocks.Remove(block);
+                            mapData[x, y] = 0;
+                            return true;
+                        }
                     }
                 }
             }
@@ -202,7 +218,8 @@ namespace GamJam2k21
             {
                 currentBlocks[i].Draw(rend, viewPos);
             }
-
+            damageParticles.Draw(viewPos);
+            destructionParticles.Draw(viewPos);
         }
         public void Init()
         {

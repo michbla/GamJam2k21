@@ -72,14 +72,19 @@ namespace GamJam2k21
             {
                 endurance -= player.GetDamage();
                 player.ResetCooldown();
-            }
-            if(endurance <= 0.0f)
-            {
-                //TODO:: Play destruction particles
                 return true;
             }
-
             return false;
+        }
+
+        public Vector3 GetBlockColor()
+        {
+            return blockColor;
+        }
+
+        public bool IsDestroyed()
+        {
+            return endurance <= 0.0f;
         }
 
         public void Regenerate()

@@ -24,6 +24,7 @@ namespace GamJam2k21
 
         private int lowestPosition = 1;
         public PlayerStatistics PlayerStatistics;
+        public Inventory eq;
 
         //Flagi
         public bool canMove = true;
@@ -48,6 +49,7 @@ namespace GamJam2k21
         private float gravity = 30.0f;
         //ANIMACJE
         private PlayerAnimator playerAnimator;
+        
         //Klatki na sekunde
         private float animFrameRate = 8.0f;
 
@@ -75,6 +77,7 @@ namespace GamJam2k21
             collisionPos = pos;
             //Init staty
             PlayerStatistics = new PlayerStatistics(0, 0, 0);
+            eq = new Inventory();
             //Init Player Animator
             playerAnimator = new PlayerAnimator(this, ResourceManager.GetShader("sprite"), (16, 1), animFrameRate);
             SetPickaxe(0);

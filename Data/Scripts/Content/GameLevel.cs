@@ -175,6 +175,22 @@ namespace GamJam2k21
             return null;
         }
 
+        public int getBlock(int x, int y)
+        {
+            if (x < 0 || y < 0 || x > width || y > height)
+                return -1;
+            for (var i = 0; i < currentBlocks.Count; i++)
+            {
+                var block = currentBlocks[i];
+                if (block.distanceToPlayer <= 2.0f && block.position.X == x && block.position.Y == -y)
+                {
+                    var b = ResourceManager.GetBlockID(block);
+                    return b;
+                }
+            }
+            return -1;
+        }
+
         public bool DamageBlock(int x, int y, Player player)
         {
             if (x < 0 || y < 0 || x > width || y > height)

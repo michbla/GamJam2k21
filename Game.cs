@@ -43,6 +43,9 @@ namespace GamJam2k21
         //Poziom gry
         private GameLevel level;
 
+        //Interfejs
+        private UI userInterface;
+
         //TEST::
         private float scale = 1.0f;
         private Vector2 screenSize = new Vector2(24.0f, 13.5f);
@@ -90,6 +93,7 @@ namespace GamJam2k21
             spriteRenderer = new SpriteRenderer(ResourceManager.GetShader("sprite"));
             text = new SpriteRenderer(ResourceManager.GetShader("sprite"), new Vector2i(16, 8));
             textRenderer = new TextRenderer(text);
+            
             //LADOWANIE TEKSTUR
             ResourceManager.LoadTexture("Data/Resources/Textures/dirt1.png", "dirt");
             ResourceManager.LoadTexture("Data/Resources/Textures/grass1.png", "grass");
@@ -129,9 +133,9 @@ namespace GamJam2k21
             player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
             //Poziom
             level = new GameLevel(128, 1000);
-
+            userInterface = new UI(spriteRenderer, textRenderer, player.PlayerStatistics, player, viewPos);
             //TUTAJ KOD
-
+            userInterface.InitUI();
             base.OnLoad();
         }
         //Obsluga logiki w kazdej klatce, dt - deltaTime (czas pomiedzy klatkami)
@@ -177,9 +181,12 @@ namespace GamJam2k21
                 double mPX = Math.Floor(mouseWorldPos.X);
                 double mPY = Math.Floor(mouseWorldPos.Y);
                 var blockName = level.getBlockName((int)mPX, -(int)mPY);
+                int dugBlock = level.getBlock((int)mPX, -(int)mPY);
                 if (level.DamageBlock((int)mPX, -(int)mPY, player))
                 {
                     player.PlayerStatistics.SetBlocksDestroyed(blockName);
+                    player.eq.addToInventory(dugBlock);
+                    //Console.WriteLine("game " + dugBlock);
                 }
             }
 
@@ -217,6 +224,8 @@ namespace GamJam2k21
                 SwitchFullscreen();
             }
 
+            
+
             //TUTAJ KOD
 
             base.OnUpdateFrame(e);
@@ -237,8 +246,14 @@ namespace GamJam2k21
             //Rysowanie gracza
             player.Draw(spriteRenderer, viewPos);
 
-            //rysowanie tekstu
-            textRenderer.PrintText("EXPO:" + player.PlayerStatistics.getExp(), ResourceManager.GetTexture("textBitmap"), viewPos, viewPos + (-12, 6), (0.4f, 0.4f), (1, 1, 1));
+            var input = KeyboardState;
+            if (input.IsKeyDown(Keys.E))
+            {
+                userInterface.DrawEQ();
+            }
+
+            //interfejs
+            userInterface.DrawUI();
             //Rysowanie kursora
             spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (screenSize.X / 2.0f * scale, screenSize.Y / 2.0f * scale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
             

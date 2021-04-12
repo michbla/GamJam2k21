@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -55,6 +56,26 @@ namespace GamJam2k21
         public static Block GetBlockByID(int id)
         {
             return blocks[id];
+        }
+
+        public static int GetBlockID(Block block)
+        {
+            foreach (KeyValuePair<int, Block> entry in blocks)
+            {
+                //Console.WriteLine("rm2 " + entry.Value.name);
+                if (entry.Value.name==block.name)
+                    {
+                        //Console.WriteLine("rm - " + entry.Value.name);
+                        return entry.Key;
+                    }
+            }
+            return 1;
+        }
+
+        //Pobieranie rozmiaru listy bloków
+        public static int GetBlockListSize()
+        {
+            return blocks.Count;
         }
         //Ladowanie shadera z plikow
         public static Shader LoadShader(string vertShaderPath, string fragShaderPath, string name)

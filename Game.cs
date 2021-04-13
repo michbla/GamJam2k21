@@ -203,6 +203,21 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalkBack1");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_arm1.png", "charArm1");
 
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroTorso_idle.png", "heroTorso_idle");
+
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroHead_idle.png", "heroHead_idle");
+
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroArmBack_idle.png", "heroArmBack_idle");
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroArmBack_walk.png", "heroArmBack_walk");
+
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroArmFront_idle.png", "heroArmFront_idle");
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroArmFront_walk.png", "heroArmFront_walk");
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroArmFront_dig.png", "heroArmFront_dig");
+
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroLegs_idle.png", "heroLegs_idle");
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroLegs_walk.png", "heroLegs_walk");
+            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroLegs_walkBack.png", "heroLegs_walkBack");
+
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe0.png", "pickaxe0");
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe1.png", "pickaxe1");
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe2.png", "pickaxe2");
@@ -212,6 +227,7 @@ namespace GamJam2k21
 
             ResourceManager.LoadTexture("Data/Resources/Textures/dest.png", "dest");
             ResourceManager.LoadTexture("Data/Resources/Textures/particle.png", "particle");
+            ResourceManager.LoadTexture("Data/Resources/Textures/empty.png", "empty");
         }
 
         private void loadBlocks()

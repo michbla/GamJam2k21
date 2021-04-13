@@ -13,9 +13,10 @@ namespace GamJam2k21
     public class Player : GameObject
     {
         public Vector2 playerCenter;
+        public Vector2 playerHeadPos;
 
         private readonly float WALK_SPEED = 8.0f;
-        private readonly float BACKWARDS_WALK_SPEED_MULTIPLIER = 0.75f;
+        private readonly float BACKWARDS_WALK_SPEED_MULTIPLIER = 0.65f;
         private readonly float CLIMB_SPEED = 10.0f;
         private readonly float JUMP_FORCE = 8.0f;
 
@@ -44,7 +45,7 @@ namespace GamJam2k21
         //0 - top, 1 - right, 2 - bottom, 3 - left
 
         private PlayerAnimator playerAnimator;
-        private readonly float animFrameRate = 8.0f;
+        private readonly float animFrameRate = 12.0f;
 
         private float diggingSpeed = 0.0f;
         public bool isReadyToDamage = true;
@@ -121,6 +122,7 @@ namespace GamJam2k21
             CheckCollisions();
 
             playerCenter = (position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
+            playerHeadPos = (playerCenter.X, playerCenter.Y + 0.5f);
 
             SetMaxPlayerDepth();
 
@@ -128,11 +130,7 @@ namespace GamJam2k21
             diggingSpeed = equippedPickaxe.speed;
 
             doMovement(deltaTime, input);
-
             doGravity(deltaTime, input);
-
-            CheckCollisions();
-
             doCollisions(deltaTime);
 
             if (playerAnimator.isWalkingBackwards)
@@ -163,6 +161,9 @@ namespace GamJam2k21
             Vector2 diffVec = mousePos - playerCenter;
             double angle = MathHelper.Atan2(diffVec.X, diffVec.Y);
             playerAnimator.UpdateDiffAngle((float)MathHelper.Floor(MathHelper.RadiansToDegrees(angle)));
+            Vector2 diffVecHead = mousePos - playerHeadPos;
+            double angleHead = MathHelper.Atan2(diffVec.X, diffVec.Y);
+            playerAnimator.UpdateDiffHead((float)MathHelper.Floor(MathHelper.RadiansToDegrees(angleHead)));
             playerAnimator.isDigging = mouseInput.IsButtonDown(MouseButton.Button1);
             playerAnimator.inAir = !isGrounded;
             playerAnimator.UpdatePlayerAnimator(deltaTime);
@@ -202,9 +203,11 @@ namespace GamJam2k21
         public void CheckCollision(GameObject collider)
         {
             (bool, Direction, Vector2) upRes = Collider.CheckBoxCollision(upperBox, collider);
-            hasColl[0] = upRes.Item1;
+            if(upRes.Item1 == true)
+                hasColl[0] = true;
             (bool, Direction, Vector2) rRes = Collider.CheckBoxCollision(rightBox, collider);
-            hasColl[1] = rRes.Item1;
+            if(rRes.Item1 == true)
+                hasColl[1] = true;
             (bool, Direction, Vector2) botRes = Collider.CheckBoxCollision(bottomBox, collider);
             if (botRes.Item1 == true)
             {
@@ -213,7 +216,8 @@ namespace GamJam2k21
                 hasColl[2] = true;
             }
             (bool, Direction, Vector2) lRes = Collider.CheckBoxCollision(leftBox, collider);
-            hasColl[3] = lRes.Item1;
+            if(lRes.Item1 == true)
+                hasColl[3] = true;
         }
         private void SetMaxPlayerDepth()
         {

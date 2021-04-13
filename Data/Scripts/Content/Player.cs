@@ -13,89 +13,71 @@ namespace GamJam2k21
     public class Player : GameObject
     {
         public Vector2 playerCenter;
-        //Predkosc gracza
-        private float playerSpeed = 8.0f;
-        //Sila skoku
-        private float jumpForce = 8.0f;
-        //Zmienne do plynnego skoku
-        private float fallMultiplier = 0.01f;
-        private float lowJumpMultiplier = 0.5f;
+
+        private readonly float WALK_SPEED = 8.0f;
+        private readonly float BACKWARDS_WALK_SPEED_MULTIPLIER = 0.75f;
+        private readonly float CLIMB_SPEED = 10.0f;
+        private readonly float JUMP_FORCE = 8.0f;
+
+        private readonly float FALL_MULTIPLIER = 0.01f;
+        private readonly float LOW_JUMP_MULTIPLIER = 0.5f;
         private float rememberGrounded = 0.0f;
+        private bool isJumping = false;
+        private bool isFloating = false;
+        private readonly float gravity = 30.0f;
 
         private int lowestPosition = 1;
         public PlayerStatistics PlayerStatistics;
         public Inventory eq;
 
-        //Flagi
         public bool canMove = true;
         public bool isGrounded = true;
-        //Collidery
+
+        public List<Block> blocks;
+
         private BoxCollider bottomBox;
         private BoxCollider upperBox;
         private BoxCollider rightBox;
         private BoxCollider leftBox;
-
-        //Porzadana pozycja gracza wzgledem obiektu kolizji
         private Vector2 collisionPos;
-        //Flaga posiadania kolizji
         private bool[] hasColl = { false, false, false, false };
         //0 - top, 1 - right, 2 - bottom, 3 - left
-        //Flaga do sprawdzenia czy w danej klatce rozpoczety zostal skok
-        private bool isJumping = false;
-        //Lista blokow z poziomu przekazana jako referencja
-        //Do liczenia kolizji
-        private List<Block> blocks;
-        //Grawitacja
-        private float gravity = 30.0f;
-        //ANIMACJE
+
         private PlayerAnimator playerAnimator;
-        
-        //Klatki na sekunde
-        private float animFrameRate = 8.0f;
+        private readonly float animFrameRate = 8.0f;
 
         private float diggingSpeed = 0.0f;
-
         public bool isReadyToDamage = true;
-
         private float diggingCooldown = 0.0f;
-        private float diggingCooldownBase = 10.0f;
+        private readonly float DIG_CD_BASE = 10.0f;
 
-        private bool isFloating = false;
+        public Pickaxe equippedPickaxe;
 
-        public Pickaxe equippedPickaxe = ResourceManager.GetPickaxeByID(0);
-
-        //Kostruktor
         public Player(Vector2 pos, Vector2 size, Texture sprite) : base(pos, size, sprite)
         {
             velocity = (0.0f, 0.0f);
             playerCenter = new Vector2(position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
-            //Kolizja boxy
+
             bottomBox = new BoxCollider(this, new Vector2(0.3f, 0.0f), new Vector2(0.4f, 0.2f));
             upperBox = new BoxCollider(this, new Vector2(0.3f, 1.6f), new Vector2(0.4f, 0.2f));
             leftBox = new BoxCollider(this, new Vector2(0.00f, 0.05f), new Vector2(0.4f, 1.75f));
             rightBox = new BoxCollider(this, new Vector2(0.6f, 0.05f), new Vector2(0.4f, 1.75f));
             collisionPos = pos;
-            //Init staty
+
             PlayerStatistics = new PlayerStatistics(0, 0, 0);
             eq = new Inventory();
-            //Init Player Animator
+
             playerAnimator = new PlayerAnimator(this, ResourceManager.GetShader("sprite"), (16, 1), animFrameRate);
             SetPickaxe(0);
         }
-        //Przekazywanie do gracza blokow z poziomu
-        public void SetBlocks(ref List<Block> b)
-        {
-            blocks = b;
-        }
-        //Rysowanie gracza
+
         public override void Draw(SpriteRenderer rend, Vector2 viewPos)
         {
-            //Rysowanie z animatora
             playerAnimator.DrawBack(rend, viewPos);
             playerAnimator.DrawPlayerAnimator(viewPos);
             playerAnimator.DrawFront(rend, viewPos);
         }
-        //Logika gracza
+
         public void UpdatePlayer(KeyboardState input, MouseState mouseInput, float deltaTime, Vector2 mousePos)
         {
             //TEMP:: Klawisze do testowania
@@ -135,98 +117,37 @@ namespace GamJam2k21
             }
             //-------------------------------------------------------------
 
-            //Reset
             ResetBounds();
-            //Kolizje
-            DoCollisions();
-            //Liczenie centrum gracza
+            CheckCollisions();
+
             playerCenter = (position.X + size.X / 2.0f, position.Y + size.Y / 2.0f);
-            //sprawdza wysokość
+
             SetMaxPlayerDepth();
-            //Update predkosci kopania
+
             playerAnimator.armSpeed = equippedPickaxe.speed;
             diggingSpeed = equippedPickaxe.speed;
 
-            //Ruch
-            if (canMove)
-            {
-                float vel = playerSpeed;
-                if (!isGrounded)
-                {
-                    vel *= 0.8f;
-                    if (rememberGrounded > 0.0f)
-                        rememberGrounded -= deltaTime;
-                }
-                else
-                {
-                    rememberGrounded = 0.1f;
-                    isJumping = false;
-                }
+            doMovement(deltaTime, input);
 
-                if (input.IsKeyDown(Keys.A))
-                {
-                    velocity.X = -vel;
-                }
-                else if (input.IsKeyDown(Keys.D))
-                {
-                    velocity.X = vel;
-                }
-                else
-                {
-                    velocity.X = 0.0f;
-                }
+            doGravity(deltaTime, input);
 
-                if (rememberGrounded > 0.0f && input.IsKeyDown(Keys.Space) && !isFloating)
-                {
-                    velocity.Y = 1.0f * jumpForce;
-                    isJumping = true;
-                    playerAnimator.Jump();
-                }
-            }
-            //Grawitacja tylko jesli w powietrzu
-            if (!isGrounded && !isFloating)
-            {
-                velocity.Y -= gravity * deltaTime;
+            CheckCollisions();
 
-                if (velocity.Y < 0.0f)
-                {
-                    velocity.Y += gravity * (fallMultiplier - 1) * deltaTime;
-                }
-                else if (velocity.Y > 0.0f && !input.IsKeyDown(Keys.Space))
-                {
-                    velocity.Y += gravity * (lowJumpMultiplier - 1) * deltaTime;
-                }
-            }
-            //Kolizje x2
-            DoCollisions();
-            //Gorna kolizja
-            if (hasColl[0] && velocity.Y > 0.0f)
-                velocity.Y = -gravity * deltaTime;
-            //Dolkna kolizja
-            if (!isJumping && hasColl[2] && !isFloating)
-            {
-                position.Y = collisionPos.Y;
-                velocity.Y = 0.0f;
-            }
-            //Boczne kolizje
-            if (hasColl[1] && velocity.X > 0.0f)
-                velocity.X = 0.0f;
-            if (hasColl[3] && velocity.X < 0.0f)
-                velocity.X = 0.0f;
-            //Spowolnienie gracza idacego do tylu
+            doCollisions(deltaTime);
+
             if (playerAnimator.isWalkingBackwards)
-                velocity.X *= 0.75f;
-            //Update pozycji
+                velocity.X *= BACKWARDS_WALK_SPEED_MULTIPLIER;
+
             position.X = Math.Clamp(position.X + velocity.X * deltaTime, 0.0f, 127.0f);
             position.Y += velocity.Y * deltaTime;
-            //Aktualizuj pozycje colliderow
+
             upperBox.Update();
             bottomBox.Update();
             rightBox.Update();
             leftBox.Update();
-            //Kolizje x3
-            DoCollisions();
-            //Dolna kolizja
+
+            CheckCollisions();
+
             if (hasColl[2] && position.Y < collisionPos.Y)
                 position.Y = collisionPos.Y;
             //Drabina mechanic
@@ -234,59 +155,42 @@ namespace GamJam2k21
             {
                 velocity.Y = 0.0f;
                 if (input.IsKeyDown(Keys.W) && !hasColl[0])
-                {
-                    position.Y += deltaTime * 10.0f;
-                }
+                    position.Y += deltaTime * CLIMB_SPEED;
                 else if (input.IsKeyDown(Keys.S) && !hasColl[2])
-                {
-                    position.Y -= deltaTime * 10.0f;
-                }
+                    position.Y -= deltaTime * CLIMB_SPEED;
             }
-            //Obliczanie kata miedzy kurosrem a graczem
+
             Vector2 diffVec = mousePos - playerCenter;
             double angle = MathHelper.Atan2(diffVec.X, diffVec.Y);
             playerAnimator.UpdateDiffAngle((float)MathHelper.Floor(MathHelper.RadiansToDegrees(angle)));
-            //Setter kopania w animatorze
-            if (mouseInput.IsButtonDown(MouseButton.Button1))
-            {
-                playerAnimator.isDigging = true;
-            }
-            else
-                playerAnimator.isDigging = false;
-            //Update bycia w powietrzu
-            if (!isGrounded)
-                playerAnimator.inAir = true;
-            else
-                playerAnimator.inAir = false;
-            //Update animatora
+            playerAnimator.isDigging = mouseInput.IsButtonDown(MouseButton.Button1);
+            playerAnimator.inAir = !isGrounded;
             playerAnimator.UpdatePlayerAnimator(deltaTime);
-            //Update cooldownu kopania
+
             if (diggingCooldown > 0.0f)
                 diggingCooldown -= deltaTime * diggingSpeed / 10.0f;
             else
                 isReadyToDamage = true;
         }
-        //Reset cooldownu kopania
+
         public void ResetCooldown()
         {
-            diggingCooldown = diggingCooldownBase;
+            diggingCooldown = DIG_CD_BASE;
             isReadyToDamage = false;
         }
-        //Setter do flipa na animatorze
+
         public void SetFlip(bool flip)
         {
             playerAnimator.isFlipped = flip;
         }
-        //Sprawdz wszystkie kolizje
-        private void DoCollisions()
+
+        private void CheckCollisions()
         {
             foreach (var block in blocks)
-            {
                 if (block.distanceToPlayer <= 2f && !block.isDestroyed)
                     CheckCollision(block);
-            }
         }
-        //Reset przed sprawdzeniem kolizji
+
         public void ResetBounds()
         {
             isGrounded = false;
@@ -294,36 +198,22 @@ namespace GamJam2k21
             for (var i = 0; i < 4; i++)
                 hasColl[i] = false;
         }
-        //Sprawdzenie kolizji z obiektem <collider>
+
         public void CheckCollision(GameObject collider)
         {
-            //Gorna kolizja
             (bool, Direction, Vector2) upRes = Collider.CheckBoxCollision(upperBox, collider);
-            if (upRes.Item1 == true)
-            {
-                hasColl[0] = true;
-            }
-            //Prawa kolizja
+            hasColl[0] = upRes.Item1;
             (bool, Direction, Vector2) rRes = Collider.CheckBoxCollision(rightBox, collider);
-            if (rRes.Item1 == true)
-            {
-                hasColl[1] = true;
-            }
-            //Dolna kolizja
+            hasColl[1] = rRes.Item1;
             (bool, Direction, Vector2) botRes = Collider.CheckBoxCollision(bottomBox, collider);
             if (botRes.Item1 == true)
             {
                 isGrounded = true;
                 collisionPos.Y = collider.position.Y + collider.size.Y;
                 hasColl[2] = true;
-
             }
-            //Lewa kolizja
             (bool, Direction, Vector2) lRes = Collider.CheckBoxCollision(leftBox, collider);
-            if (lRes.Item1 == true)
-            {
-                hasColl[3] = true;
-            }
+            hasColl[3] = lRes.Item1;
         }
         private void SetMaxPlayerDepth()
         {
@@ -352,6 +242,68 @@ namespace GamJam2k21
         public bool IsDigging()
         {
             return playerAnimator.isDigging;
+        }
+
+        private void doMovement(float deltaTime, KeyboardState input)
+        {
+            if (!canMove)
+                return;
+            float vel = WALK_SPEED;
+            if (!isGrounded)
+            {
+                vel *= 0.8f;
+                if (rememberGrounded > 0.0f)
+                    rememberGrounded -= deltaTime;
+            }
+            else
+            {
+                rememberGrounded = 0.1f;
+                isJumping = false;
+            }
+
+            if (input.IsKeyDown(Keys.A))
+                velocity.X = -vel;
+            else if (input.IsKeyDown(Keys.D))
+                velocity.X = vel;
+            else
+                velocity.X = 0.0f;
+
+            if (rememberGrounded > 0.0f && input.IsKeyDown(Keys.Space) && !isFloating)
+            {
+                velocity.Y = 1.0f * JUMP_FORCE;
+                isJumping = true;
+                playerAnimator.Jump();
+            }
+        }
+
+        private void doGravity(float deltaTime, KeyboardState input)
+        {
+            if (!isGrounded && !isFloating)
+            {
+                velocity.Y -= gravity * deltaTime;
+
+                if (velocity.Y < 0.0f)
+                    velocity.Y += gravity * (FALL_MULTIPLIER - 1) * deltaTime;
+                else if (velocity.Y > 0.0f && !input.IsKeyDown(Keys.Space))
+                    velocity.Y += gravity * (LOW_JUMP_MULTIPLIER - 1) * deltaTime;
+            }
+        }
+
+        private void doCollisions(float deltaTime)
+        {
+            if (hasColl[0] && velocity.Y > 0.0f)
+                velocity.Y = -gravity * deltaTime;
+
+            if (!isJumping && hasColl[2] && !isFloating)
+            {
+                position.Y = collisionPos.Y;
+                velocity.Y = 0.0f;
+            }
+
+            if (hasColl[1] && velocity.X > 0.0f)
+                velocity.X = 0.0f;
+            if (hasColl[3] && velocity.X < 0.0f)
+                velocity.X = 0.0f;
         }
     }
 }

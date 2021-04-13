@@ -9,75 +9,164 @@ using OpenTK.Windowing.Desktop;
 
 namespace GamJam2k21
 {
-    //Typ wyliczeniowy reprezentujacy stany gry
     public enum GameState
     {
+        menu,
         active,
         paused,
         end
     }
-    //Klasa okna gry
+
     public class Game : GameWindow
     {
-        //Aktualny stan gry
         public GameState state;
 
-        //WIDOK (Kamera):
         private Matrix4 projection;
         private Vector2 viewPos;
-        private float cameraFollowSpeed = 5.0f;
+        private readonly float cameraFollowSpeed = 5.0f;
 
-        //Pozycja myszy na ekranie
         private Vector2 mousePos;
-        //Pozycja myszy w swiecie
         private Vector2 mouseWorldPos;
 
-        //Sprite renderer do rysowania obiektow
         private SpriteRenderer spriteRenderer;
-        private SpriteRenderer text;
         private TextRenderer textRenderer;
 
-        //Gracz
         private Player player;
+        private Vector2 playerSpawnPos = (64.0f, 1.0f);
 
-        //Poziom gry
         private GameLevel level;
+        private readonly int LEVEL_WIDTH = 128;
+        private readonly int LEVEL_DEPTH = 1000;
 
-        //Interfejs
         private UI userInterface;
+        private bool displayEq = false;
 
-        //TEST::
-        private float scale = 1.0f;
-        private Vector2 screenSize = new Vector2(24.0f, 13.5f);
-
+        private float renderScale = 1.0f;
+        private readonly Vector2 screenSize = (24.0f, 13.5f);
         private bool isFullscreen = false;
 
-
-        //Konstruktor okna gry
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
         {
             state = GameState.active;
             WindowBorder = WindowBorder.Hidden;
         }
 
-        //Metoda inicjalizujaca
         protected override void OnLoad()
         {
-            //Ustawianie kolor tla
+            initScreenRender();
+            projection = Matrix4.CreateOrthographic(screenSize.X * renderScale, screenSize.Y * renderScale, -1.0f, 1.0f);
+
+            ResourceManager.GetInstance();
+            loadShaders();
+            initRenderers();
+            loadTextures();
+            loadBlocks();
+            loadPickaxes();
+
+            player = new Player(playerSpawnPos, (1.0f, 2.0f), ResourceManager.GetTexture("char"));
+            level = new GameLevel(LEVEL_WIDTH, LEVEL_DEPTH);
+            userInterface = new UI(spriteRenderer, textRenderer, player.PlayerStatistics, player, viewPos);
+            viewPos = playerSpawnPos;
+
+            //TUTAJ KOD
+
+            userInterface.InitUI();
+            base.OnLoad();
+        }
+
+        protected override void OnUpdateFrame(FrameEventArgs e)
+        {
+            CursorVisible = false;
+            float deltaTime = (float)e.Time;
+            if (!IsFocused)
+                return;
+            if (KeyboardState.IsKeyDown(Keys.Escape))
+                Close();
+
+            var mouseInput = MouseState;
+            var input = KeyboardState;
+            calculateMousePos(mouseInput);
+
+            player.blocks = level.currentBlocks;
+            player.UpdatePlayer(input, mouseInput, deltaTime, mouseWorldPos);
+            setPlayerFlip(player);
+
+            if (mouseInput.IsButtonDown(MouseButton.Button1))
+                dig();
+
+            updateView(deltaTime, input);
+
+            level.Update(player.playerCenter, deltaTime);
+
+            if (input.IsKeyPressed(Keys.F4))
+                switchFullscreen();
+
+            displayEq = input.IsKeyDown(Keys.E);
+
+            //TUTAJ KOD
+
+            base.OnUpdateFrame(e);
+        }
+
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            if (state == GameState.active)
+            {
+                spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (screenSize.X / 2.0f * renderScale, screenSize.Y / 2.0f * renderScale), (0.0f, 0.0f), (screenSize.X * renderScale, screenSize.Y * renderScale), 0.0f);
+
+                level.Draw(spriteRenderer, viewPos);
+                player.Draw(spriteRenderer, viewPos);
+
+                if (displayEq)
+                    userInterface.DrawEQ();
+                userInterface.DrawUI();
+
+                spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (screenSize.X / 2.0f * renderScale, screenSize.Y / 2.0f * renderScale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
+            }
+
+            //TUTAJ KOD
+
+            SwapBuffers();
+            base.OnRenderFrame(e);
+        }
+
+        protected override void OnUnload()
+        {
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindVertexArray(0);
+            GL.UseProgram(0);
+
+            ResourceManager.Clear();
+            base.OnUnload();
+        }
+
+        protected override void OnResize(ResizeEventArgs e)
+        {
+            GL.Viewport(0, 0, Size.X, Size.Y);
+            base.OnResize(e);
+        }
+
+        private void switchFullscreen()
+        {
+            isFullscreen = !isFullscreen;
+            WindowState = isFullscreen ? WindowState.Fullscreen : WindowState.Normal;
+            GL.Viewport(0, 0, Size.X, Size.Y);
+        }
+
+        private void initScreenRender()
+        {
             GL.ClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-            //Wlaczanie mieszania dla tekstur z alpha
             GL.Enable(EnableCap.Blend);
             GL.Disable(EnableCap.DepthTest);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             CenterWindow();
+        }
 
-            //Pozycja widoku ustawiona tak, by lewy dolny rog mial wspolrzedne (0,0)
-            viewPos = new Vector2(8.0f, 4.5f);
-            //Generuje projekcje ortograficzna 16/9
-            projection = Matrix4.CreateOrthographic(screenSize.X * scale, screenSize.Y * scale, -1.0f, 1.0f);
-            //Generowanie ResourcesManagera
-            ResourceManager.GetInstance();
-            //LADOWANIE SHADEROW
+        private void loadShaders()
+        {
             ResourceManager.LoadShader("Data/Resources/Shaders/spriteShader/spriteShader.vert", "Data/Resources/Shaders/spriteShader/spriteShader.frag", "sprite");
             ResourceManager.GetShader("sprite").Use();
             ResourceManager.GetShader("sprite").SetInt("texture0", 0);
@@ -89,16 +178,23 @@ namespace GamJam2k21
             ResourceManager.GetShader("particle").SetInt("texture0", 0);
             ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X, -viewPos.Y, 0.0f));
             ResourceManager.GetShader("particle").SetMatrix4("projection", projection);
+        }
 
+        private void initRenderers()
+        {
             spriteRenderer = new SpriteRenderer(ResourceManager.GetShader("sprite"));
-            text = new SpriteRenderer(ResourceManager.GetShader("sprite"), new Vector2i(16, 8));
-            textRenderer = new TextRenderer(text);
-            
-            //LADOWANIE TEKSTUR
+            textRenderer = new TextRenderer(new SpriteRenderer(ResourceManager.GetShader("sprite"), new Vector2i(16, 8)));
+        }
+
+        private void loadTextures()
+        {
             ResourceManager.LoadTexture("Data/Resources/Textures/dirt1.png", "dirt");
             ResourceManager.LoadTexture("Data/Resources/Textures/grass1.png", "grass");
             ResourceManager.LoadTexture("Data/Resources/Textures/stone1.png", "stone");
+
             ResourceManager.LoadTexture("Data/Resources/Textures/sky2.png", "sky");
+            ResourceManager.LoadTexture("Data/Resources/Textures/bgDirt01.png", "backgroundDirt");
+
             ResourceManager.LoadTexture("Data/Resources/Textures/hero1.png", "char");
             ResourceManager.LoadTexture("Data/Resources/Textures/cursor2.png", "cursor");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_idle.png", "charIdle1");
@@ -106,194 +202,87 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalk1");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalkBack1");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_arm1.png", "charArm1");
+
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe0.png", "pickaxe0");
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe1.png", "pickaxe1");
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe2.png", "pickaxe2");
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe3.png", "pickaxe3");
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe4.png", "pickaxe4");
             ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe5.png", "pickaxe5");
+
             ResourceManager.LoadTexture("Data/Resources/Textures/dest.png", "dest");
-            ResourceManager.LoadTexture("Data/Resources/Textures/bgDirt01.png", "backgroundDirt");
             ResourceManager.LoadTexture("Data/Resources/Textures/particle.png", "particle");
-            //LADOWANIE TYPOW BLOKOW
-            //ID 0 zarezerwowane dla powietrza
+        }
+
+        private void loadBlocks()
+        {
+            //ResourceManager.AddBlock(0, ResourceManager.GetTexture("air"), "Air", (1.0f, 1.0f, 1.0f), 0, 0);
             ResourceManager.AddBlock(1, ResourceManager.GetTexture("grass"), "Grass", (0.17f, 0.06f, 0.01f), 0, 100.0f);
             ResourceManager.AddBlock(2, ResourceManager.GetTexture("dirt"), "Dirt", (0.17f, 0.06f, 0.01f), 0, 100.0f);
             ResourceManager.AddBlock(3, ResourceManager.GetTexture("stone"), "Stone", (0.1f, 0.1f, 0.1f), 1, 150.0f);
+        }
 
-            //LADOWANIE KILOFOW
+        private void loadPickaxes()
+        {
             ResourceManager.AddPickaxe(0, ResourceManager.GetTexture("pickaxe0"), "Fists", 500.0f, 0, 10.0f);
             ResourceManager.AddPickaxe(1, ResourceManager.GetTexture("pickaxe1"), "Stone Pickaxe", 500.0f, 1, 15.0f);
             ResourceManager.AddPickaxe(2, ResourceManager.GetTexture("pickaxe2"), "Copper Pickaxe", 600.0f, 2, 25.0f);
             ResourceManager.AddPickaxe(3, ResourceManager.GetTexture("pickaxe3"), "Iron Pickaxe", 700.0f, 3, 40.0f);
             ResourceManager.AddPickaxe(4, ResourceManager.GetTexture("pickaxe4"), "GoldenPickaxe", 800.0f, 4, 60.0f);
             ResourceManager.AddPickaxe(5, ResourceManager.GetTexture("pickaxe5"), "Diamond Pickaxe", 900.0f, 5, 85.0f);
-
-            //Gracz
-            player = new Player((7.5f, 1.0f), (1.0f, 2.0f), ResourceManager.GetTexture("char"));
-            //Poziom
-            level = new GameLevel(128, 1000);
-            userInterface = new UI(spriteRenderer, textRenderer, player.PlayerStatistics, player, viewPos);
-            //TUTAJ KOD
-            userInterface.InitUI();
-            base.OnLoad();
         }
-        //Obsluga logiki w kazdej klatce, dt - deltaTime (czas pomiedzy klatkami)
-        protected override void OnUpdateFrame(FrameEventArgs e)
+
+        private void calculateMousePos(MouseState mouseInput)
         {
-            //Wylaczenie widoku kursora, mamy wlasny
-            CursorVisible = false;
-            //Delta Czas
-            float deltaTime = (float)e.Time;
-            //Nie obsluguje logiki jesli okno dziala w tle
-            if (!IsFocused)
-                return;
-            //TEMP:: [ESC] zamyka okno
-            if (KeyboardState.IsKeyDown(Keys.Escape))
-                Close();
-
-            //Zmienne inputowe
-            var mouseInput = MouseState;
-            var input = KeyboardState;
-
-            //Obliczanie pozycji myszy
-            float mouseScale = (screenSize.X * scale) / Size.X;
+            float mouseScale = (screenSize.X * renderScale) / Size.X;
             mousePos.X = mouseInput.Position.X * mouseScale;
             mousePos.Y = -(mouseInput.Position.Y - Size.Y) * mouseScale;
-            mouseWorldPos = mousePos + viewPos - (screenSize.X * scale / 2.0f, screenSize.Y * scale / 2.0f);
+            mouseWorldPos = mousePos + viewPos - (screenSize.X * renderScale / 2.0f, screenSize.Y * renderScale / 2.0f);
+        }
 
-            //Kolizja TESTOWANA U GRACZA
-            //Przekazuje bloki do gracza dla kolizji
-            player.SetBlocks(ref level.currentBlocks);
-            //Aktualizacja logiki gracza
-            player.UpdatePlayer(input, mouseInput, deltaTime,mouseWorldPos);
+        private void setPlayerFlip(Player player)
+        {
             if (player.IsDigging())
-            {
-                if (mouseWorldPos.X < player.playerCenter.X)
-                    player.SetFlip(true);
-                else
-                    player.SetFlip(false);
-            }
+                player.SetFlip(mouseWorldPos.X < player.playerCenter.X);
+        }
 
-            //Kopanie
-            if (mouseInput.IsButtonDown(MouseButton.Button1))
+        private void dig()
+        {
+            double mPX = Math.Floor(mouseWorldPos.X);
+            double mPY = Math.Floor(mouseWorldPos.Y);
+            var blockName = level.getBlockName((int)mPX, -(int)mPY);
+            int dugBlock = level.getBlock((int)mPX, -(int)mPY);
+            if (level.DamageBlock((int)mPX, -(int)mPY, player))
             {
-                double mPX = Math.Floor(mouseWorldPos.X);
-                double mPY = Math.Floor(mouseWorldPos.Y);
-                var blockName = level.getBlockName((int)mPX, -(int)mPY);
-                int dugBlock = level.getBlock((int)mPX, -(int)mPY);
-                if (level.DamageBlock((int)mPX, -(int)mPY, player))
-                {
-                    player.PlayerStatistics.SetBlocksDestroyed(blockName);
-                    player.eq.addToInventory(dugBlock);
-                    //Console.WriteLine("game " + dugBlock);
-                }
+                player.PlayerStatistics.SetBlocksDestroyed(blockName);
+                player.eq.addToInventory(dugBlock);
+                //Console.WriteLine("game " + dugBlock);
             }
+        }
 
-            //Plynne podazanie kamery za graczem
+        private void updateView(float deltaTime, KeyboardState keyboard)
+        {
             float desiredViewX = MathHelper.Lerp(viewPos.X, player.position.X + player.size.X / 2.0f, deltaTime * cameraFollowSpeed);
             float desiredViewY = MathHelper.Lerp(viewPos.Y, player.position.Y + player.size.Y * 0.7f, deltaTime * cameraFollowSpeed);
-            //viewPos.X = desiredViewX;
             viewPos.Y = desiredViewY;
 
-            //TEMP:: Ruch kamery przez przypadek dziala jak rozgladanie (feature?)
-            if (KeyboardState.IsKeyDown(Keys.S))
+            if (keyboard.IsKeyDown(Keys.S))
             {
                 viewPos.Y -= deltaTime * 10;
             }
-            else if (KeyboardState.IsKeyDown(Keys.W))
+            if (keyboard.IsKeyDown(Keys.W))
             {
                 viewPos.Y += deltaTime * 10;
             }
-            if (KeyboardState.IsKeyDown(Keys.A))
+            if (keyboard.IsKeyDown(Keys.A))
             {
                 desiredViewX -= deltaTime * 10;
             }
-            else if (KeyboardState.IsKeyDown(Keys.D))
+            if (keyboard.IsKeyDown(Keys.D))
             {
                 desiredViewX += deltaTime * 10;
             }
             viewPos.X = Math.Clamp(desiredViewX, 0.0f + screenSize.X / 2.0f, 128.0f - screenSize.X / 2.0f);
-
-            //Aktualizacja poziomu
-            level.Update(player.playerCenter, deltaTime);
-
-
-            if (input.IsKeyPressed(Keys.F4))
-            {
-                SwitchFullscreen();
-            }
-
-            
-
-            //TUTAJ KOD
-
-            base.OnUpdateFrame(e);
-        }
-        //Obsluga rysowania klatek, kolejnosc ma znaczenie
-        protected override void OnRenderFrame(FrameEventArgs e)
-        {
-            //Czyszczenie buffera
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-
-            //TEST
-            //Rysowanie tla
-            spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (screenSize.X / 2.0f * scale, screenSize.Y / 2.0f * scale), (0.0f, 0.0f), (screenSize.X * scale, screenSize.Y * scale), 0.0f);
-
-            //Rysowanie poziomu
-            level.Draw(spriteRenderer, viewPos);
-
-            //Rysowanie gracza
-            player.Draw(spriteRenderer, viewPos);
-
-            var input = KeyboardState;
-            if (input.IsKeyDown(Keys.E))
-            {
-                userInterface.DrawEQ();
-            }
-
-            //interfejs
-            userInterface.DrawUI();
-            //Rysowanie kursora
-            spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (screenSize.X / 2.0f * scale, screenSize.Y / 2.0f * scale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
-            
-            //TUTAJ KOD
-            SwapBuffers();
-            base.OnRenderFrame(e);
-        }
-        //Metoda finalizujaca dzialanie okna
-        protected override void OnUnload()
-        {
-            //Czyszczenie pamieci itp.
-            //Czyszczenie bufferow
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindVertexArray(0);
-            GL.UseProgram(0);
-            //Czyszczenie zasobow
-            ResourceManager.Clear();
-            base.OnUnload();
-        }
-        //Obsluga zmiany rozmiaru okna
-        protected override void OnResize(ResizeEventArgs e)
-        {
-            GL.Viewport(0, 0, Size.X, Size.Y);
-            base.OnResize(e);
-        }
-
-        private void SwitchFullscreen()
-        {
-            if (isFullscreen)
-            {
-                isFullscreen = false;
-                WindowState = WindowState.Normal;
-            }
-            else
-            {
-                isFullscreen = true;
-                WindowState = WindowState.Fullscreen;
-            }
-            GL.Viewport(0, 0, Size.X, Size.Y);
         }
     }
 }

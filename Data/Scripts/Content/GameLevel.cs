@@ -62,7 +62,6 @@ namespace GamJam2k21
                     SpawnChunk(playerChunk.X - 1, playerChunk.Y);
                     SpawnChunk(playerChunk.X - 1, playerChunk.Y - 1);
                     SpawnChunk(playerChunk.X - 1, playerChunk.Y + 1);
-
                 }
                 else
                 {
@@ -73,7 +72,6 @@ namespace GamJam2k21
                     SpawnChunk(playerChunk.X + 1, playerChunk.Y);
                     SpawnChunk(playerChunk.X + 1, playerChunk.Y - 1);
                     SpawnChunk(playerChunk.X + 1, playerChunk.Y + 1);
-
                 }
             }
             else if (playerChunk.Y != lastPlayerChunk.Y)
@@ -87,7 +85,6 @@ namespace GamJam2k21
                     SpawnChunk(playerChunk.X, playerChunk.Y - 1);
                     SpawnChunk(playerChunk.X - 1, playerChunk.Y - 1);
                     SpawnChunk(playerChunk.X + 1, playerChunk.Y - 1);
-
                 }
                 else
                 {
@@ -98,7 +95,6 @@ namespace GamJam2k21
                     SpawnChunk(playerChunk.X, playerChunk.Y + 1);
                     SpawnChunk(playerChunk.X - 1, playerChunk.Y + 1);
                     SpawnChunk(playerChunk.X + 1, playerChunk.Y + 1);
-
                 }
             }
 
@@ -282,11 +278,10 @@ namespace GamJam2k21
                 }
             }
 
-            SpawnChunk(0, 0);
-            SpawnChunk(1, 0);
-            SpawnChunk(0, 1);
-            SpawnChunk(1, 1);
-
+            SpawnChunk(4, 0);
+            SpawnChunk(3, 0);
+            SpawnChunk(4, 1);
+            SpawnChunk(3, 1);
         }
 
         private float[,] GenerateNoiseMap(int width, int height, int octaves, float freq)

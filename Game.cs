@@ -45,6 +45,8 @@ namespace GamJam2k21
         private readonly Vector2 screenSize = (24.0f, 13.5f);
         private bool isFullscreen = false;
 
+        public DateTime time = new DateTime(1, 1, 1, 8, 0, 0);
+
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
         {
             state = GameState.active;
@@ -62,7 +64,7 @@ namespace GamJam2k21
             loadTextures();
             loadBlocks();
             loadPickaxes();
-
+         
             player = new Player(playerSpawnPos, (1.0f, 2.0f), ResourceManager.GetTexture("char"));
             level = new GameLevel(LEVEL_WIDTH, LEVEL_DEPTH);
             userInterface = new UI(spriteRenderer, textRenderer, player.PlayerStatistics, player, viewPos);
@@ -77,6 +79,7 @@ namespace GamJam2k21
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             CursorVisible = false;
+            updateDayCycle();
             float deltaTime = (float)e.Time;
             if (!IsFocused)
                 return;
@@ -111,10 +114,11 @@ namespace GamJam2k21
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
-
+            var color = setColorByTime();
+            Console.WriteLine(color.X + " " + color.Y + " " + color.Z);
             if (state == GameState.active)
             {
-                spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (screenSize.X / 2.0f * renderScale, screenSize.Y / 2.0f * renderScale), (0.0f, 0.0f), (screenSize.X * renderScale, screenSize.Y * renderScale), 0.0f);
+                spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (screenSize.X / 2.0f * renderScale, screenSize.Y / 2.0f * renderScale), (0.0f, 0.0f), (screenSize.X * renderScale, screenSize.Y * renderScale), 0.0f, color);
 
                 level.Draw(spriteRenderer, viewPos);
                 player.Draw(spriteRenderer, viewPos);
@@ -123,6 +127,8 @@ namespace GamJam2k21
                     userInterface.DrawEQ();
                 userInterface.DrawUI();
 
+                //Console.WriteLine(time);
+                
                 spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (screenSize.X / 2.0f * renderScale, screenSize.Y / 2.0f * renderScale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
             }
 
@@ -300,5 +306,33 @@ namespace GamJam2k21
             }
             viewPos.X = Math.Clamp(desiredViewX, 0.0f + screenSize.X / 2.0f, 128.0f - screenSize.X / 2.0f);
         }
+
+        private void updateDayCycle()
+        {
+            if (time.Hour==18)
+            {
+                time = time.AddDays(1);
+                time = time.AddHours(-10);
+            }
+            else if(time.Hour<18)
+            {
+                //Console.WriteLine(time);
+                time = time.AddSeconds(30);
+            }
+
+        }
+
+        private Vector3 setColorByTime()
+        {
+            double red, green, blue;
+            Vector3 color; 
+            red = Math.Sin((float)(time.Hour * 60 + time.Minute) / 1000);
+            green = Math.Cos((float)(time.Hour * 60 + time.Minute) / 1000);
+            blue = Math.Cos((float)(time.Hour * 60 + time.Minute) / 1000);
+            color = new Vector3((float)red, (float)green, (float)blue);
+
+            return color;
+        }
+
     }
 }

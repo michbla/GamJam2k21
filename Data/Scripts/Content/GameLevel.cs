@@ -13,11 +13,8 @@ namespace GamJam2k21
     /// </summary>
     public class GameLevel
     {
-        //Dane przechowujace rodzaj bloku w danej pozycji
-        //na dwuwymiarowej siatce
         public int[,] mapData;
 
-        //Rozmiar siatki
         private int width;
         private int height;
 
@@ -27,13 +24,11 @@ namespace GamJam2k21
         private Vector2i playerChunk;
         private Vector2i lastPlayerChunk;
 
-
         private Vector2 damagedBlockPosition = (0.0f, 0.0f);
         private Vector3 damagedBlockColor = (1.0f, 1.0f, 1.0f);
         private ParticleEmmiter damageParticles;
         private ParticleEmmiter destructionParticles;
 
-        //Kostruktor poziomu
         public GameLevel(int w, int h)
         {
             width = w;
@@ -41,9 +36,7 @@ namespace GamJam2k21
             mapData = new int[width, height];
             for (var i = 0; i < height; i++)
                 for (var j = 0; j < width; j++)
-                {
                     mapData[j, i] = 0;
-                }
             damageParticles = new ParticleEmmiter(ResourceManager.GetShader("particle"), ResourceManager.GetTexture("particle"), 128);
             destructionParticles = new ParticleEmmiter(ResourceManager.GetShader("particle"), ResourceManager.GetTexture("particle"), 128);
             Init();
@@ -54,48 +47,32 @@ namespace GamJam2k21
             if (playerChunk.X != lastPlayerChunk.X)
             {
                 if (playerChunk.X < lastPlayerChunk.X)
-                {
-                    DespawnChunk(playerChunk.X + 2, playerChunk.Y);
-                    DespawnChunk(playerChunk.X + 2, playerChunk.Y - 1);
-                    DespawnChunk(playerChunk.X + 2, playerChunk.Y + 1);
-
-                    SpawnChunk(playerChunk.X - 1, playerChunk.Y);
-                    SpawnChunk(playerChunk.X - 1, playerChunk.Y - 1);
-                    SpawnChunk(playerChunk.X - 1, playerChunk.Y + 1);
-                }
+                    for(int i = -1; i < 2; i++)
+                    {
+                        DespawnChunk(playerChunk.X + 2, playerChunk.Y + i);
+                        SpawnChunk(playerChunk.X - 1, playerChunk.Y + i);
+                    }
                 else
-                {
-                    DespawnChunk(playerChunk.X - 2, playerChunk.Y);
-                    DespawnChunk(playerChunk.X - 2, playerChunk.Y - 1);
-                    DespawnChunk(playerChunk.X - 2, playerChunk.Y + 1);
-
-                    SpawnChunk(playerChunk.X + 1, playerChunk.Y);
-                    SpawnChunk(playerChunk.X + 1, playerChunk.Y - 1);
-                    SpawnChunk(playerChunk.X + 1, playerChunk.Y + 1);
-                }
+                    for (int i = -1; i < 2; i++)
+                    {
+                        DespawnChunk(playerChunk.X - 2, playerChunk.Y + i);
+                        SpawnChunk(playerChunk.X + 1, playerChunk.Y + i);
+                    }
             }
             else if (playerChunk.Y != lastPlayerChunk.Y)
             {
                 if (playerChunk.Y < lastPlayerChunk.Y)
-                {
-                    DespawnChunk(playerChunk.X, playerChunk.Y + 2);
-                    DespawnChunk(playerChunk.X - 1, playerChunk.Y + 2);
-                    DespawnChunk(playerChunk.X + 1, playerChunk.Y + 2);
-
-                    SpawnChunk(playerChunk.X, playerChunk.Y - 1);
-                    SpawnChunk(playerChunk.X - 1, playerChunk.Y - 1);
-                    SpawnChunk(playerChunk.X + 1, playerChunk.Y - 1);
-                }
+                    for (int i = -1; i < 2; i++)
+                    {
+                        DespawnChunk(playerChunk.X + i, playerChunk.Y + 2);
+                        SpawnChunk(playerChunk.X + i, playerChunk.Y - 1);
+                    }
                 else
-                {
-                    DespawnChunk(playerChunk.X, playerChunk.Y - 2);
-                    DespawnChunk(playerChunk.X - 1, playerChunk.Y - 2);
-                    DespawnChunk(playerChunk.X + 1, playerChunk.Y - 2);
-
-                    SpawnChunk(playerChunk.X, playerChunk.Y + 1);
-                    SpawnChunk(playerChunk.X - 1, playerChunk.Y + 1);
-                    SpawnChunk(playerChunk.X + 1, playerChunk.Y + 1);
-                }
+                    for (int i = -1; i < 2; i++)
+                    {
+                        DespawnChunk(playerChunk.X + i, playerChunk.Y - 2);
+                        SpawnChunk(playerChunk.X + i, playerChunk.Y + 1);
+                    }
             }
 
             for (var i = 0; i < currentBlocks.Count; i++)
@@ -155,7 +132,7 @@ namespace GamJam2k21
             }
         }
 
-        public string getBlockName(int x, int y)
+        public Block getBlock(int x, int y)
         {
             if (x < 0 || y < 0 || x > width || y > height)
                 return null;
@@ -163,28 +140,9 @@ namespace GamJam2k21
             {
                 var block = currentBlocks[i];
                 if (block.distanceToPlayer <= 2.0f && block.position.X == x && block.position.Y == -y)
-                {
-                    //Console.WriteLine(block.name);
-                    return block.name;
-                }
+                    return block;
             }
             return null;
-        }
-
-        public int getBlock(int x, int y)
-        {
-            if (x < 0 || y < 0 || x > width || y > height)
-                return -1;
-            for (var i = 0; i < currentBlocks.Count; i++)
-            {
-                var block = currentBlocks[i];
-                if (block.distanceToPlayer <= 2.0f && block.position.X == x && block.position.Y == -y)
-                {
-                    var b = ResourceManager.GetBlockID(block);
-                    return b;
-                }
-            }
-            return -1;
         }
 
         public bool DamageBlock(int x, int y, Player player)
@@ -223,13 +181,9 @@ namespace GamJam2k21
         public void Draw(SpriteRenderer rend, Vector2 viewPos)
         {
             foreach (var bg in backgrounds)
-            {
                 bg.Draw(rend, viewPos);
-            }
             for (var i = 0; i < currentBlocks.Count; i++)
-            {
                 currentBlocks[i].Draw(rend, viewPos);
-            }
             damageParticles.Draw(viewPos);
             destructionParticles.Draw(viewPos);
         }
@@ -241,18 +195,14 @@ namespace GamJam2k21
             {
                 var i = 0;
                 while (data[j, i] < 0.3f && i < height)
-                {
                     i++;
-                }
                 data[j, i] = 2.0f;
 
                 Random rand = new Random();
                 int l = rand.Next(4, 7);
                 for (var k = 1; k < l; k++)
-                {
                     if (data[j, i + k] > 0.3f)
                         data[j, i + k] = 1.0f;
-                }
             }
 
             for (var i = 0; i < height; i++)

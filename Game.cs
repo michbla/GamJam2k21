@@ -47,6 +47,9 @@ namespace GamJam2k21
 
         public DateTime time = new DateTime(1, 1, 1, 8, 0, 0);
 
+        private GameObject blockSelection;
+        private bool showSelection = false;
+
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) : base(gWS, nWS)
         {
             state = GameState.active;
@@ -65,17 +68,19 @@ namespace GamJam2k21
             loadBlocks();
             loadPickaxes();
          
-            player = new Player(playerSpawnPos, (1.0f, 2.0f), ResourceManager.GetTexture("char"));
+            player = new Player(playerSpawnPos, (1.0f, 2.0f), ResourceManager.GetTexture("empty"));
             level = new GameLevel(LEVEL_WIDTH, LEVEL_DEPTH);
             userInterface = new UI(spriteRenderer, textRenderer, player.PlayerStatistics, player, viewPos);
             viewPos = playerSpawnPos;
+            blockSelection = new GameObject((0, 0), (1.0f, 1.0f), ResourceManager.GetTexture("blockSelection"));
 
             //TUTAJ KOD
 
             userInterface.InitUI();
             base.OnLoad();
         }
-
+        private float cursorScale = 0.0f;
+        private float cursorSize = 1.0f;
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             CursorVisible = false;
@@ -89,26 +94,31 @@ namespace GamJam2k21
             var input = KeyboardState;
             calculateMousePos(mouseInput);
 
-            player.blocks = level.currentBlocks;
-            player.UpdatePlayer(input, mouseInput, deltaTime, mouseWorldPos);
-            setPlayerFlip(player);
+            if (state == GameState.active)
+            {
+                player.blocks = level.currentBlocks;
+                player.UpdatePlayer(input, mouseInput, deltaTime, mouseWorldPos);
+                setPlayerFlip(player);
 
-            if (mouseInput.IsButtonDown(MouseButton.Button1))
-                dig();
+                dig(mouseInput.IsButtonDown(MouseButton.Button1));
 
-            updateView(deltaTime, input);
+                updateView(deltaTime, input);
 
-            level.Update(player.playerCenter, deltaTime);
+                level.Update(player.playerCenter, deltaTime);
 
-            if (input.IsKeyPressed(Keys.F4))
-                switchFullscreen();
+                if (input.IsKeyPressed(Keys.F4))
+                    switchFullscreen();
 
-            displayEq = input.IsKeyDown(Keys.E);
+                displayEq = input.IsKeyDown(Keys.E);
 
-            updateDayCycle(deltaTime);
+                updateDayCycle(deltaTime);
 
-            //TUTAJ KOD
+                cursorScale += 3 * deltaTime;
+                cursorSize = 1.0f + (float)Math.Sin(cursorScale) / 50.0f;
 
+                //TUTAJ KOD
+
+            }
             base.OnUpdateFrame(e);
         }
 
@@ -125,6 +135,8 @@ namespace GamJam2k21
                                0.0f, color);
 
                 level.Draw(spriteRenderer, viewPos);
+                if(showSelection)
+                    blockSelection.Draw(spriteRenderer, viewPos);
                 player.Draw(spriteRenderer, viewPos);
 
                 if (displayEq)
@@ -132,10 +144,8 @@ namespace GamJam2k21
                 userInterface.DrawUI();
 
                 //Console.WriteLine(time);
-                
-                spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), 
-                                (SCREEN_SIZE.X / 2.0f * renderScale, SCREEN_SIZE.Y / 2.0f * renderScale), 
-                                mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
+
+                drawCursor();
             }
 
             //TUTAJ KOD
@@ -207,13 +217,10 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/sky2.png", "sky");
             ResourceManager.LoadTexture("Data/Resources/Textures/bgDirt01.png", "backgroundDirt");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero1.png", "char");
             ResourceManager.LoadTexture("Data/Resources/Textures/cursor2.png", "cursor");
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero_idle.png", "charIdle1");
-            ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap_bold.png", "textBitmap"); //xd
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalk1");
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalkBack1");
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero_arm1.png", "charArm1");
+            ResourceManager.LoadTexture("Data/Resources/Textures/cursor_pick.png", "cursorPick");
+            ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap_bold.png", "textBitmap");
+            ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap_bold_white.png", "textBitmapWhite");
 
             ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroTorso_idle.png", "heroTorso_idle");
 
@@ -240,13 +247,13 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/dest.png", "dest");
             ResourceManager.LoadTexture("Data/Resources/Textures/particle.png", "particle");
             ResourceManager.LoadTexture("Data/Resources/Textures/empty.png", "empty");
+            ResourceManager.LoadTexture("Data/Resources/Textures/blockSelection.png", "blockSelection");
 
             ResourceManager.LoadTexture("Data/Resources/Textures/Ores/coalOre.png", "coalOre");
         }
 
         private void loadBlocks()
         {
-            //ResourceManager.AddBlock(0, ResourceManager.GetTexture("empty"), "Air", (1.0f, 1.0f, 1.0f), 0, 0);
             ResourceManager.AddBlock(1, ResourceManager.GetTexture("grass"), "Grass", (0.17f, 0.06f, 0.01f), 0, 100.0f);
             ResourceManager.AddBlock(2, ResourceManager.GetTexture("dirt"), "Dirt", (0.17f, 0.06f, 0.01f), 0, 100.0f);
             ResourceManager.AddBlock(3, ResourceManager.GetTexture("stone"), "Stone", (0.1f, 0.1f, 0.1f), 1, 150.0f);
@@ -276,13 +283,19 @@ namespace GamJam2k21
                 player.SetFlip(mouseWorldPos.X < player.playerCenter.X);
         }
 
-        private void dig()
+        private void dig(bool isMouseDown)
         {
             double mPX = Math.Floor(mouseWorldPos.X);
             double mPY = Math.Floor(mouseWorldPos.Y);
-            var blockName = level.getBlockName((int)mPX, -(int)mPY);
-            int dugBlock = level.getBlock((int)mPX, -(int)mPY);
-            if (level.DamageBlock((int)mPX, -(int)mPY, player))
+            Block block = level.getBlock((int)mPX, -(int)mPY);
+            showSelection = false;
+            if (block == null || block.hardness > player.GetHardness())
+                return;
+            var blockName = block.name;
+            int dugBlock = ResourceManager.GetBlockID(block);
+            blockSelection.position = ((int)mPX, (int)mPY);
+            showSelection = true;
+            if (isMouseDown && level.DamageBlock((int)mPX, -(int)mPY, player))
             {
                 player.PlayerStatistics.SetBlocksDestroyed(blockName);
                 player.eq.addToInventory(dugBlock);
@@ -334,6 +347,21 @@ namespace GamJam2k21
             color = new Vector3((float)red, (float)green, (float)blue);
 
             return color;
+        }
+
+        private void drawCursor()
+        {
+            float cursorRotation = 0.0f;
+            String cursorTexture = "cursor";
+            if (showSelection)
+            {
+                cursorTexture = "cursorPick";
+                cursorRotation = 0.0f + (float)Math.Sin(cursorScale) * 5.0f;
+            }
+
+            spriteRenderer.DrawSprite(ResourceManager.GetTexture(cursorTexture),
+                            (SCREEN_SIZE.X / 2.0f * renderScale, SCREEN_SIZE.Y / 2.0f * renderScale),
+                            mousePos - (0.0f, 1.0f), (cursorSize, cursorSize), cursorRotation);
         }
 
     }

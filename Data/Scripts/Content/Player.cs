@@ -86,29 +86,17 @@ namespace GamJam2k21
             isFloating = input.IsKeyDown(Keys.K);
 
             if (input.IsKeyDown(Keys.D0))
-            {
                 SetPickaxe(0);
-            }
-            else if (input.IsKeyDown(Keys.D1))
-            {
+            if (input.IsKeyDown(Keys.D1))
                 SetPickaxe(1);
-            }
-            else if (input.IsKeyDown(Keys.D2))
-            {
+            if (input.IsKeyDown(Keys.D2))
                 SetPickaxe(2);
-            }
-            else if (input.IsKeyDown(Keys.D3))
-            {
+            if (input.IsKeyDown(Keys.D3))
                 SetPickaxe(3);
-            }
-            else if (input.IsKeyDown(Keys.D4))
-            {
+            if (input.IsKeyDown(Keys.D4))
                 SetPickaxe(4);
-            }
-            else if (input.IsKeyDown(Keys.D5))
-            {
+            if (input.IsKeyDown(Keys.D5))
                 SetPickaxe(5);
-            }
             //-------------------------------------------------------------
 
             ResetBounds();

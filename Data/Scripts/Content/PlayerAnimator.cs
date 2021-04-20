@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using OpenTK.Mathematics;
-using System.Diagnostics;
 
 namespace GamJam2k21
 {
     public class PlayerAnimator : Animator
     {
-        public GameObject frontArm = new GameObject((0.0f, 0.0f), (2.0f, 2.0f), ResourceManager.GetTexture("charArm1"));
-
+        public GameObject frontArm = new GameObject((0.0f, 0.0f), (2.0f, 2.0f), ResourceManager.GetTexture("empty"));
         public GameObject backArm = new GameObject((0.0f, 0.0f), (1.8f, 1.8f), ResourceManager.GetTexture("empty"));
         public GameObject head = new GameObject((0.0f, 0.0f), (1.0f, 1.0f), ResourceManager.GetTexture("empty"));
         public GameObject torso = new GameObject((0.0f, 0.0f), (2.0f, 2.0f), ResourceManager.GetTexture("empty"));
@@ -20,12 +17,11 @@ namespace GamJam2k21
         private Animator torsoAnim;
         private Animator legsAnim;
 
-
         public GameObject pickaxe = new GameObject((0.0f, 0.0f), (4.0f, 4.0f), ResourceManager.GetTexture("pickaxe1"));
         public GameObject backPickaxe = new GameObject((0.0f, 0.0f), (4.0f, 4.0f), ResourceManager.GetTexture("pickaxe1"));
 
-        private readonly Vector2 armOffsetR = (-0.7f, 0.35f);
-        private readonly Vector2 armOffsetL = (1.7f, 0.35f);
+        private readonly Vector2 ARM_OFFSET_R = (-0.7f, 0.35f);
+        private readonly Vector2 ARM_OFFSET_L = (1.7f, 0.35f);
         public float armSpeed = 0.0f;
 
         public bool isDigging = false;
@@ -45,10 +41,6 @@ namespace GamJam2k21
 
         public PlayerAnimator(GameObject p, Shader sha, Vector2i size, float rate) : base(p, sha, size, rate)
         {
-            AddAnimation("idle", ResourceManager.GetTexture("charIdle1"), 16);
-            AddAnimation("walk", ResourceManager.GetTexture("charWalk1"), 8);
-            AddAnimation("walkBackwards", ResourceManager.GetTexture("charWalkBack1"), 8);
-
             walkDust = new ParticleEmmiter(ResourceManager.GetShader("particle"), ResourceManager.GetTexture("particle"), 2);
             jumpParticles = new ParticleEmmiter(ResourceManager.GetShader("particle"), ResourceManager.GetTexture("particle"), 4);
 
@@ -81,8 +73,6 @@ namespace GamJam2k21
         }
         public void DrawPlayerAnimator(Vector2 viewPos)
         {
-            //base.Draw(currentState, viewPos);
-
             backArmAnim.Draw(armState, viewPos);
             legsAnim.Draw(currentState, viewPos);
             torsoAnim.Draw("idle", viewPos);
@@ -152,7 +142,6 @@ namespace GamJam2k21
             backArmAnim.Update(armState, deltaTime, 1.2f);
             frontArmAnim.Update(armState, deltaTime, 1.2f);
 
-            base.Update(currentState, deltaTime);
             updateArm(deltaTime);
             walkDust.Update(deltaTime);
             jumpParticles.Update(deltaTime);
@@ -178,7 +167,7 @@ namespace GamJam2k21
         {
             diffAngleHead = angle;
         }
-        //Update reki
+        
         private readonly float INIT_PICK_ROT = 60.0f;
         private float pickRot = 60.0f;
         private void updateArm(float deltaTime)
@@ -193,7 +182,7 @@ namespace GamJam2k21
                 backPickaxe.rotation = -40.0f;
 
                 frontArm.size.X = -2.0f;
-                frontArm.position = parent.position + armOffsetL;
+                frontArm.position = parent.position + ARM_OFFSET_L;
 
                 pickaxe.size.X = -4.0f;
                 pickaxe.position = frontArm.position + (1.0f, -1.0f);
@@ -209,7 +198,7 @@ namespace GamJam2k21
                 backPickaxe.rotation = -50.0f;
 
                 frontArm.size.X = 2.0f;
-                frontArm.position = parent.position + armOffsetR;
+                frontArm.position = parent.position + ARM_OFFSET_R;
 
                 pickaxe.size.X = 4.0f;
                 pickaxe.position = frontArm.position + (-1.0f, -1.0f);

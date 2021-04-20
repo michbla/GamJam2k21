@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
 
@@ -20,7 +19,6 @@ namespace GamJam2k21
             color = new Vector4(1.0f);
             life = 0.0f;
         }
-
     }
 
     public class ParticleEmmiter
@@ -36,10 +34,8 @@ namespace GamJam2k21
         public void SpawnParticles(Vector2 pos, int newParticles, Vector2 offset, Vector3 color, Vector2 vel, Vector2 velStr, bool Y, bool X, bool randPos)
         {
             for (var i = 0; i < newParticles; i++)
-            {
                 if (FirstUnusedParticle() != -1)
                     RespawnParticle(particles[i], pos, offset, color, vel, velStr, Y, X, randPos);
-            }
         }
 
         public void Update(float dt)
@@ -59,7 +55,6 @@ namespace GamJam2k21
         {
             shader.Use();
             foreach (var particle in particles)
-            {
                 if (particle.life > 0.0f)
                 {
                     shader.SetVector2("offset", particle.position);
@@ -70,8 +65,8 @@ namespace GamJam2k21
                     GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
                     GL.BindVertexArray(0);
                 }
-            }
         }
+
         private List<Particle> particles;
         private int amount;
         private Shader shader;
@@ -114,25 +109,22 @@ namespace GamJam2k21
         private int FirstUnusedParticle()
         {
             for (var i = lastUsedParticle; i < amount; i++)
-            {
                 if (particles[i].life <= 0.0f)
                 {
                     lastUsedParticle = i;
                     return i;
                 }
-            }
             for (var i = 0; i < lastUsedParticle; i++)
-            {
                 if (particles[i].life <= 0.0f)
                 {
                     lastUsedParticle = i;
                     return i;
                 }
-            }
             lastUsedParticle = 0;
             return -1;
         }
-        private void RespawnParticle(Particle particle, Vector2 pos, Vector2 offset, Vector3 color, Vector2 vel, Vector2 velStr, bool Y, bool X, bool randPos)
+        private void RespawnParticle(Particle particle, Vector2 pos, Vector2 offset, Vector3 color, 
+                                    Vector2 vel, Vector2 velStr, bool Y, bool X, bool randPos)
         {
             var random = new Random();
             float randX = ((random.Next() % 100) - 50) / 150.0f;

@@ -14,14 +14,14 @@ namespace GamJam2k21
 
         public bool isFlipped = false;
         private float timeSum = 0.0f;
-        private float frameRate;
+        private readonly float FRAME_RATE;
 
         public Animator(GameObject p, Shader sha, Vector2i size, float rate)
         {
             parent = p;
             sheetSize = size;
             renderer = new SpriteRenderer(sha, sheetSize);
-            frameRate = rate;
+            FRAME_RATE = rate;
 
             animations = new Dictionary<string, Animation>();
         }
@@ -29,7 +29,7 @@ namespace GamJam2k21
         public virtual void Update(string state, float deltaTime, float animSpeed = 1.0f)
         {
             timeSum += deltaTime * animSpeed;
-            if (timeSum >= 1.0f / frameRate)
+            if (timeSum >= 1.0f / FRAME_RATE)
             {
                 animations[state].NextFrame();
                 timeSum = 0.0f;

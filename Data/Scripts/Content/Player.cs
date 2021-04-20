@@ -25,7 +25,7 @@ namespace GamJam2k21
         private float rememberGrounded = 0.0f;
         private bool isJumping = false;
         private bool isFloating = false;
-        private readonly float gravity = 30.0f;
+        private readonly float GRAVITY = 30.0f;
 
         private int lowestPosition = 1;
         public PlayerStatistics PlayerStatistics;
@@ -83,14 +83,7 @@ namespace GamJam2k21
         {
             //TEMP:: Klawisze do testowania
             //-------------------------------------------------------------
-            if (input.IsKeyDown(Keys.K))
-            {
-                isFloating = true;
-            }
-            else
-            {
-                isFloating = false;
-            }
+            isFloating = input.IsKeyDown(Keys.K);
 
             if (input.IsKeyDown(Keys.D0))
             {
@@ -284,19 +277,21 @@ namespace GamJam2k21
         {
             if (!isGrounded && !isFloating)
             {
-                velocity.Y -= gravity * deltaTime;
+                velocity.Y -= GRAVITY * deltaTime;
 
                 if (velocity.Y < 0.0f)
-                    velocity.Y += gravity * (FALL_MULTIPLIER - 1) * deltaTime;
+                    velocity.Y += GRAVITY * (FALL_MULTIPLIER - 1) * deltaTime;
                 else if (velocity.Y > 0.0f && !input.IsKeyDown(Keys.Space))
-                    velocity.Y += gravity * (LOW_JUMP_MULTIPLIER - 1) * deltaTime;
+                    velocity.Y += GRAVITY * (LOW_JUMP_MULTIPLIER - 1) * deltaTime;
+
+                velocity.Y = Math.Clamp(velocity.Y, -30.0f, 30.0f);
             }
         }
 
         private void doCollisions(float deltaTime)
         {
             if (hasColl[0] && velocity.Y > 0.0f)
-                velocity.Y = -gravity * deltaTime;
+                velocity.Y = -GRAVITY * deltaTime;
 
             if (!isJumping && hasColl[2] && !isFloating)
             {

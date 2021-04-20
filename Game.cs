@@ -23,7 +23,7 @@ namespace GamJam2k21
 
         private Matrix4 projection;
         private Vector2 viewPos;
-        private readonly float cameraFollowSpeed = 5.0f;
+        private readonly float CAMERA_FOLLOW_SPEED = 5.0f;
 
         private Vector2 mousePos;
         private Vector2 mouseWorldPos;
@@ -42,7 +42,7 @@ namespace GamJam2k21
         private bool displayEq = false;
 
         private float renderScale = 1.0f;
-        private readonly Vector2 screenSize = (24.0f, 13.5f);
+        private readonly Vector2 SCREEN_SIZE = (24.0f, 13.5f);
         private bool isFullscreen = false;
 
         public DateTime time = new DateTime(1, 1, 1, 8, 0, 0);
@@ -56,7 +56,7 @@ namespace GamJam2k21
         protected override void OnLoad()
         {
             initScreenRender();
-            projection = Matrix4.CreateOrthographic(screenSize.X * renderScale, screenSize.Y * renderScale, -1.0f, 1.0f);
+            projection = Matrix4.CreateOrthographic(SCREEN_SIZE.X * renderScale, SCREEN_SIZE.Y * renderScale, -1.0f, 1.0f);
 
             ResourceManager.GetInstance();
             loadShaders();
@@ -79,7 +79,6 @@ namespace GamJam2k21
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             CursorVisible = false;
-            updateDayCycle();
             float deltaTime = (float)e.Time;
             if (!IsFocused)
                 return;
@@ -106,6 +105,8 @@ namespace GamJam2k21
 
             displayEq = input.IsKeyDown(Keys.E);
 
+            updateDayCycle(deltaTime);
+
             //TUTAJ KOD
 
             base.OnUpdateFrame(e);
@@ -118,7 +119,10 @@ namespace GamJam2k21
             Console.WriteLine(color.X + " " + color.Y + " " + color.Z);
             if (state == GameState.active)
             {
-                spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), (screenSize.X / 2.0f * renderScale, screenSize.Y / 2.0f * renderScale), (0.0f, 0.0f), (screenSize.X * renderScale, screenSize.Y * renderScale), 0.0f, color);
+                spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"), 
+                               (SCREEN_SIZE.X / 2.0f * renderScale, SCREEN_SIZE.Y / 2.0f * renderScale), 
+                               (0.0f, 0.0f), (SCREEN_SIZE.X * renderScale, SCREEN_SIZE.Y * renderScale), 
+                               0.0f, color);
 
                 level.Draw(spriteRenderer, viewPos);
                 player.Draw(spriteRenderer, viewPos);
@@ -129,7 +133,9 @@ namespace GamJam2k21
 
                 //Console.WriteLine(time);
                 
-                spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), (screenSize.X / 2.0f * renderScale, screenSize.Y / 2.0f * renderScale), mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
+                spriteRenderer.DrawSprite(ResourceManager.GetTexture("cursor"), 
+                                (SCREEN_SIZE.X / 2.0f * renderScale, SCREEN_SIZE.Y / 2.0f * renderScale), 
+                                mousePos - (0.0f, 1.0f), (1.0f, 1.0f), 0.0f);
             }
 
             //TUTAJ KOD
@@ -204,7 +210,7 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/hero1.png", "char");
             ResourceManager.LoadTexture("Data/Resources/Textures/cursor2.png", "cursor");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_idle.png", "charIdle1");
-            ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap.png", "textBitmap"); //xd
+            ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap_bold.png", "textBitmap"); //xd
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalk1");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_walk1.png", "charWalkBack1");
             ResourceManager.LoadTexture("Data/Resources/Textures/hero_arm1.png", "charArm1");
@@ -234,11 +240,13 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/dest.png", "dest");
             ResourceManager.LoadTexture("Data/Resources/Textures/particle.png", "particle");
             ResourceManager.LoadTexture("Data/Resources/Textures/empty.png", "empty");
+
+            ResourceManager.LoadTexture("Data/Resources/Textures/Ores/coalOre.png", "coalOre");
         }
 
         private void loadBlocks()
         {
-            //ResourceManager.AddBlock(0, ResourceManager.GetTexture("air"), "Air", (1.0f, 1.0f, 1.0f), 0, 0);
+            //ResourceManager.AddBlock(0, ResourceManager.GetTexture("empty"), "Air", (1.0f, 1.0f, 1.0f), 0, 0);
             ResourceManager.AddBlock(1, ResourceManager.GetTexture("grass"), "Grass", (0.17f, 0.06f, 0.01f), 0, 100.0f);
             ResourceManager.AddBlock(2, ResourceManager.GetTexture("dirt"), "Dirt", (0.17f, 0.06f, 0.01f), 0, 100.0f);
             ResourceManager.AddBlock(3, ResourceManager.GetTexture("stone"), "Stone", (0.1f, 0.1f, 0.1f), 1, 150.0f);
@@ -256,10 +264,10 @@ namespace GamJam2k21
 
         private void calculateMousePos(MouseState mouseInput)
         {
-            float mouseScale = (screenSize.X * renderScale) / Size.X;
+            float mouseScale = (SCREEN_SIZE.X * renderScale) / Size.X;
             mousePos.X = mouseInput.Position.X * mouseScale;
             mousePos.Y = -(mouseInput.Position.Y - Size.Y) * mouseScale;
-            mouseWorldPos = mousePos + viewPos - (screenSize.X * renderScale / 2.0f, screenSize.Y * renderScale / 2.0f);
+            mouseWorldPos = mousePos + viewPos - (SCREEN_SIZE.X * renderScale / 2.0f, SCREEN_SIZE.Y * renderScale / 2.0f);
         }
 
         private void setPlayerFlip(Player player)
@@ -284,40 +292,34 @@ namespace GamJam2k21
 
         private void updateView(float deltaTime, KeyboardState keyboard)
         {
-            float desiredViewX = MathHelper.Lerp(viewPos.X, player.position.X + player.size.X / 2.0f, deltaTime * cameraFollowSpeed);
-            float desiredViewY = MathHelper.Lerp(viewPos.Y, player.position.Y + player.size.Y * 0.7f, deltaTime * cameraFollowSpeed);
+            float desiredViewX = MathHelper.Lerp(viewPos.X, player.position.X + player.size.X / 2.0f, deltaTime * CAMERA_FOLLOW_SPEED);
+            float desiredViewY = MathHelper.Lerp(viewPos.Y, player.position.Y + player.size.Y * 0.7f, deltaTime * CAMERA_FOLLOW_SPEED);
             viewPos.Y = desiredViewY;
 
             if (keyboard.IsKeyDown(Keys.S))
-            {
                 viewPos.Y -= deltaTime * 10;
-            }
             if (keyboard.IsKeyDown(Keys.W))
-            {
                 viewPos.Y += deltaTime * 10;
-            }
             if (keyboard.IsKeyDown(Keys.A))
-            {
                 desiredViewX -= deltaTime * 10;
-            }
             if (keyboard.IsKeyDown(Keys.D))
-            {
                 desiredViewX += deltaTime * 10;
-            }
-            viewPos.X = Math.Clamp(desiredViewX, 0.0f + screenSize.X / 2.0f, 128.0f - screenSize.X / 2.0f);
+            viewPos.X = Math.Clamp(desiredViewX, 0.0f + SCREEN_SIZE.X / 2.0f, 128.0f - SCREEN_SIZE.X / 2.0f);
         }
 
-        private void updateDayCycle()
+        private float deltaSum = 0;
+        private void updateDayCycle(float dt)
         {
-            if (time.Hour==18)
+            deltaSum += dt;
+            if (deltaSum >= 1)
+            {
+                time = time.AddMinutes(60);
+                deltaSum = 0;
+            }
+            if (time.Hour>=18)
             {
                 time = time.AddDays(1);
                 time = time.AddHours(-10);
-            }
-            else if(time.Hour<18)
-            {
-                //Console.WriteLine(time);
-                time = time.AddSeconds(30);
             }
 
         }

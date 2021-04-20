@@ -1,40 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 
 namespace GamJam2k21
 {
     public class Animation
     {
-        //Sprite Sheet
-        private Texture sheet;
-        //Ilosc klatek
-        private int frameCount;
-        //Aktualna klatka
+        private Texture spriteSheet;
+        private readonly int FRAME_COUNT;
         private int currentFrame = 0;
-        //Konstruktor
-        public Animation(Texture tex, int frames)
+        
+        public Animation(Texture tex, int frames = 1)
         {
-            sheet = tex;
-            frameCount = frames;
+            spriteSheet = tex;
+            FRAME_COUNT = frames;
         }
-        //Rendering animacji
-        public void Play(ref SpriteRenderer rend, ref GameObject obj, Vector2 viewPos, bool flipped)
+        
+        public void Play(ref SpriteRenderer rend, ref GameObject parent, Vector2 viewPos, bool flipped = false)
         {
             if (flipped)
-            {
-                rend.DrawSprite((currentFrame, 0), sheet, viewPos, (obj.position.X + 1.0f, obj.position.Y), (obj.size.X * -1.0f, obj.size.Y), obj.rotation, obj.color);
-            }
+                rend.DrawSprite((currentFrame, 0), spriteSheet, viewPos, 
+                                (parent.position.X + 1.0f, parent.position.Y), 
+                                (parent.size.X * -1.0f, parent.size.Y), parent.rotation, parent.color);
             else
-            {
-                rend.DrawSprite((currentFrame, 0), sheet, viewPos, obj.position, obj.size, obj.rotation, obj.color);
-            }
+                rend.DrawSprite((currentFrame, 0), spriteSheet, viewPos, parent.position, parent.size, parent.rotation, parent.color);
         }
-        //Nastepna klatka z zabezpieczeniem, zeby nie wyjsc za skale
+        
         public void NextFrame()
         {
-            currentFrame = (currentFrame + 1) % frameCount;
+            currentFrame = (currentFrame + 1) % FRAME_COUNT;
         }
     }
 }

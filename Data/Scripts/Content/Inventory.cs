@@ -6,30 +6,31 @@ namespace GamJam2k21
 {
     public class Inventory
     {
-        //posiadany blok i jego ilosc
-        private Dictionary<Block, int> itemList= new Dictionary<Block, int>();
+        private readonly List<Item> itemList = new List<Item>();
+        public readonly int CAPACITY = 20;
+
+        private readonly int STACK_SIZE = 64;
 
         public Inventory()
         {
 
         }
 
-        public void addToInventory(int go)
+        public bool addToInventory(Item newItem)
         {
-            Block block = ResourceManager.GetBlockByID(go);
-            if (itemList.ContainsKey(block))
-            {
-                if (itemList[block] < 99)
-                    itemList[block]++;
-                else
+            foreach(var item in itemList)
+                if (item.id == newItem.id && item.quantity < STACK_SIZE)
                 {
-                    itemList.TryAdd(block, 1);
+                    item.quantity++;
+                    return true;
                 }
-            }
-            else itemList.Add(block, 1);
+            if (itemList.Count >= CAPACITY)
+                return false;
+            itemList.Add(newItem);
+            return true;
         }
 
-        public Dictionary<Block, int> getInventory()
+        public List<Item> getInventory()
         {
             return itemList;
         }

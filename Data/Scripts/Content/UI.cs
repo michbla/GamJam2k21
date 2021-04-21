@@ -22,10 +22,14 @@ namespace GamJam2k21
         private Texture frame;
         private Texture canvas;
         private Texture text;
+        private Texture textWhite;
 
         private Vector2 viewPos;
 
-        private Dictionary<Block, int> itemList;
+        private List<Item> itemList = new List<Item>();
+
+        private readonly int ROWS = 5;
+        private readonly int COLUMNS = 5;
 
         public UI(SpriteRenderer spriteRenderer, TextRenderer textRenderer, PlayerStatistics playerStatistics, Player player, Vector2 viewPos)
         {
@@ -34,7 +38,6 @@ namespace GamJam2k21
             this.playerStatistics = playerStatistics;
             this.player = player;
             this.viewPos = viewPos;
-            itemList = new Dictionary<Block, int>();
         }
 
         public void InitUI()
@@ -44,6 +47,7 @@ namespace GamJam2k21
             canvas = ResourceManager.GetTexture("canvas");
             frame = ResourceManager.GetTexture("itemFrame");
             text = ResourceManager.GetTexture("textBitmap");
+            textWhite = ResourceManager.GetTexture("textBitmapWhite");
         }
 
         public void DrawUI()
@@ -58,30 +62,29 @@ namespace GamJam2k21
             int i = 0;
             spriteRenderer.DrawSprite(canvas, viewPos, viewPos + (-5.5f, -5.8f), (10, 13), 0);
             textRenderer.PrintText("EXPO:" + player.PlayerStatistics.getExp(), text, viewPos, viewPos + (-3f, 4.5f), (0.4f, 0.4f), (1, 1, 1));
-            for ( i = 0; i < 5; i++)
-            {
-                for ( j = 0; j < 7; j++)
-                {
+            for (i = 0; i < COLUMNS; i++)
+                for (j = 0; j < ROWS; j++)
                     spriteRenderer.DrawSprite(frame, viewPos, viewPos + (-3.6f + 1.2f * i, 3f - 1.2f * j), (1.5f, 1.5f), 0);
-                }
-            }
 
             itemList = player.eq.getInventory();
 
-            i = j = 0;
-            foreach (KeyValuePair<Block, int> entry in itemList)
+            i = 0;
+            foreach (var item in itemList)
             {
-                var bl = entry.Key.sprite;
-                spriteRenderer.DrawSprite(bl, viewPos, viewPos + (-3.2f + 1.2f * i, 3.4f - 1.2f * j), (0.7f, 0.7f), 0);
-                textRenderer.PrintText(entry.Value.ToString(), text, viewPos, viewPos + (-3.1f + 1.2f * i, 3.4f - 1.2f * j), (0.35f, 0.35f), (1, 1, 1));
+                spriteRenderer.DrawSprite(item.icon, viewPos, viewPos + (-3.2f + 1.2f * (i % COLUMNS), 3.4f - 1.2f * (i / ROWS)), (0.7f, 0.7f), 0);
+                int quantity = item.quantity;
+                String qString = "";
+                if (quantity < 10)
+                    qString = " ";
+                qString += quantity;
+                textRenderer.PrintText(qString, textWhite, viewPos, viewPos + (-3.1f + 1.2f * (i % COLUMNS), 3.4f - 1.2f * (i / ROWS)), (0.35f, 0.35f), (1, 1, 1));
                 i++;
-                if (i>5)
-                {
-                    i = 0;
-                    j++;
-                }
             }
-            
+        }
+
+        public void DrawInventoryFull()
+        {
+            //Red backpack icon?
         }
     }
 }

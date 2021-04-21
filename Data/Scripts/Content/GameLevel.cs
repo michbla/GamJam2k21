@@ -14,9 +14,10 @@ namespace GamJam2k21
     public class GameLevel
     {
         public int[,] mapData;
+        public int[,] oreData;
 
-        private int width;
-        private int height;
+        private readonly int width;
+        private readonly int height;
 
         public List<Block> currentBlocks = new List<Block>();
         public List<GameObject> backgrounds = new List<GameObject>();
@@ -34,9 +35,10 @@ namespace GamJam2k21
             width = w;
             height = h;
             mapData = new int[width, height];
+            oreData = new int[width, height];
             for (var i = 0; i < height; i++)
                 for (var j = 0; j < width; j++)
-                    mapData[j, i] = 0;
+                    mapData[j, i] = oreData[j, i] = 0;
             damageParticles = new ParticleEmmiter(ResourceManager.GetShader("particle"), ResourceManager.GetTexture("particle"), 128);
             destructionParticles = new ParticleEmmiter(ResourceManager.GetShader("particle"), ResourceManager.GetTexture("particle"), 128);
             Init();
@@ -47,7 +49,7 @@ namespace GamJam2k21
             if (playerChunk.X != lastPlayerChunk.X)
             {
                 if (playerChunk.X < lastPlayerChunk.X)
-                    for(int i = -1; i < 2; i++)
+                    for (int i = -1; i < 2; i++)
                     {
                         DespawnChunk(playerChunk.X + 2, playerChunk.Y + i);
                         SpawnChunk(playerChunk.X - 1, playerChunk.Y + i);
@@ -96,8 +98,9 @@ namespace GamJam2k21
         {
             int posX = x * 16;
             int posY = y * 16;
+            string background = GetBackgroundByDepth(posY);
             if (posY >= 0)
-                backgrounds.Add(new GameObject((posX, -posY - 15), (16.0f, 16.0f), ResourceManager.GetTexture("backgroundDirt")));
+                backgrounds.Add(new GameObject((posX, -posY - 15), (16.0f, 16.0f), ResourceManager.GetTexture(background)));
             for (var i = posY; i < posY + 16; i++)
             {
                 for (var j = posX; j < posX + 16; j++)
@@ -132,7 +135,7 @@ namespace GamJam2k21
             }
         }
 
-        public Block getBlock(int x, int y)
+        public Block GetBlock(int x, int y)
         {
             if (x < 0 || y < 0 || x > width || y > height)
                 return null;
@@ -174,8 +177,11 @@ namespace GamJam2k21
 
         private void SpawnBlock(int x, int y)
         {
+            Ore ore = ResourceManager.GetOreByID(oreData[x, y]);
+            if (mapData[x, y] == 1)
+                ore = null;
             if (mapData[x, y] != 0)
-                currentBlocks.Add(new Block(ResourceManager.GetBlockByID(mapData[x, y]), (x, -y)));
+                currentBlocks.Add(new Block(ResourceManager.GetBlockByID(mapData[x, y]), (x, -y), ore));
         }
 
         public void Draw(SpriteRenderer rend, Vector2 viewPos)
@@ -189,9 +195,14 @@ namespace GamJam2k21
         }
         public void Init()
         {
-            float[,] data = GenerateNoiseMap(this.width * 2, this.height, 5, 30.0f);
+            float[,] data = GenerateNoiseMap(width * 2, height, 5, 30.0f);
+            float[,] coal = GenerateNoiseMap(width * 3, height, 5, 200.0f);
+            for (var i = 0; i < height; i++)
+                for (var j = 0; j < width; j++)
+                    if (coal[j, i] > 0.7f)
+                        oreData[j, i] = 1;
 
-            for (var j = 0; j < width; j++)
+                    for (var j = 0; j < width; j++)
             {
                 var i = 0;
                 while (data[j, i] < 0.3f && i < height)
@@ -269,6 +280,13 @@ namespace GamJam2k21
                     result[j, i] = MathHelper.Clamp((data[i, j] - min) / (max - min), 0.0f, 1.0f);
 
             return result;
+        }
+
+        private string GetBackgroundByDepth(int depth)
+        {
+            if (depth > 1)
+                return "backgroundStone";
+            return "backgroundDirt";
         }
     }
 }

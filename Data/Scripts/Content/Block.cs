@@ -107,5 +107,10 @@ namespace GamJam2k21
         {
             return ORE != null;
         }
+
+        public Ore getOre()
+        {
+            return ORE;
+        }
     }
 }

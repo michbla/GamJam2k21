@@ -10,18 +10,21 @@ namespace GamJam2k21
         public readonly int hardness;
         public readonly float endurance;
 
+        public readonly float value;
+
         private readonly Texture SPRITE;
         public readonly Vector3 COLOR = (1.0f, 1.0f, 1.0f);
 
         public Item drop;
 
-        public Ore(int _id, string _name, Texture _sprite, int _hardness, float _endurance, Item _drop, Vector3 _color)
+        public Ore(int _id, string _name, Texture _sprite, int _hardness, float _endurance, float _value, Item _drop, Vector3 _color)
         {
             id = _id;
             name = _name;
             SPRITE = _sprite;
             hardness = _hardness;
             endurance = _endurance;
+            value = _value;
             drop = _drop;
             COLOR = _color;
         }
@@ -29,6 +32,11 @@ namespace GamJam2k21
         public void Draw(SpriteRenderer rend, Vector2 viewPos, Block parent)
         {
             rend.DrawSprite(SPRITE, viewPos, parent.position, parent.size, parent.rotation, parent.color);
+        }
+
+        public float getOreEndurance()
+        {
+            return endurance;
         }
 
     }

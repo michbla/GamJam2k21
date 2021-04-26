@@ -14,6 +14,7 @@ namespace GamJam2k21
         menu,
         active,
         paused,
+        summary,
         end
     }
 
@@ -40,6 +41,7 @@ namespace GamJam2k21
 
         private UI userInterface;
         private bool displayEq = false;
+        private bool displaySummary = false;
 
         private float renderScale = 1.0f;
         private readonly Vector2 SCREEN_SIZE = (24.0f, 13.5f);
@@ -97,9 +99,11 @@ namespace GamJam2k21
             calculateMousePos(mouseInput);
 
 
-            if (state == GameState.active)
+            if (state == GameState.active || state == GameState.summary)
             {
-                player.blocks = level.currentBlocks;
+                if (state != GameState.summary)
+                { 
+                    player.blocks = level.currentBlocks;
                 player.UpdatePlayer(input, mouseInput, deltaTime, mouseWorldPos);
                 setPlayerFlip(player);
 
@@ -113,11 +117,20 @@ namespace GamJam2k21
                     switchFullscreen();
 
                 displayEq = input.IsKeyDown(Keys.E);
-
                 updateDayCycle(deltaTime);
-
                 cursorScale += 3 * deltaTime;
                 cursorSize = 1.0f + (float)Math.Sin(cursorScale) / 50.0f;
+                }
+                else
+                {
+                    showSelection = false;
+                    displaySummary = true;
+                    if (input.IsKeyPressed(Keys.Enter))
+                    {
+                        state = GameState.active;
+                        displaySummary = false;
+                    }
+                }
 
                 //TUTAJ KOD
 
@@ -139,8 +152,7 @@ namespace GamJam2k21
             }
             GL.Clear(ClearBufferMask.ColorBufferBit);
             var color = setColorByTime();
-            Console.WriteLine(color.X + " " + color.Y + " " + color.Z);
-            if (state == GameState.active)
+            if (state == GameState.active || state == GameState.summary)
             {
                 spriteRenderer.DrawSprite(ResourceManager.GetTexture("sky"),
                                (SCREEN_SIZE.X / 2.0f * renderScale, SCREEN_SIZE.Y / 2.0f * renderScale),
@@ -151,9 +163,11 @@ namespace GamJam2k21
                 if (showSelection)
                     blockSelection.Draw(spriteRenderer, viewPos);
                 player.Draw(spriteRenderer, viewPos);
-
+                int day = getDay();
                 if (displayEq)
                     userInterface.DrawEQ();
+                else if (displaySummary)
+                    userInterface.DrawDaySummary(day-1);
                 userInterface.DrawUI();
 
                 //Console.WriteLine(time);
@@ -267,6 +281,7 @@ namespace GamJam2k21
             ResourceManager.LoadTexture("Data/Resources/Textures/cursor_pick.png", "cursorPick");
             ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap_bold.png", "textBitmap");
             ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap_bold_white.png", "textBitmapWhite");
+            ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap_bold.png", "textBitmapBold");
 
             ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroTorso_idle.png", "heroTorso_idle");
 
@@ -324,7 +339,7 @@ namespace GamJam2k21
 
         private void loadOres()
         {
-            ResourceManager.AddOre(1, "Coal", ResourceManager.GetTexture("coalOre"), 1, 100.0f, ResourceManager.GetItemByID(1), (0.08f, 0.065f, 0.07f));
+            ResourceManager.AddOre(1, "Coal", ResourceManager.GetTexture("coalOre"), 1, 100.0f, 5f, ResourceManager.GetItemByID(1), (0.08f, 0.065f, 0.07f));
         }
 
         private void calculateMousePos(MouseState mouseInput)
@@ -353,10 +368,12 @@ namespace GamJam2k21
             showSelection = true;
             if (isMouseDown && level.DamageBlock((int)mPX, -(int)mPY, player))
             {
-                player.PlayerStatistics.SetBlocksDestroyed(block.name);
+                
                 if (block.hasOre())
                     if (player.eq.addToInventory(new Item(block.GetDrop())))
                     {
+                        var ore = block.getOre();
+                        player.PlayerStatistics.SetOresDestroyed(ore);
                         //Succesfully added item to inventory
                     }
                     else
@@ -395,10 +412,18 @@ namespace GamJam2k21
             }
             if (time.Hour >= 18)
             {
+                state = GameState.summary;
                 time = time.AddDays(1);
                 time = time.AddHours(-10);
             }
 
+        }
+
+        private int getDay()
+        {
+            int day = 0;
+            day = time.Day + (time.Month - 1) * 30 + (time.Year - 1) * 365;
+            return day;
         }
 
         private Vector3 setColorByTime()

@@ -7,7 +7,7 @@ namespace GamJam2k21
 
     /// <summary>
     /// Klasa zlicza doswiadczenie, ilosc zniszczonych blokow i max glebokosc
-    /// 
+    /// expo liczone po endurance rud
     /// </summary>
     /// 
     public class PlayerStatistics
@@ -17,9 +17,10 @@ namespace GamJam2k21
         private int blocksDestroyed = 0;
         private float exp = 0;
 
-        private static Dictionary<string, int> expList= new Dictionary<string, int>();
+        private static Dictionary<Ore, int> expList= new Dictionary<Ore, int>();
 
-        private static Dictionary<string, int> blocksDug = new Dictionary<string, int>();
+        //niepotrzebne???
+        //private static Dictionary<string, int> blocksDug = new Dictionary<string, int>();
 
         public PlayerStatistics(int levelReached, int blocksDestroyed, float exp)
         {
@@ -29,10 +30,9 @@ namespace GamJam2k21
             addToExpList();
         }
 
-        public void SetBlocksDestroyed(string name)
+        public void SetOresDestroyed(Ore name)
         {
             blocksDestroyed += 1;
-            addDugBlock(name);
             exp += expList[name];
         }
 
@@ -52,24 +52,18 @@ namespace GamJam2k21
 
         public void addToExpList()
         {
-            Dictionary<int, Block> blocklist= new Dictionary<int, Block>();
-            for (int i=1;i<=ResourceManager.GetBlockListSize();i++)
+            int oreCount = ResourceManager.getOreListCount();
+            for (int i=1;i<=oreCount;i++)
             {
-                blocklist.Add(i, ResourceManager.GetBlockByID(i));
-                expList.Add(blocklist[i].name, (int)blocklist[i].endurance / 10);
-                blocksDug.Add(blocklist[i].name, 0);
+                var ore = ResourceManager.GetOreByID(i);
+                expList.Add(ore, (int)ore.value);
             }
-            blocklist.Clear();
         }
-        private void addDugBlock(string block)
+      /*  private void addDugBlock(string block)
         {
             blocksDug[block]++;
-        }
+        } niepotrzebne*/
         
-        public int getDugBlocks(string name)
-        {
-            return blocksDug[name];
-        }
 
     }
 

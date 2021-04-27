@@ -23,6 +23,7 @@ namespace GamJam2k21
         private Texture canvas;
         private Texture text;
         private Texture textWhite;
+        private Texture textBold;
 
         private Vector2 viewPos;
 
@@ -48,6 +49,7 @@ namespace GamJam2k21
             frame = ResourceManager.GetTexture("itemFrame");
             text = ResourceManager.GetTexture("textBitmap");
             textWhite = ResourceManager.GetTexture("textBitmapWhite");
+            textBold = ResourceManager.GetTexture("textBitmapBold");
         }
 
         public void DrawUI()
@@ -85,6 +87,25 @@ namespace GamJam2k21
         public void DrawInventoryFull()
         {
             //Red backpack icon?
+        }
+
+        public void DrawDaySummary(int day)
+        {
+            itemList = player.eq.getInventory();
+            int i = 0;
+            spriteRenderer.DrawSprite(canvas, viewPos, viewPos + (-6.2f, -7.5f), (12f, 15f), 1f);
+            textRenderer.PrintText("SUMMARY", textBold, viewPos, viewPos + (-3.80f, 4.2f), (1f,1f), (1f, 1f, 1f));
+            textRenderer.PrintText("DAY " + day, textBold, viewPos, viewPos + (-1.6f, 3.6f), (0.5f,0.5f), (1f, 1f, 1f));
+            foreach (var item in itemList)
+            {
+                Console.WriteLine(item.name);
+                spriteRenderer.DrawSprite(item.icon, viewPos, viewPos + (-4.3f, 2f - i), (1f, 1f), 1f);
+                textRenderer.PrintText("X" + item.quantity, text, viewPos, viewPos + (-3.2f, 2.2f - i), (0.5f, 0.5f), (1f, 1f, 1f));
+                i++;
+            }
+            textRenderer.PrintText("ORES VALUE:" + playerStatistics.getExp(), text, viewPos, viewPos + (-4.2f, 2.2f - i), (0.4f, 0.4f), (1f, 1f, 1f));
+            textRenderer.PrintText("CURRENT DEPTH:" + playerStatistics.getLevelReached(), text, viewPos, viewPos + (-4.2f, 1.2f - i), (0.4f, 0.4f), (1f, 1f, 1f));
+            textRenderer.PrintText("PRESS ENTER TO PROCEED", text, viewPos, viewPos + (-5f, -5.5f), (0.4f, 0.4f), (1f, 1f, 1f));
         }
     }
 }

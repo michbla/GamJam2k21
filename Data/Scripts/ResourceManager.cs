@@ -44,16 +44,26 @@ namespace GamJam2k21
         {
             return items[id];
         }
-        public static void AddOre(int id, string _name, Texture _sprite, int _hardness, float _endurance, Item _drop, Vector3 _color)
+        
+        public static void AddOre(int id, string _name, Texture _sprite, int _hardness, float _endurance, float _value, Item _drop, Vector3 _color)
         {
-            ores.Add(id, new Ore(id,_name, _sprite, _hardness, _endurance, _drop, _color));
+            ores.Add(id, new Ore(id,_name, _sprite, _hardness, _endurance, _value, _drop, _color));
         }
+        
+        public static int getOreListCount()
+        {
+            return ores.Count;
+        }
+
         public static Ore GetOreByID(int id)
         {
             if (id == 0)
                 return null;
             return ores[id];
         }
+
+        
+        
         public static void AddPickaxe(int id, Texture _sprite, string _name, float _speed, int _hardness, float _damage)
         {
             pickaxes.Add(id, new Pickaxe(_name, _sprite, _speed, _hardness, _damage));
@@ -85,10 +95,7 @@ namespace GamJam2k21
             return 1;
         }
 
-        public static int GetBlockListSize()
-        {
-            return blocks.Count;
-        }
+
         public static Shader LoadShader(string vertShaderPath, string fragShaderPath, string name)
         {
             shaders.Add(name, new Shader(vertShaderPath, fragShaderPath));

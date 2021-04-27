@@ -234,13 +234,14 @@ namespace GamJam2k21
 
         private void loadShaders()
         {
-            ResourceManager.LoadShader("Data/Resources/Shaders/spriteShader/spriteShader.vert", "Data/Resources/Shaders/spriteShader/spriteShader.frag", "sprite");
+            string shaderPath = "Data/Resources/Shaders/";
+            ResourceManager.LoadShader(shaderPath + "spriteShader/spriteShader.vert", shaderPath + "spriteShader/spriteShader.frag", "sprite");
             ResourceManager.GetShader("sprite").Use();
             ResourceManager.GetShader("sprite").SetInt("texture0", 0);
             ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X, -viewPos.Y, 0.0f));
             ResourceManager.GetShader("sprite").SetMatrix4("projection", projection);
 
-            ResourceManager.LoadShader("Data/Resources/Shaders/particleShader/particleShader.vert", "Data/Resources/Shaders/particleShader/particleShader.frag", "particle");
+            ResourceManager.LoadShader(shaderPath + "particleShader/particleShader.vert", shaderPath + "particleShader/particleShader.frag", "particle");
             ResourceManager.GetShader("particle").Use();
             ResourceManager.GetShader("particle").SetInt("texture0", 0);
             ResourceManager.GetShader("sprite").SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X, -viewPos.Y, 0.0f));
@@ -255,49 +256,53 @@ namespace GamJam2k21
 
         private void loadTextures()
         {
-            ResourceManager.LoadTexture("Data/Resources/Textures/dirt1.png", "dirt");
-            ResourceManager.LoadTexture("Data/Resources/Textures/grass1.png", "grass");
-            ResourceManager.LoadTexture("Data/Resources/Textures/stone1.png", "stone");
+            string texturePath = "Data/Resources/Textures/";
+            ResourceManager.LoadTexture(texturePath + "dirt1.png", "dirt");
+            ResourceManager.LoadTexture(texturePath + "grass1.png", "grass");
+            ResourceManager.LoadTexture(texturePath + "stone1.png", "stone");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/sky2.png", "sky");
-            ResourceManager.LoadTexture("Data/Resources/Textures/bgDirt02.png", "backgroundDirt");
-            ResourceManager.LoadTexture("Data/Resources/Textures/bgStone01.png", "backgroundStone");
+            ResourceManager.LoadTexture(texturePath + "sky2.png", "sky");
+            ResourceManager.LoadTexture(texturePath + "bgDirt02.png", "backgroundDirt");
+            ResourceManager.LoadTexture(texturePath + "bgStone01.png", "backgroundStone");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/cursor2.png", "cursor");
-            ResourceManager.LoadTexture("Data/Resources/Textures/cursor_pick.png", "cursorPick");
-            ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap_bold.png", "textBitmap");
-            ResourceManager.LoadTexture("Data/Resources/Textures/text_bitmap_bold_white.png", "textBitmapWhite");
+            ResourceManager.LoadTexture(texturePath + "cursor2.png", "cursor");
+            ResourceManager.LoadTexture(texturePath + "cursor_pick.png", "cursorPick");
+            ResourceManager.LoadTexture(texturePath + "text_bitmap_bold.png", "textBitmap");
+            ResourceManager.LoadTexture(texturePath + "text_bitmap_bold_white.png", "textBitmapWhite");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroTorso_idle.png", "heroTorso_idle");
+            string heroTexturePath = texturePath + "hero/";
+            ResourceManager.LoadTexture(heroTexturePath + "heroTorso_idle.png", "heroTorso_idle");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroHead_idle.png", "heroHead_idle");
+            ResourceManager.LoadTexture(heroTexturePath + "heroHead_idle.png", "heroHead_idle");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroArmBack_idle.png", "heroArmBack_idle");
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroArmBack_walk.png", "heroArmBack_walk");
+            ResourceManager.LoadTexture(heroTexturePath + "heroArmBack_idle.png", "heroArmBack_idle");
+            ResourceManager.LoadTexture(heroTexturePath + "heroArmBack_walk.png", "heroArmBack_walk");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroArmFront_idle.png", "heroArmFront_idle");
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroArmFront_walk.png", "heroArmFront_walk");
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroArmFront_dig.png", "heroArmFront_dig");
+            ResourceManager.LoadTexture(heroTexturePath + "heroArmFront_idle.png", "heroArmFront_idle");
+            ResourceManager.LoadTexture(heroTexturePath + "heroArmFront_walk.png", "heroArmFront_walk");
+            ResourceManager.LoadTexture(heroTexturePath + "heroArmFront_dig.png", "heroArmFront_dig");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroLegs_idle.png", "heroLegs_idle");
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroLegs_walk.png", "heroLegs_walk");
-            ResourceManager.LoadTexture("Data/Resources/Textures/hero/heroLegs_walkBack.png", "heroLegs_walkBack");
+            ResourceManager.LoadTexture(heroTexturePath + "heroLegs_idle.png", "heroLegs_idle");
+            ResourceManager.LoadTexture(heroTexturePath + "heroLegs_walk.png", "heroLegs_walk");
+            ResourceManager.LoadTexture(heroTexturePath + "heroLegs_walkBack.png", "heroLegs_walkBack");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe0.png", "pickaxe0");
-            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe1.png", "pickaxe1");
-            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe2.png", "pickaxe2");
-            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe3.png", "pickaxe3");
-            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe4.png", "pickaxe4");
-            ResourceManager.LoadTexture("Data/Resources/Textures/pickaxe5.png", "pickaxe5");
+            ResourceManager.LoadTexture(texturePath + "pickaxe0.png", "pickaxe0");
+            ResourceManager.LoadTexture(texturePath + "pickaxe1.png", "pickaxe1");
+            ResourceManager.LoadTexture(texturePath + "pickaxe2.png", "pickaxe2");
+            ResourceManager.LoadTexture(texturePath + "pickaxe3.png", "pickaxe3");
+            ResourceManager.LoadTexture(texturePath + "pickaxe4.png", "pickaxe4");
+            ResourceManager.LoadTexture(texturePath + "pickaxe5.png", "pickaxe5");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/dest.png", "dest");
-            ResourceManager.LoadTexture("Data/Resources/Textures/particle.png", "particle");
-            ResourceManager.LoadTexture("Data/Resources/Textures/empty.png", "empty");
-            ResourceManager.LoadTexture("Data/Resources/Textures/blockSelection.png", "blockSelection");
+            ResourceManager.LoadTexture(texturePath + "dest.png", "dest");
+            ResourceManager.LoadTexture(texturePath + "particle.png", "particle");
+            ResourceManager.LoadTexture(texturePath + "empty.png", "empty");
+            ResourceManager.LoadTexture(texturePath + "blockSelection.png", "blockSelection");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/ores/coalOre.png", "coalOre");
+            string oreTexturePath = texturePath + "ores/";
+            ResourceManager.LoadTexture(oreTexturePath + "coalOre.png", "coalOre");
 
-            ResourceManager.LoadTexture("Data/Resources/Textures/items/coal.png", "coal");
+            string itemsTexturePath = texturePath + "items/";
+            ResourceManager.LoadTexture(itemsTexturePath + "coal.png", "coal");
         }
 
         private void loadBlocks()

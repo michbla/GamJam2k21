@@ -20,11 +20,11 @@ namespace GamJam2k21
         public Texture sprite;
 
         public GameObject() : this((0.0f, 0.0f), (1.0f, 1.0f), null, (1.0f, 1.0f, 1.0f), (0.0f, 0.0f)) { }
-        
+
         public GameObject(Vector2 pos, Vector2 size, Texture sprite) : this(pos, size, sprite, (1.0f, 1.0f, 1.0f), (0.0f, 0.0f)) { }
-        
+
         public GameObject(Vector2 pos, Vector2 size, Texture sprite, Vector3 col) : this(pos, size, sprite, col, (0.0f, 0.0f)) { }
-        
+
         public GameObject(Vector2 pos, Vector2 size, Texture sprite, Vector3 col, Vector2 vel)
         {
             this.position = pos;
@@ -33,14 +33,21 @@ namespace GamJam2k21
             this.color = col;
             this.velocity = vel;
         }
-        
+
         public virtual void Draw(SpriteRenderer rend, Vector2 viewPos)
         {
-            if (position.Y + size.Y < viewPos.Y - 9f || position.Y > viewPos.Y + 9f || position.X + size.X < viewPos.X - 18f || position.X > viewPos.X + 18f)
-                return;
-            rend.DrawSprite(sprite, viewPos, position, size, rotation, color);
+            if (isInFrame(viewPos))
+                rend.DrawSprite(sprite, viewPos, position, size, rotation, color);
         }
-        
+
+        private bool isInFrame(Vector2 viewPos)
+        {
+            return position.Y + size.Y > viewPos.Y - 9f
+                && position.Y < viewPos.Y + 9f
+                && position.X + size.X > viewPos.X - 18f
+                && position.X < viewPos.X + 18f;
+        }
+
         public virtual void Update(KeyboardState input, MouseState mouseInput, float deltaTime)
         {
 

@@ -9,25 +9,19 @@ namespace GamJam2k21
     /// </summary>
     public class SpriteRenderer
     {
-        //Shader
         private Shader shader;
-        //Buffer prostokata
+
         private int quadVAO;
 
-        //Ile spriteow jest w kazdym wymiarze tekstury
-        Vector2i dim;
+        Vector2i sheetSize;
 
-        //Wstepna inicjalizacja
         private void InitRenderData()
         {
-            //Kazdy sprite jest prostokatem
-            //wiec nie musi posiadac informacji
-            //o ksztalcie bryly
             int vbo;
             int texB;
 
             float[] vertPos = {
-            //pos       //tex
+            //pos //tex
             0.0f, 1.0f,//lewy gorny
             1.0f, 0.0f,//prawy dolny
             0.0f, 0.0f,//lewy dolny
@@ -37,18 +31,18 @@ namespace GamJam2k21
             1.0f, 0.0f//prawy dolny
             };
 
-            float sizeX = 1.0f / dim.X;
-            float sizeY = 1.0f / dim.Y;
+            float sizeX = 1.0f / sheetSize.X;
+            float sizeY = 1.0f / sheetSize.Y;
 
             float[] texPos = {
-            //pos       //tex
-            0.0f, 0.0f, //lewy gorny
-            sizeX, sizeY, //prawy dolny
-            0.0f, sizeY, //lewy dolny
+            //pos   //tex
+            0.0f,   0.0f, //lewy gorny
+            sizeX,  sizeY, //prawy dolny
+            0.0f,   sizeY, //lewy dolny
 
-            0.0f, 0.0f, //lewy gorny
-            sizeX, 0.0f, //prawy gorny
-            sizeX, sizeY  //prawy dolny
+            0.0f,   0.0f, //lewy gorny
+            sizeX,  0.0f, //prawy gorny
+            sizeX,  sizeY  //prawy dolny
             };
 
             quadVAO = GL.GenVertexArray();
@@ -59,7 +53,6 @@ namespace GamJam2k21
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             GL.BufferData(BufferTarget.ArrayBuffer, vertPos.Length * sizeof(float), vertPos, BufferUsageHint.StaticDraw);
-
 
             GL.EnableVertexAttribArray(0);
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
@@ -73,25 +66,25 @@ namespace GamJam2k21
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindVertexArray(0);
         }
-        //Konstuktor
+
         public SpriteRenderer(Shader sha, Vector2i d)
         {
             shader = sha;
-            dim = d;
+            sheetSize = d;
             InitRenderData();
         }
         public SpriteRenderer(Shader sha) : this(sha, new Vector2i(1, 1)) { }
-        //Destruktor
+        
         ~SpriteRenderer()
         {
             GL.DeleteVertexArray(quadVAO);
         }
-        //Rysowanie sprite'a
+        
         public void DrawSprite(Vector2i offset, Texture tex, Vector2 viewPos, Vector2 pos, Vector2 size, float rotate, Vector3 color)
         {
             shader.Use();
             Matrix4 model = Matrix4.Identity;
-            //Skalowanie
+            
             model *= Matrix4.CreateScale(size.X, size.Y, 1.0f);
             //Obracanie wzgledem srodka
             model *= Matrix4.CreateTranslation(-0.5f * size.X, -0.5f * size.Y, 0.0f);
@@ -103,7 +96,7 @@ namespace GamJam2k21
             shader.SetMatrix4("model", model);
             shader.SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X, -viewPos.Y, 0.0f));
             shader.SetVector3("spriteColor", color);
-            shader.SetVector2("texOffset", (offset.X * (1.0f / dim.X), offset.Y * (1.0f / dim.Y)));
+            shader.SetVector2("texOffset", (offset.X * (1.0f / sheetSize.X), offset.Y * (1.0f / sheetSize.Y)));
             //Uzywanie tekstury
             tex.Use(TextureUnit.Texture0);
             //Rysowanie geometrii

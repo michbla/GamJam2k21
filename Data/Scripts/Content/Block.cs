@@ -25,7 +25,7 @@ namespace GamJam2k21
 
         private readonly Ore ORE = null;
 
-        public Block(Vector2 pos, Texture sprite, string _name, Vector3 _color, int _hardness, float _endurance) : base(pos, (1.0f, 1.0f), sprite)
+        public Block(Vector2 pos, Texture sprite, string _name, Vector3 _color, int _hardness, float _endurance) : base(pos, Vector2.One, sprite, Vector3.One)
         {
             name = _name;
             blockColor = _color;
@@ -34,7 +34,7 @@ namespace GamJam2k21
             endurance = baseEndurance;
         }
 
-        public Block(Block copy, Vector2 pos, Ore _ore = null) : base(pos, (1.0f, 1.0f), copy.sprite)
+        public Block(Block copy, Vector2 pos, Ore _ore = null) : base(pos, (1.0f, 1.0f), copy.sprite, Vector3.One)
         {
             name = copy.name;
             blockColor = copy.blockColor;

@@ -8,44 +8,41 @@ namespace GamJam2k21
     /// </summary>
     public class GameObject
     {
-        public Vector2 position;
-        public Vector2 size;
-        public Vector2 velocity;
-        public float rotation;
-        public Vector3 color;
+        public Vector2 position = Vector2.Zero;
+        public Vector2 size = Vector2.One;
+        public Vector2 velocity = Vector2.Zero;
+        public float rotation = 0.0f;
+        public Vector3 color = Vector3.One;
 
         public bool isSolid = false;
         public bool isDestroyed = false;
 
-        public Texture sprite;
+        public Texture sprite = null;
 
-        public GameObject() : this((0.0f, 0.0f), (1.0f, 1.0f), null, (1.0f, 1.0f, 1.0f), (0.0f, 0.0f)) { }
-
-        public GameObject(Vector2 pos, Vector2 size, Texture sprite) : this(pos, size, sprite, (1.0f, 1.0f, 1.0f), (0.0f, 0.0f)) { }
-
-        public GameObject(Vector2 pos, Vector2 size, Texture sprite, Vector3 col) : this(pos, size, sprite, col, (0.0f, 0.0f)) { }
-
-        public GameObject(Vector2 pos, Vector2 size, Texture sprite, Vector3 col, Vector2 vel)
+        public GameObject(Vector2 position = default,
+                          Vector2 size = default,
+                          Texture sprite = null,
+                          Vector3 color = default)
         {
-            this.position = pos;
+            this.position = position;
             this.size = size;
             this.sprite = sprite;
-            this.color = col;
-            this.velocity = vel;
+            this.color = color;
         }
 
         public virtual void Draw(SpriteRenderer rend, Vector2 viewPos)
         {
-            if (isInFrame(viewPos))
+            if (isInRenderDistance(viewPos))
                 rend.DrawSprite(sprite, viewPos, position, size, rotation, color);
         }
 
-        private bool isInFrame(Vector2 viewPos)
+        private bool isInRenderDistance(Vector2 viewPos)
         {
-            return position.Y + size.Y > viewPos.Y - 9f
-                && position.Y < viewPos.Y + 9f
-                && position.X + size.X > viewPos.X - 18f
-                && position.X < viewPos.X + 18f;
+            float renderDistance = 9.0f;
+            return position.Y + size.Y > viewPos.Y - renderDistance
+                && position.Y < viewPos.Y + renderDistance
+                && position.X + size.X > viewPos.X - renderDistance * 2.0f
+                && position.X < viewPos.X + renderDistance * 2.0f;
         }
 
         public virtual void Update(KeyboardState input, MouseState mouseInput, float deltaTime)

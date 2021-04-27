@@ -100,7 +100,7 @@ namespace GamJam2k21
             int posY = y * 16;
             string background = GetBackgroundByDepth(posY);
             if (posY >= 0)
-                backgrounds.Add(new GameObject((posX, -posY - 15), (16.0f, 16.0f), ResourceManager.GetTexture(background)));
+                backgrounds.Add(new GameObject((posX, -posY - 15), (16.0f, 16.0f), ResourceManager.GetTexture(background), Vector3.One));
             for (var i = posY; i < posY + 16; i++)
             {
                 for (var j = posX; j < posX + 16; j++)

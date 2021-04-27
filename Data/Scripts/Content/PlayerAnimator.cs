@@ -5,11 +5,11 @@ namespace GamJam2k21
 {
     public class PlayerAnimator : Animator
     {
-        public GameObject frontArm = new GameObject((0.0f, 0.0f), (2.0f, 2.0f), ResourceManager.GetTexture("empty"));
-        public GameObject backArm = new GameObject((0.0f, 0.0f), (1.8f, 1.8f), ResourceManager.GetTexture("empty"));
-        public GameObject head = new GameObject((0.0f, 0.0f), (1.0f, 1.0f), ResourceManager.GetTexture("empty"));
-        public GameObject torso = new GameObject((0.0f, 0.0f), (2.0f, 2.0f), ResourceManager.GetTexture("empty"));
-        public GameObject legs = new GameObject((0.0f, 0.0f), (2.0f, 2.0f), ResourceManager.GetTexture("empty"));
+        public GameObject frontArm = new GameObject((0.0f, 0.0f), (2.0f, 2.0f), ResourceManager.GetTexture("empty"), Vector3.One);
+        public GameObject backArm = new GameObject((0.0f, 0.0f), (1.8f, 1.8f), ResourceManager.GetTexture("empty"), Vector3.One);
+        public GameObject head = new GameObject((0.0f, 0.0f), (1.0f, 1.0f), ResourceManager.GetTexture("empty"), Vector3.One);
+        public GameObject torso = new GameObject((0.0f, 0.0f), (2.0f, 2.0f), ResourceManager.GetTexture("empty"), Vector3.One);
+        public GameObject legs = new GameObject((0.0f, 0.0f), (2.0f, 2.0f), ResourceManager.GetTexture("empty"), Vector3.One);
 
         private Animator headAnim;
         private Animator frontArmAnim;
@@ -17,8 +17,8 @@ namespace GamJam2k21
         private Animator torsoAnim;
         private Animator legsAnim;
 
-        public GameObject pickaxe = new GameObject((0.0f, 0.0f), (4.0f, 4.0f), ResourceManager.GetTexture("pickaxe1"));
-        public GameObject backPickaxe = new GameObject((0.0f, 0.0f), (4.0f, 4.0f), ResourceManager.GetTexture("pickaxe1"));
+        public GameObject pickaxe = new GameObject((0.0f, 0.0f), (4.0f, 4.0f), ResourceManager.GetTexture("pickaxe1"), Vector3.One);
+        public GameObject backPickaxe = new GameObject((0.0f, 0.0f), (4.0f, 4.0f), ResourceManager.GetTexture("pickaxe1"), Vector3.One);
 
         private readonly Vector2 ARM_OFFSET_R = (-0.7f, 0.35f);
         private readonly Vector2 ARM_OFFSET_L = (1.7f, 0.35f);

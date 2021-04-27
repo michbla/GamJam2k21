@@ -40,6 +40,7 @@ namespace GamJam2k21
         {
             items.Add(id, new Item(id, _name, _icon));
         }
+
         public static Item GetItemByID(int id)
         {
             return items[id];
@@ -61,21 +62,22 @@ namespace GamJam2k21
                 return null;
             return ores[id];
         }
-
-        
         
         public static void AddPickaxe(int id, Texture _sprite, string _name, float _speed, int _hardness, float _damage)
         {
             pickaxes.Add(id, new Pickaxe(_name, _sprite, _speed, _hardness, _damage));
         }
+
         public static Pickaxe GetPickaxeByID(int id)
         {
             return pickaxes[id];
         }
+
         public static void AddBlock(int id, Texture _sprite, string _name,Vector3 _color, int _hardness, float _endurance)
         {
             blocks.Add(id, new Block((0.0f, 0.0f), _sprite, _name, _color,_hardness,_endurance));
         }
+
         public static Block GetBlockByID(int id)
         {
             return blocks[id];
@@ -83,28 +85,23 @@ namespace GamJam2k21
 
         public static int GetBlockID(Block block)
         {
-            foreach (KeyValuePair<int, Block> entry in blocks)
-            {
-                //Console.WriteLine("rm2 " + entry.Value.name);
+            foreach (var entry in blocks)
                 if (entry.Value.name==block.name)
-                    {
-                        //Console.WriteLine("rm - " + entry.Value.name);
                         return entry.Key;
-                    }
-            }
             return 1;
         }
-
 
         public static Shader LoadShader(string vertShaderPath, string fragShaderPath, string name)
         {
             shaders.Add(name, new Shader(vertShaderPath, fragShaderPath));
             return shaders[name];
         }
+
         public static Shader GetShader(string name)
         {
             return shaders[name];
         }
+
         public static Texture LoadTexture(string path, string name)
         {
             textures.Add(name, Texture.LoadFromFile(path));

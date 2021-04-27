@@ -7,7 +7,7 @@ namespace GamJam2k21
 
     /// <summary>
     /// Klasa zlicza doswiadczenie, ilosc zniszczonych blokow i max glebokosc
-    /// expo liczone po endurance rud
+    /// expo liczone po value rud
     /// </summary>
     /// 
     public class PlayerStatistics
@@ -56,7 +56,7 @@ namespace GamJam2k21
             for (int i=1;i<=oreCount;i++)
             {
                 var ore = ResourceManager.GetOreByID(i);
-                expList.Add(ore, (int)ore.value);
+                expList.Add(ore, (int)ore.drop.value);
             }
         }
       /*  private void addDugBlock(string block)

@@ -9,14 +9,16 @@ namespace GamJam2k21
         public readonly int id;
         public readonly string name;
         public readonly Texture icon;
+        public readonly float value;
 
         public int quantity = 1;
 
-        public Item(int _id, string _name, Texture _icon)
+        public Item(int _id, string _name, float _value, Texture _icon)
         {
             id = _id;
             name = _name;
             icon = _icon;
+            value = _value;
         }
 
         public Item(Item copy)
@@ -24,6 +26,7 @@ namespace GamJam2k21
             id = copy.id;
             name = copy.name;
             icon = copy.icon;
+            value = copy.value;
         }
     }
 }

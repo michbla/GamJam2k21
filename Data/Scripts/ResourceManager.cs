@@ -36,18 +36,18 @@ namespace GamJam2k21
             return instance;
         }
         #endregion Singleton
-        public static void AddItem(int id, string _name, Texture _icon)
+        public static void AddItem(int id, string _name, float _value, Texture _icon)
         {
-            items.Add(id, new Item(id, _name, _icon));
+            items.Add(id, new Item(id, _name, _value, _icon));
         }
         public static Item GetItemByID(int id)
         {
             return items[id];
         }
         
-        public static void AddOre(int id, string _name, Texture _sprite, int _hardness, float _endurance, float _value, Item _drop, Vector3 _color)
+        public static void AddOre(int id, string _name, Texture _sprite, int _hardness, float _endurance, Item _drop, Vector3 _color)
         {
-            ores.Add(id, new Ore(id,_name, _sprite, _hardness, _endurance, _value, _drop, _color));
+            ores.Add(id, new Ore(id,_name, _sprite, _hardness, _endurance, _drop, _color));
         }
         
         public static int getOreListCount()

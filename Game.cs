@@ -339,12 +339,12 @@ namespace GamJam2k21
 
         private void loadItems()
         {
-            ResourceManager.AddItem(1, "Coal", ResourceManager.GetTexture("coal"));
+            ResourceManager.AddItem(1, "Coal", 5, ResourceManager.GetTexture("coal"));
         }
 
         private void loadOres()
         {
-            ResourceManager.AddOre(1, "Coal", ResourceManager.GetTexture("coalOre"), 1, 100.0f, 5f, ResourceManager.GetItemByID(1), (0.08f, 0.065f, 0.07f));
+            ResourceManager.AddOre(1, "Coal", ResourceManager.GetTexture("coalOre"), 1, 100.0f, ResourceManager.GetItemByID(1), (0.08f, 0.065f, 0.07f));
         }
 
         private void calculateMousePos(MouseState mouseInput)

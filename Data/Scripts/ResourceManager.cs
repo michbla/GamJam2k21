@@ -1,56 +1,60 @@
 ﻿using System.Collections.Generic;
-using System;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace GamJam2k21
 {
-    /// <summary>
-    /// Klasa przechowujaca wszystkie wykorzystywane zasoby zasoby, tj.:
-    /// -shadery
-    /// -tekstury
-    /// </summary>
     public class ResourceManager
     {
-        private static Dictionary<string, Shader> shaders;
-        private static Dictionary<string, Texture> textures;
-        private static Dictionary<int, Block> blocks;
-        private static Dictionary<int, Pickaxe> pickaxes;
-        private static Dictionary<int, Ore> ores;
-        private static Dictionary<int, Item> items;
+        private readonly static Dictionary<string, Shader> shaders
+            = new Dictionary<string, Shader>();
+
+        private readonly static Dictionary<string, Texture> textures
+            = new Dictionary<string, Texture>();
+
+        private readonly static Dictionary<int, Block> blocks
+            = new Dictionary<int, Block>();
+
+        private readonly static Dictionary<int, Pickaxe> pickaxes
+            = new Dictionary<int, Pickaxe>();
+
+        private readonly static Dictionary<int, Ore> ores
+            = new Dictionary<int, Ore>();
+
+        private readonly static Dictionary<int, Item> items
+            = new Dictionary<int, Item>();
+
         #region Singleton
         private ResourceManager() { }
         private static ResourceManager instance;
         public static ResourceManager GetInstance()
         {
             if (instance == null)
-            {
                 instance = new ResourceManager();
-                shaders = new Dictionary<string, Shader>();
-                textures = new Dictionary<string, Texture>();
-                blocks = new Dictionary<int, Block>();
-                pickaxes = new Dictionary<int, Pickaxe>();
-                ores = new Dictionary<int, Ore>();
-                items = new Dictionary<int, Item>();
-            }
             return instance;
         }
         #endregion Singleton
-        public static void AddItem(int id, string _name, float _value, Texture _icon)
+        public static void AddItem(int id, string name, float value, Sprite icon)
         {
-            items.Add(id, new Item(id, _name, _value, _icon));
+            items.Add(id, new Item(id, name, value, icon));
         }
 
         public static Item GetItemByID(int id)
         {
             return items[id];
         }
-        
-        public static void AddOre(int id, string _name, Texture _sprite, int _hardness, float _endurance, Item _drop, Vector3 _color)
+
+        public static void AddOre(int id,
+                                  Sprite sprite,
+                                  string name,
+                                  int hardness,
+                                  float endurance,
+                                  Item drop,
+                                  Vector3 color)
         {
-            ores.Add(id, new Ore(id,_name, _sprite, _hardness, _endurance, _drop, _color));
+            ores.Add(id, new Ore(id, sprite, name, hardness, endurance, drop, color));
         }
-        
+
         public static int getOreListCount()
         {
             return ores.Count;
@@ -62,10 +66,10 @@ namespace GamJam2k21
                 return null;
             return ores[id];
         }
-        
-        public static void AddPickaxe(int id, Texture _sprite, string _name, float _speed, int _hardness, float _damage)
+
+        public static void AddPickaxe(int id, Sprite sprite, string name, int hardness, float damage)
         {
-            pickaxes.Add(id, new Pickaxe(_name, _sprite, _speed, _hardness, _damage));
+            pickaxes.Add(id, new Pickaxe(name, sprite, hardness, damage));
         }
 
         public static Pickaxe GetPickaxeByID(int id)
@@ -73,9 +77,14 @@ namespace GamJam2k21
             return pickaxes[id];
         }
 
-        public static void AddBlock(int id, Texture _sprite, string _name,Vector3 _color, int _hardness, float _endurance)
+        public static void AddBlock(int id,
+                                    Sprite sprite,
+                                    string name,
+                                    int hardness,
+                                    float endurance,
+                                    Vector3 effectsColor)
         {
-            blocks.Add(id, new Block((0.0f, 0.0f), _sprite, _name, _color,_hardness,_endurance));
+            blocks.Add(id, new Block(sprite, Transform.Default, name, hardness, endurance, effectsColor));
         }
 
         public static Block GetBlockByID(int id)
@@ -86,8 +95,8 @@ namespace GamJam2k21
         public static int GetBlockID(Block block)
         {
             foreach (var entry in blocks)
-                if (entry.Value.name==block.name)
-                        return entry.Key;
+                if (entry.Value.Name == block.Name)
+                    return entry.Key;
             return 1;
         }
 

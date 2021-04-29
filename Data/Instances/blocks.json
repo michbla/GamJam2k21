@@ -1,0 +1,35 @@
+﻿[
+  {
+    "block": {
+      "id": 1,
+      "textureName": "grass",
+      "name": "Drass",
+      "hardness": 0,
+      "endurance": 100,
+      "color": [ 17, 6, 1 ]
+    }
+  },
+
+  {
+    "block": {
+      "id": 2,
+      "textureName": "dirt",
+      "name": "Dirt",
+      "hardness": 0,
+      "endurance": 100,
+      "color": [ 17, 6, 1 ]
+    }
+  },
+
+  {
+    "block": {
+      "id": 3,
+      "textureName": "stone",
+      "name": "Stone",
+      "hardness": 1,
+      "endurance": 150,
+      "color": [ 10, 10, 10 ]
+    }
+  }
+
+]

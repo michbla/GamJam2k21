@@ -1,0 +1,11 @@
+﻿[
+  {
+    "item": {
+      "id": 1,
+      "name": "Coal",
+      "value": 5,
+      "textureName": "coal"
+    }
+  }
+
+]

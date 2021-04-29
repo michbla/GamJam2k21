@@ -1,0 +1,62 @@
+﻿[
+  {
+    "pickaxe": {
+      "id": 0,
+      "textureName": "pickaxe0",
+      "name": "Fists",
+      "hardness": 0,
+      "damage": 10
+    }
+  },
+
+  {
+    "pickaxe": {
+      "id": 1,
+      "textureName": "pickaxe1",
+      "name": "Stone Pickaxe",
+      "hardness": 1,
+      "damage": 15
+    }
+  },
+
+  {
+    "pickaxe": {
+      "id": 2,
+      "textureName": "pickaxe2",
+      "name": "Copper Pickaxe",
+      "hardness": 2,
+      "damage": 25
+    }
+  },
+
+  {
+    "pickaxe": {
+      "id": 3,
+      "textureName": "pickaxe3",
+      "name": "Iron Pickaxe",
+      "hardness": 3,
+      "damage": 40
+    }
+  },
+
+  {
+    "pickaxe": {
+      "id": 4,
+      "textureName": "pickaxe4",
+      "name": "GoldenPickaxe",
+      "hardness": 4,
+      "damage": 60
+    }
+  },
+
+  {
+    "pickaxe": {
+      "id": 5,
+      "textureName": "pickaxe5",
+      "name": "Diamond Pickaxe",
+      "hardness": 5,
+      "damage": 85
+    }
+  }
+
+]

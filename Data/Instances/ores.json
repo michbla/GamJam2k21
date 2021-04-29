@@ -1,0 +1,14 @@
+﻿[
+  {
+    "ore": {
+      "id": 1,
+      "textureName": "coalOre",
+      "name": "Coal",
+      "hardness": 1,
+      "endurance": 100,
+      "dropId": 1,
+      "color": [ 8, 6, 7 ]
+    }
+  }
+
+]

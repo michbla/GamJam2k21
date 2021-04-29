@@ -1,40 +1,55 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using OpenTK.Graphics.OpenGL4;
+﻿using System.Collections.Generic;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK.Windowing.Desktop;
 
 namespace GamJam2k21
 {
+    public enum TextType
+    {
+        normal,
+        bold,
+        white
+    }
     public class TextRenderer
     {
-        private SpriteRenderer charRenderer;
-        
+        private static Dictionary<TextType, Sprite> fonts;
 
-        public TextRenderer(SpriteRenderer cr)
+        private static Vector2i SHEET_SIZE = (16, 8);
+
+        public TextRenderer()
         {
-            charRenderer = cr;
+            initFonts();
         }
 
-        public void PrintText(string text, Texture tex, Vector2 vPos, Vector2 tPos, Vector2 textSize, Vector3 color)
+        private static void initFonts()
         {
-            int i = 0;
-            foreach (var t in text)
-            {
-                int x, y;
-                float scale = (textSize.X + textSize.Y) / 2f;
-                y = (t / 16);
-                x = (t % 16) - 1;
-                if (x == -1)
-                {
-                    x = 15;
-                    y -= 1;
-                }
-                charRenderer.DrawSprite((x, y), tex, vPos, ((tPos.X+(i*scale)) , tPos.Y), textSize, 0f, color);
-                i++;
+            if (fonts != null)
+                return;
+            fonts = new Dictionary<TextType, Sprite>();
+            addFont(TextType.normal, "textBitmap");
+            addFont(TextType.bold, "textBitmapBold");
+            addFont(TextType.white, "textBitmapWhite");
+        }
+
+        private static void addFont(TextType type, string textureName)
+        {
+            fonts.Add(type,
+                      Sprite.Sheet(ResourceManager.GetTexture(textureName),
+                                   Vector2.One,
+                                   SHEET_SIZE));
+        }
+
+        public void PrintText(string text ,TextType type, Vector2 position, float scale = 1.0f)
+        {
+            for(int i = 0; i < text.Length; i++){
+                Vector2i positionOnSheet;
+                positionOnSheet.Y = text[i] / 16;
+                positionOnSheet.X = (text[i] ) % 16 - 1;
+                if(positionOnSheet.X < 0)
+                    positionOnSheet = (15, positionOnSheet.Y - 1);
+
+                Transform charTransform = new Transform((position.X + scale * i, position.Y),
+                                                        (scale, scale));
+                fonts[type].RenderWithTransform(charTransform,positionOnSheet);
             }
         }
     }

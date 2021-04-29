@@ -1,86 +1,126 @@
 ﻿using System;
 using System.Linq;
 using OpenTK.Mathematics;
+using System.Threading.Tasks;
 
 namespace GamJam2k21
 {
-    public static class Noise2d
+    public static class Noise2D
     {
-        private static Random _random = new Random();
+        private static readonly Random _random = new Random();
+
         private static int[] _permutation;
 
         private static Vector2[] _gradients;
 
-        static Noise2d()
+        static Noise2D()
         {
-            CalculatePermutation(out _permutation);
-            CalculateGradients(out _gradients);
+            _permutation = calculatePermutation();
+            _gradients = calculateGradients();
         }
 
-        private static void CalculatePermutation(out int[] p)
+        public static float[,] GenerateNoiseMap(int width, int height, int octaves, float freq)
         {
-            p = Enumerable.Range(0, 256).ToArray();
+            var data = new float[height, width];
 
-            //shuffle the array
-            for (var i = 0; i < p.Length; i++)
+            var min = float.MaxValue;
+            var max = float.MinValue;
+
+            reseed();
+
+            var frequency = freq;
+            var amplitude = 1f;
+
+            for (var octave = 0; octave < octaves; octave++)
             {
-                var source = _random.Next(p.Length);
-
-                var t = p[i];
-                p[i] = p[source];
-                p[source] = t;
-            }
-        }
-
-        //generate a new permutation.
-        public static void Reseed()
-        {
-            CalculatePermutation(out _permutation);
-        }
-
-        private static void CalculateGradients(out Vector2[] grad)
-        {
-            grad = new Vector2[256];
-
-            for (var i = 0; i < grad.Length; i++)
-            {
-                Vector2 gradient;
-
-                do
+                Parallel.For(0, width * height, (offset) =>
                 {
-                    gradient = new Vector2((float)(_random.NextDouble() * 2 - 1), (float)(_random.NextDouble() * 2 - 1));
+                    var j = offset % width;
+                    var i = offset / width;
+                    var noise = generateNoise(i * frequency * 1f / width, j * frequency * 1f / height);
+                    noise = data[i, j] += noise * amplitude;
+
+                    min = MathHelper.Min(min, noise);
+                    max = MathHelper.Max(max, noise);
                 }
+                );
+                frequency *= 4;
+                amplitude /= 10;
+            }
+            float[,] result = new float[width, height];
+            for (var i = 0; i < height; i++)
+                for (var j = 0; j < width; j++)
+                    result[j, i] = MathHelper.Clamp((data[i, j] - min) / (max - min), 0.0f, 1.0f);
+
+            return result;
+        }
+
+        private static int[] calculatePermutation()
+        {
+            int[] permutation = Enumerable.Range(0, 256).ToArray();
+
+            for (var i = 0; i < permutation.Length; i++)
+            {
+                var source = _random.Next(permutation.Length);
+
+                var temp = permutation[i];
+                permutation[i] = permutation[source];
+                permutation[source] = temp;
+            }
+            return permutation;
+        }
+
+        public static void reseed()
+        {
+            _permutation = calculatePermutation();
+        }
+
+        private static Vector2[] calculateGradients()
+        {
+            Vector2[] gradients = new Vector2[256];
+            Vector2 gradient;
+
+            for (var i = 0; i < gradients.Length; i++)
+            {
+                do
+                    gradient = new Vector2(
+                        (float)(_random.NextDouble() * 2 - 1),
+                        (float)(_random.NextDouble() * 2 - 1));
                 while (gradient.LengthSquared >= 1);
 
                 gradient.Normalize();
 
-                grad[i] = gradient;
+                gradients[i] = gradient;
             }
-
+            return gradients;
         }
 
-        private static float Drop(float t)
+        private static float drop(float t)
         {
             t = Math.Abs(t);
             return 1f - t * t * t * (t * (t * 6 - 15) + 10);
         }
 
-        private static float Q(float u, float v)
+        private static float q(float u, float v)
         {
-            return Drop(u) * Drop(v);
+            return drop(u) * drop(v);
         }
 
-        public static float Noise(float x, float y)
+        public static float generateNoise(float x, float y)
         {
             var cell = new Vector2((float)Math.Floor(x), (float)Math.Floor(y));
 
             var total = 0f;
 
-            var corners = new[] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 0), new Vector2(1, 1) };
+            var corners = new[] { 
+                new Vector2(0, 0), 
+                new Vector2(0, 1), 
+                new Vector2(1, 0), 
+                new Vector2(1, 1) };
 
-            foreach (var n in corners)
+            foreach (var corner in corners)
             {
-                var ij = cell + n;
+                var ij = cell + corner;
                 var uv = new Vector2(x - ij.X, y - ij.Y);
 
                 var index = _permutation[(int)ij.X % _permutation.Length];
@@ -88,7 +128,7 @@ namespace GamJam2k21
 
                 var grad = _gradients[index % _gradients.Length];
 
-                total += Q(uv.X, uv.Y) * Vector2.Dot(grad, uv);
+                total += q(uv.X, uv.Y) * Vector2.Dot(grad, uv);
             }
 
             return Math.Max(Math.Min(total, 1f), -1f);

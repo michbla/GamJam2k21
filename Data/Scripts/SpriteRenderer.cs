@@ -3,24 +3,32 @@ using OpenTK.Mathematics;
 
 namespace GamJam2k21
 {
-    /// <summary>
-    /// Klasa renderujaca sprite'y 2D.
-    /// Moze byc uzywana dla roznych obiektow wykorzystujacych ten sam shader.
-    /// </summary>
     public class SpriteRenderer
     {
         private Shader shader;
 
         private int quadVAO;
 
-        Vector2i sheetSize;
+        private Vector2i sheetSize;
+
+        public SpriteRenderer(Shader shader, Vector2i sheetSize)
+        {
+            this.shader = shader;
+            this.sheetSize = sheetSize;
+            InitRenderData();
+        }
 
         private void InitRenderData()
         {
-            int vbo;
-            int texB;
+            float[] vertPos = generateVertexQuad();
+            float[] texPos = generateTextureQuad(getSingleSpriteSize());
 
-            float[] vertPos = {
+            bindVertexArrayObject(vertPos, texPos);
+        }
+
+        private float[] generateVertexQuad()
+        {
+            return new float[] {
             //pos //tex
             0.0f, 1.0f,//lewy gorny
             1.0f, 0.0f,//prawy dolny
@@ -30,82 +38,145 @@ namespace GamJam2k21
             1.0f, 1.0f,//prawy gorny
             1.0f, 0.0f//prawy dolny
             };
+        }
 
-            float sizeX = 1.0f / sheetSize.X;
-            float sizeY = 1.0f / sheetSize.Y;
+        private float[] generateTextureQuad(Vector2 singleSpriteSize)
+        {
+            return new float[] {
+            //pos                   //tex
+            0.0f,                   0.0f, //lewy gorny
+            singleSpriteSize.X,     singleSpriteSize.Y, //prawy dolny
+            0.0f,                   singleSpriteSize.Y, //lewy dolny
 
-            float[] texPos = {
-            //pos   //tex
-            0.0f,   0.0f, //lewy gorny
-            sizeX,  sizeY, //prawy dolny
-            0.0f,   sizeY, //lewy dolny
-
-            0.0f,   0.0f, //lewy gorny
-            sizeX,  0.0f, //prawy gorny
-            sizeX,  sizeY  //prawy dolny
+            0.0f,                   0.0f, //lewy gorny
+            singleSpriteSize.X,     0.0f, //prawy gorny
+            singleSpriteSize.X,     singleSpriteSize.Y  //prawy dolny
             };
+        }
 
+        private Vector2 getSingleSpriteSize()
+        {
+            return new Vector2(1.0f / sheetSize.X, 1.0f / sheetSize.Y);
+        }
+
+        private void bindVertexArrayObject(float[] vertPos, float[] texPos)
+        {
+            int vbo = GL.GenBuffer();
+            int texB = GL.GenBuffer();
             quadVAO = GL.GenVertexArray();
-            vbo = GL.GenBuffer();
-            texB = GL.GenBuffer();
 
             GL.BindVertexArray(quadVAO);
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertPos.Length * sizeof(float), vertPos, BufferUsageHint.StaticDraw);
-
-            GL.EnableVertexAttribArray(0);
-            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, texB);
-            GL.BufferData(BufferTarget.ArrayBuffer, texPos.Length * sizeof(float), texPos, BufferUsageHint.StaticDraw);
-
-            GL.EnableVertexAttribArray(1);
-            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
+            bindVertexBuffer(vbo, vertPos);
+            bindTextureBuffer(texB, texPos);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindVertexArray(0);
         }
 
-        public SpriteRenderer(Shader sha, Vector2i d)
+        private void bindVertexBuffer(int vbo, float[] vertPos)
         {
-            shader = sha;
-            sheetSize = d;
-            InitRenderData();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            GL.BufferData(BufferTarget.ArrayBuffer,
+                vertPos.Length * sizeof(float),
+                vertPos,
+                BufferUsageHint.StaticDraw);
+            enableVertexAttribArray(0);
         }
-        public SpriteRenderer(Shader sha) : this(sha, new Vector2i(1, 1)) { }
-        
-        ~SpriteRenderer()
+
+        private void bindTextureBuffer(int texB, float[] texPos)
         {
-            GL.DeleteVertexArray(quadVAO);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, texB);
+            GL.BufferData(BufferTarget.ArrayBuffer,
+                texPos.Length * sizeof(float),
+                texPos,
+                BufferUsageHint.StaticDraw);
+            enableVertexAttribArray(1);
         }
-        
-        public void DrawSprite(Vector2i offset, Texture tex, Vector2 viewPos, Vector2 pos, Vector2 size, float rotate, Vector3 color)
+
+        private void enableVertexAttribArray(int index)
+        {
+            GL.EnableVertexAttribArray(index);
+            GL.VertexAttribPointer(index,
+                2,
+                VertexAttribPointerType.Float,
+                false,
+                2 * sizeof(float),
+                0);
+        }
+
+        public void DrawSprite(Sprite sprite,
+                               Transform transform,
+                               Vector2i spriteOffset = default,
+                               bool isFlipped = false)
         {
             shader.Use();
+
             Matrix4 model = Matrix4.Identity;
-            
-            model *= Matrix4.CreateScale(size.X, size.Y, 1.0f);
-            //Obracanie wzgledem srodka
-            model *= Matrix4.CreateTranslation(-0.5f * size.X, -0.5f * size.Y, 0.0f);
-            model *= Matrix4.CreateRotationZ((float)MathHelper.DegreesToRadians(-rotate));
-            model *= Matrix4.CreateTranslation(0.5f * size.X, 0.5f * size.Y, 0.0f);
-            //Przemieszczanie
-            model *= Matrix4.CreateTranslation(pos.X, pos.Y, 0.0f);
-            //Ustawianie wartosci shadera
-            shader.SetMatrix4("model", model);
-            shader.SetMatrix4("view", Matrix4.CreateTranslation(-viewPos.X, -viewPos.Y, 0.0f));
-            shader.SetVector3("spriteColor", color);
-            shader.SetVector2("texOffset", (offset.X * (1.0f / sheetSize.X), offset.Y * (1.0f / sheetSize.Y)));
-            //Uzywanie tekstury
-            tex.Use(TextureUnit.Texture0);
-            //Rysowanie geometrii
+
+            Vector2 size = (sprite.Size.X * transform.Scale.X,
+                            sprite.Size.Y * transform.Scale.Y);
+
+            model = scaleModel(model, size);
+            model = moveToCenter(model, size);
+            if (isFlipped)
+                model = flip(model);
+            model = rotate(model, transform.Rotation);
+            model = moveBack(model, size);
+            model = setPosition(model, transform.Position);
+
+            setShaderProperties(model, sprite.Color, spriteOffset);
+
+            sprite.Texture.Use(TextureUnit.Texture0);
+
             GL.BindVertexArray(quadVAO);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
             GL.BindVertexArray(0);
         }
-        //Rysowanie ze standardowym kolorem
-        public void DrawSprite(Texture tex, Vector2 viewPos, Vector2 pos, Vector2 size, float rotate) { DrawSprite((0, 0), tex, viewPos, pos, size, rotate, (1.0f, 1.0f, 1.0f)); }
-        public void DrawSprite(Texture tex, Vector2 viewPos, Vector2 pos, Vector2 size, float rotate, Vector3 color) { DrawSprite((0, 0), tex, viewPos, pos, size, rotate, color); }
+
+        private Matrix4 scaleModel(Matrix4 model, Vector2 scale)
+        {
+            return model * Matrix4.CreateScale(scale.X, scale.Y, 1.0f);
+        }
+
+        private Matrix4 moveToCenter(Matrix4 model, Vector2 size)
+        {
+            return model * Matrix4.CreateTranslation(-0.5f * size.X, -0.5f * size.Y, 0.0f);
+        }
+
+        private Matrix4 flip(Matrix4 model)
+        {
+            return model * Matrix4.CreateScale(-1.0f, 1.0f, 1.0f);
+        }
+
+        private Matrix4 rotate(Matrix4 model, float degrees)
+        {
+            float radians = (float)MathHelper.DegreesToRadians(degrees);
+            return model * Matrix4.CreateRotationZ(radians);
+        }
+
+        private Matrix4 moveBack(Matrix4 model, Vector2 size)
+        {
+            return model * Matrix4.CreateTranslation(0.5f * size.X, 0.5f * size.Y, 0.0f);
+        }
+
+        private Matrix4 setPosition(Matrix4 model, Vector2 position)
+        {
+            return model * Matrix4.CreateTranslation(position.X, position.Y, 0.0f);
+        }
+
+        private void setShaderProperties(Matrix4 model, Vector3 color, Vector2i offset)
+        {
+            shader.SetMatrix4("model", model);
+            shader.SetMatrix4("view", Matrix4.CreateTranslation(-Camera.Position.X, -Camera.Position.Y, 0.0f));
+            shader.SetVector3("spriteColor", color);
+
+            Vector2 singleSpriteSize = getSingleSpriteSize();
+            shader.SetVector2("texOffset", (offset.X * singleSpriteSize.X, offset.Y * singleSpriteSize.Y));
+        }
+
+        ~SpriteRenderer()
+        {
+            GL.DeleteVertexArray(quadVAO);
+        }
     }
 }

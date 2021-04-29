@@ -5,14 +5,10 @@ using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
 namespace GamJam2k21
 {
-    /// <summary>
-    /// Prosta Tekstura 2D
-    /// </summary>
     public class Texture
     {
-        //ID tekstury
         public readonly int _handle;
-        //Ladowanie tekstury z pliku
+        
         public static Texture LoadFromFile(string path)
         {
             int handle = GL.GenTexture();
@@ -20,7 +16,16 @@ namespace GamJam2k21
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, handle);
 
-            using (var image = new Bitmap(path))
+            generateTextureFromFile(path);
+
+            setTextureParameters();
+
+            return new Texture(handle);
+        }
+
+        private static void generateTextureFromFile(string texturePath)
+        {
+            using (var image = new Bitmap(texturePath))
             {
                 var data = image.LockBits(
                     new Rectangle(0, 0, image.Width, image.Height),
@@ -37,23 +42,30 @@ namespace GamJam2k21
                     PixelType.UnsignedByte,
                     data.Scan0);
             }
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-            return new Texture(handle);
         }
-        //Konstruktor pustej tekstury
+
+        private static void setTextureParameters()
+        {
+            GL.TexParameter(TextureTarget.Texture2D,
+                            TextureParameterName.TextureMinFilter,
+                            (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D,
+                            TextureParameterName.TextureMagFilter,
+                            (int)TextureMagFilter.Nearest);
+
+            GL.TexParameter(TextureTarget.Texture2D,
+                            TextureParameterName.TextureWrapS,
+                            (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D,
+                            TextureParameterName.TextureWrapT,
+                            (int)TextureWrapMode.Repeat);
+        }
+        
         public Texture(int glHandle)
         {
             _handle = glHandle;
         }
-        //Uzywanie tekstury
+        
         public void Use(TextureUnit unit)
         {
             GL.ActiveTexture(unit);

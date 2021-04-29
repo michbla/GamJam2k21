@@ -6,16 +6,12 @@ using OpenTK.Mathematics;
 
 namespace GamJam2k21
 {
-    /// <summary>
-    /// Program opisujacy wlasciwosci pikseli
-    /// </summary>
     public class Shader
     {
-        //ID programu
         public readonly int handle;
-        //Slownik lokalizacji vertexow
+
         private readonly Dictionary<string, int> _uniformLocations;
-        //Kostruktor przyjmujacy vertex shader i fragment shader
+
         public Shader(string vertexPath, string fragmentPath)
         {
 
@@ -54,7 +50,7 @@ namespace GamJam2k21
             }
 
         }
-        //Kompilator programu
+
         private static void CompileShader(int shader)
         {
             GL.CompileShader(shader);
@@ -66,7 +62,7 @@ namespace GamJam2k21
                 throw new Exception($"Blad kompilacji Shadera ({shader}).\n\n{infoLog}");
             }
         }
-        //Metoda podlaczajaca program
+
         private static void LinkProgram(int program)
         {
             GL.LinkProgram(program);
@@ -77,17 +73,17 @@ namespace GamJam2k21
                 throw new Exception($"Blad podpinania Programu ({program})");
             }
         }
-        //Metoda uzywajaca program
+
         public void Use()
         {
             GL.UseProgram(handle);
         }
-        //Pobieranie lokalizacji vertexow
+
         public int GetAttribLocation(string attribName)
         {
             return GL.GetAttribLocation(handle, attribName);
         }
-        //Settery do uniform wartosci w shaderze (jesli jakiegos brakuje - dorobic wedlug wzoru)
+
         public void SetInt(string name, int data)
         {
             GL.UseProgram(handle);

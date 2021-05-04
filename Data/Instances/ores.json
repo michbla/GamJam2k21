@@ -2,13 +2,60 @@
   {
     "ore": {
       "id": 1,
-      "textureName": "coalOre",
+      "textureName": "Coal_Ore",
       "name": "Coal",
       "hardness": 1,
       "endurance": 100,
       "dropId": 1,
       "color": [ 8, 6, 7 ]
     }
-  }
+  },
 
+  {
+    "ore": {
+      "id": 2,
+      "textureName": "Copper_Ore",
+      "name": "Copper",
+      "hardness": 1,
+      "endurance": 110,
+      "dropId": 2,
+      "color": [ 8, 6, 7 ]
+    }
+  },
+
+  {
+    "ore": {
+      "id": 3,
+      "textureName": "Iron_Ore_V2",
+      "name": "Iron",
+      "hardness": 2,
+      "endurance": 125,
+      "dropId": 3,
+      "color": [ 8, 6, 7 ]
+    }
+  },
+
+  {
+    "ore": {
+      "id": 4,
+      "textureName": "Gold_Ore",
+      "name": "Gold",
+      "hardness": 3,
+      "endurance": 135,
+      "dropId": 4,
+      "color": [ 8, 6, 7 ]
+    }
+  },
+
+  {
+    "ore": {
+      "id": 5,
+      "textureName": "Diamond_Ore",
+      "name": "Diamond",
+      "hardness": 4,
+      "endurance": 150,
+      "dropId": 5,
+      "color": [ 8, 6, 7 ]
+    }
+  }
 ]

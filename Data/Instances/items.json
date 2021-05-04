@@ -4,7 +4,43 @@
       "id": 1,
       "name": "Coal",
       "value": 5,
-      "textureName": "coal"
+      "textureName": "Coal_Item"
+    }
+  },
+
+  {
+    "item": {
+      "id": 2,
+      "name": "Copper",
+      "value": 6,
+      "textureName": "Copper_Item"
+    }
+  },
+
+  {
+    "item": {
+      "id": 3,
+      "name": "Iron",
+      "value": 7,
+      "textureName": "Iron_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 4,
+      "name": "Gold",
+      "value": 10,
+      "textureName": "Gold_Item_V1"
+    }
+  },
+
+  {
+    "item": {
+      "id": 5,
+      "name": "Diamond",
+      "value": 15,
+      "textureName": "Diamond_Item_V2"
     }
   }
 

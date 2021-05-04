@@ -59,6 +59,30 @@ namespace GamJam2k21
                 for (var j = 0; j < width; j++)
                     if (coal[j, i] > 0.7f)
                         oreData[j, i] = 1;
+
+            float[,] copper = Noise2D.GenerateNoiseMap(width * 2, depth, 5, 200.0f);
+            for (var i = 0; i < depth; i++)
+                for (var j = 0; j < width; j++)
+                    if (copper[j, i] > 0.8f)
+                        oreData[j, i] = 2;
+
+            float[,] iron = Noise2D.GenerateNoiseMap(width * 3, depth, 5, 200.0f);
+            for (var i = 10; i < depth; i++)
+                for (var j = 0; j < width; j++)
+                    if (copper[j, i] > 0.83f)
+                        oreData[j, i] = 3;
+
+            float[,] gold = Noise2D.GenerateNoiseMap(width * 2, depth, 5, 200.0f);
+            for (var i = 20; i < depth; i++)
+                for (var j = 0; j < width; j++)
+                    if (copper[j, i] > 0.84f)
+                        oreData[j, i] = 4;
+
+            float[,] diamond = Noise2D.GenerateNoiseMap(width * 2, depth, 5, 200.0f);
+            for (var i = 35; i < depth; i++)
+                for (var j = 0; j < width; j++)
+                    if (copper[j, i] > 0.85f)
+                        oreData[j, i] = 5;
         }
 
         private void generateGrassOnTop(float[,] blockData)

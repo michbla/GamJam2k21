@@ -11,14 +11,16 @@ namespace GamJam2k21
     }
     public abstract class Collider
     {
-        private readonly Transform parent;
+        private Transform parent;
 
         private Vector2 position;
         private Vector2 offset;
 
-        public Vector2 Position
+        public Vector2 Position { get => position; }
+
+        public void SetPosition(Vector2 newPosition)
         {
-            get => position;
+            parent.Position = newPosition;
         }
 
         public Collider(Transform parent, Vector2 offset = default)
@@ -73,7 +75,7 @@ namespace GamJam2k21
             get => size;
         }
 
-        public BoxCollider(Transform parent, Vector2 size, Vector2 offset = default) 
+        public BoxCollider(Transform parent, Vector2 size, Vector2 offset = default)
             : base(parent, offset)
         {
             this.size = size;
@@ -104,7 +106,7 @@ namespace GamJam2k21
             get => radius;
         }
 
-        public CircleCollider(Transform parent, float radius, Vector2 offset = default) 
+        public CircleCollider(Transform parent, float radius, Vector2 offset = default)
             : base(parent, offset)
         {
             this.radius = radius;

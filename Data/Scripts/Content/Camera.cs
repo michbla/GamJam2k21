@@ -48,6 +48,7 @@ namespace GamJam2k21
             get => windowResolution;
             set { windowResolution = value; }
         }
+        public static bool CanLookAround { set { lookAroundEnabled = value; } }
 
         public static void Update()
         {

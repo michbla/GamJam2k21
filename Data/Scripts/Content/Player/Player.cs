@@ -30,6 +30,8 @@ namespace GamJam2k21
 
         public Pickaxe equippedPickaxe;
 
+        private bool canBeControlled = true;
+
         public Transform Transform { get => transform; }
         public Vector2 Position
         {
@@ -47,6 +49,7 @@ namespace GamJam2k21
         public GameLevel Level { set { level = value; } }
         public Vector2i CursorOnGridPosition { set { cursorOnGidPos = value; } }
         public bool HasSelectedBlock { get => hasSelectedBlock; }
+        public bool CanBeControlled { set { canBeControlled = value; } }
 
         public Player(Transform transform, Vector2 size)
         {
@@ -68,6 +71,8 @@ namespace GamJam2k21
 
         public void Update()
         {
+            if (!canBeControlled)
+                return;
             test();
 
             handleDigging();

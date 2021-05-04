@@ -39,5 +39,12 @@ namespace GamJam2k21
             this.rotation = rotation;
         }
 
+        public Transform(Vector2 position)
+        {
+            this.position = position;
+            this.scale = Vector2.One;
+            this.rotation = 0.0f;
+        }
+
     }
 }

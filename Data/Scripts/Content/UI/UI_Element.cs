@@ -14,7 +14,7 @@ namespace GamJam2k21.Interface
         private bool isClicked;
         private bool wasClicked;
 
-        public Vector2 Offset { get => offset; }
+        public Vector2 Offset { get => offset; set { offset = value; } }
         public bool IsHoverOver { get => isHoveredOver; }
         public bool IsClicked { get => isClicked; }
 
@@ -59,7 +59,8 @@ namespace GamJam2k21.Interface
             return false;
         }
 
-        public virtual void Render(Vector2 position) {
+        public virtual void Render(Vector2 position)
+        {
             colliderPosition = position + Offset;
         }
 

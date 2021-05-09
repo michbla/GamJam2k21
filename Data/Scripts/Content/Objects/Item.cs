@@ -5,7 +5,7 @@
         private readonly int id;
         private readonly string name;
         private readonly Sprite icon;
-        private readonly float value;
+        private readonly int value;
 
         private int quantity = 1;
 
@@ -19,7 +19,7 @@
             get => name;
         }
 
-        public float Value
+        public int Value
         {
             get => value;
         }
@@ -32,7 +32,7 @@
 
         public Item(int id,
                     string name,
-                    float value,
+                    int value,
                     Sprite icon)
         {
             this.id = id;

@@ -24,7 +24,8 @@ namespace GamJam2k21.Interface
 
         public Button(Vector2 offset,
                       Vector2i size,
-                      string text = "")
+                      string text = "",
+                      TextType type = TextType.bold)
             : base(offset)
         {
             this.size = size;
@@ -40,7 +41,7 @@ namespace GamJam2k21.Interface
                 if (charSize >= size.Y)
                     charSize = size.Y - 0.05f;
                 Vector2 textOffset = calculateTextOffset(text, size, charSize);
-                this.text = new Text(textOffset, text, TextType.bold, charSize);
+                this.text = new Text(textOffset, text, type, charSize);
             }
         }
 

@@ -16,13 +16,7 @@ namespace GamJam2k21
         private Player player;
         private Cursor cursor;
 
-        private List<Item> itemList = new List<Item>();
-
-        private readonly int INVENTORY_ROWS = 5;
-        private readonly int INVENTORY_COLUMNS = 5;
-
-        private bool displayEq = false;
-        private bool displaySummary = false;
+        private bool displayMenu = false;
 
         private GameObject blockSelection;
 
@@ -34,6 +28,16 @@ namespace GamJam2k21
         private Button subtractButton;
         private ProgressBar barTest;
 
+        private Icon UIbackgound;
+        private Icon CHAR_back;
+        private Icon SHOP_back;
+        private Icon OPT_back;
+        private Button CHAR_button;
+        private Button SHOP_button;
+        private Button OPT_button;
+
+        private string UI_state = "basic";
+
         public UI(Player player)
         {
             this.player = player;
@@ -41,6 +45,16 @@ namespace GamJam2k21
 
         public void Initiate()
         {
+            UIbackgound = new Icon((-6.0f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back"), (12.0f, 8.0f)));
+
+            CHAR_back = new Icon((-6.0f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_char"), (12.0f, 8.0f)));
+            SHOP_back = new Icon((-6.0f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_shop"), (12.0f, 8.0f)));
+            OPT_back = new Icon((-6.0f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (12.0f, 8.0f)));
+
+            CHAR_button = new Button((-5.0f, 3.5f), (3, 1), "A", TextType.ui_icon);
+            SHOP_button = new Button((-1.5f, 3.5f), (3, 1), "B", TextType.ui_icon);
+            OPT_button = new Button((2.0f, 3.5f), (3, 1), "C", TextType.ui_icon);
+
             PickaxeFrame = new Icon((0.0f, -1.0f), Sprite.Single(ResourceManager.GetTexture("canvas"), Vector2.One));
 
             dimmBackground = Sprite.Single(ResourceManager.GetTexture("dimmBackground"), (24.0f, 13.5f));
@@ -77,7 +91,15 @@ namespace GamJam2k21
             }
 
             if (Input.IsKeyPressed(Keys.E))
-                switchInventory();
+                switchMenu();
+
+            UIbackgound.Update(cursor.InWorldPos);
+            CHAR_back.Update(cursor.InWorldPos);
+            SHOP_back.Update(cursor.InWorldPos);
+            OPT_back.Update(cursor.InWorldPos);
+            CHAR_button.Update(cursor.InWorldPos);
+            SHOP_button.Update(cursor.InWorldPos);
+            OPT_button.Update(cursor.InWorldPos);
 
             WIP.Update(cursor.InWorldPos);
             PickaxeFrame.Update(cursor.InWorldPos);
@@ -94,40 +116,56 @@ namespace GamJam2k21
             {
                 barTest.SetValue(barTest.value - 0.1f);
             }
+
+            if (CHAR_button.CanPerformAction())
+            {
+                UI_state = "char";
+            }
+            if (SHOP_button.CanPerformAction())
+            {
+                UI_state = "shop";
+            }
+            if (OPT_button.CanPerformAction())
+            {
+                UI_state = "options";
+            }
         }
 
         private bool isInMenu()
         {
-            return displayEq || displaySummary;
+            return displayMenu;
         }
 
-        private void switchInventory()
+        private void switchMenu()
         {
-            displayEq = !displayEq;
+            displayMenu = !displayMenu;
+            if (!displayMenu)
+                UI_state = "basic";
         }
 
         public void Render()
         {
-            if (player.HasSelectedBlock && !isInMenu())
-                blockSelection.Render();
+            if (!isInMenu())
+            {
+                if (player.HasSelectedBlock)
+                    blockSelection.Render();
 
-            renderEquippedPickaxe();
+                renderEquippedPickaxe();
 
-            if (displayEq)
-                RenderEQ();
+                PickaxeFrame.Render(Camera.GetLeftUpperCorner());
 
-            PickaxeFrame.Render(Camera.GetLeftUpperCorner());
-
-            if(isInMenu())
-                dimmBackground.RenderWithTransform(new Transform(Camera.GetLeftLowerCorner()));
-            buttonTest.Render(Camera.GetLeftLowerCorner());
-            subtractButton.Render(Camera.GetLeftLowerCorner());
-            barTest.Render(Camera.GetLeftLowerCorner());
+                buttonTest.Render(Camera.GetLeftLowerCorner());
+                subtractButton.Render(Camera.GetLeftLowerCorner());
+                barTest.Render(Camera.GetLeftLowerCorner());
+            }
+            else
+            {
+                renderMenu();
+            }
 
             cursor.Render();
 
             WIP.Render(Camera.GetRightLowerCorner());
-
         }
 
         private void renderEquippedPickaxe()
@@ -139,67 +177,48 @@ namespace GamJam2k21
             pickaxe.RenderWithTransform(pickaxeTransform);
         }
 
-        public void RenderEQ()
+        private void renderMenu()
         {
-            int j = 0;
-            int i = 0;
-            Transform canvasTransform = Transform.Default;
-            canvasTransform.Position = Camera.GetScreenCenter((-5.0f, -6.5f));
-            //canvas.RenderWithTransform(canvasTransform);
-            //textRenderer.PrintText("EXPO:" + player.PlayerStatistics.getExp(), text, Camera.Position + (-3f, 4.5f), (0.4f, 0.4f), (1, 1, 1));
-            //for (i = 0; i < COLUMNS; i++)
-            //    for (j = 0; j < ROWS; j++)
-            //        spriteRenderer.DrawSprite(frame, new Transform(Camera.Position + (-3.2f + 1.2f * (i % COLUMNS), 3.4f - 1.2f * (i / ROWS)), (0.7f, 0.7f)), Vector3.One);
+            dimmBackground.RenderWithTransform(new Transform(Camera.GetLeftLowerCorner()));
+            CHAR_button.Render(Camera.GetScreenCenter());
+            SHOP_button.Render(Camera.GetScreenCenter());
+            OPT_button.Render(Camera.GetScreenCenter());
 
-            /*
-            int j = 0;
-            int i = 0;
-            spriteRenderer.DrawSprite(canvas, new Transform(Camera.Position + (-5.5f, -5.8f), (10.0f, 13.0f)), Vector3.One);
-            textRenderer.PrintText("EXPO:" + player.PlayerStatistics.getExp(), text, Camera.Position + (-3f, 4.5f), (0.4f, 0.4f), (1, 1, 1));
-            for (i = 0; i < COLUMNS; i++)
-                for (j = 0; j < ROWS; j++)
-                    spriteRenderer.DrawSprite(frame, new Transform(Camera.Position + (-3.2f + 1.2f * (i % COLUMNS), 3.4f - 1.2f * (i / ROWS)), (0.7f, 0.7f)), Vector3.One);
-
-            itemList = player.eq.GetInventoryItems();
-
-            i = 0;
-            foreach (var item in itemList)
-            {
-                spriteRenderer.DrawSprite(item.icon, new Transform(Camera.Position + (-3.6f + 1.2f * i, 3f - 1.2f * j), (1.5f, 1.5f)), Vector3.One);
-                int quantity = item.quantity;
-                String qString = "";
-                if (quantity < 10)
-                    qString = " ";
-                qString += quantity;
-                textRenderer.PrintText(qString, textWhite, Camera.Position + (-3.1f + 1.2f * (i % COLUMNS), 3.4f - 1.2f * (i / ROWS)), (0.35f, 0.35f), (1, 1, 1));
-                i++;
-            }*/
+            renderUIBasedonState();
         }
 
-        public void DrawInventoryFull()
+        private void renderUIBasedonState()
         {
-            //Red backpack icon?
-        }
-
-        public void DrawDaySummary(int day)
-        {
-            /*
-            itemList = player.eq.GetInventoryItems();
-            int i = 0;
-            spriteRenderer.DrawSprite(canvas, new Transform(Camera.Position + (-6.2f, -7.5f), (12.0f, 15.0f)), Vector3.One);
-            textRenderer.PrintText("SUMMARY", textBold, Camera.Position + (-3.80f, 4.2f), (1f, 1f), (1f, 1f, 1f));
-            textRenderer.PrintText("DAY " + day, textBold, Camera.Position + (-1.6f, 3.6f), (0.5f, 0.5f), (1f, 1f, 1f));
-            foreach (var item in itemList)
+            switch (UI_state)
             {
-                Console.WriteLine(item.name);
-                spriteRenderer.DrawSprite(item.icon, new Transform(Camera.Position + (-4.3f, 2.0f - i), Vector2.One), Vector3.One);
-                textRenderer.PrintText("X" + item.quantity, text, Camera.Position + (-3.2f, 2.2f - i), (0.5f, 0.5f), (1f, 1f, 1f));
-                i++;
+                case "basic":
+                    UIbackgound.Render(Camera.GetScreenCenter());
+                    break;
+                case "char":
+                    renderAttributes();
+                    break;
+                case "shop":
+                    renderShop();
+                    break;
+                case "options":
+                    renderOptions();
+                    break;
             }
-            textRenderer.PrintText("ORES VALUE:" + playerStatistics.getExp(), text, Camera.Position + (-4.2f, 2.2f - i), (0.4f, 0.4f), (1f, 1f, 1f));
-            textRenderer.PrintText("CURRENT DEPTH:" + playerStatistics.getLevelReached(), text, Camera.Position + (-4.2f, 1.2f - i), (0.4f, 0.4f), (1f, 1f, 1f));
-            textRenderer.PrintText("PRESS ENTER TO PROCEED", text, Camera.Position + (-5f, -5.5f), (0.4f, 0.4f), (1f, 1f, 1f));
-            */
+        }
+
+        private void renderAttributes()
+        {
+            CHAR_back.Render(Camera.GetScreenCenter());
+        }
+
+        private void renderShop()
+        {
+            SHOP_back.Render(Camera.GetScreenCenter());
+        }
+
+        private void renderOptions()
+        {
+            OPT_back.Render(Camera.GetScreenCenter());
         }
     }
 }

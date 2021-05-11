@@ -24,6 +24,7 @@ namespace GamJam2k21
         public Inventory inventory;
 
         private float diggingSpeed = 400.0f;
+        private float diggingSpeedBase = 400.0f;
         public bool isReadyToDamage = true;
         private float diggingCooldown = 0.0f;
         private readonly float DIG_CD_BASE = 10.0f;
@@ -31,6 +32,8 @@ namespace GamJam2k21
         public Pickaxe equippedPickaxe;
 
         private bool canBeControlled = true;
+
+        public Skills Skills = new Skills();
 
         public Transform Transform { get => transform; }
         public Vector2 Position
@@ -91,6 +94,8 @@ namespace GamJam2k21
                 diggingCooldown -= Time.DeltaTime * diggingSpeed / 10.0f;
             else
                 isReadyToDamage = true;
+
+            updateSkills();
         }
 
         private void handleDigging()
@@ -160,6 +165,12 @@ namespace GamJam2k21
                 stats.addLevelReached();
             }
         }
+
+        private void updateSkills()
+        {
+            diggingSpeed = diggingSpeedBase + Skills.SpeedPoints * 200.0f;
+        }
+
         //TODO: REMOVE TESTS
         private void test()
         {

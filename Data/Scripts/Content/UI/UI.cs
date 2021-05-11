@@ -45,6 +45,8 @@ namespace GamJam2k21
 
         private Shop shop;
 
+        private CharacterMenu charMenu;
+
         public UI(Player player)
         {
             this.player = player;
@@ -74,6 +76,7 @@ namespace GamJam2k21
             ui_elements.Add(OPT_button);
 
             shop = new Shop(player);
+            charMenu = new CharacterMenu(player);
 
             //
             buttonTest = new Button((3.0f, 2.0f), (2, 1), "+");
@@ -88,7 +91,7 @@ namespace GamJam2k21
             cursor = new Cursor();
 
             Time.GetInstance();
-            playTime = new Text((7.4f, -1.2f), Time.GetTime(), TextType.white, 1f);
+            playTime = new Text((7.4f, -2.2f), Time.GetTime(), TextType.tall_white_o, 1f);
         }
         private int lastGold = 0;
         public void Update()
@@ -117,6 +120,9 @@ namespace GamJam2k21
 
                 shop.MouseLocation = cursor.InWorldPos;
                 shop.Update();
+
+                charMenu.MouseLocation = cursor.InWorldPos;
+                charMenu.Update();
 
                 if (CHAR_button.CanPerformAction())
                     UI_state = "char";
@@ -243,7 +249,7 @@ namespace GamJam2k21
                     UIbackgound.Render(Camera.GetScreenCenter());
                     break;
                 case "char":
-                    renderAttributes();
+                    charMenu.Render();
                     break;
                 case "shop":
                     shop.Render();
@@ -252,11 +258,6 @@ namespace GamJam2k21
                     renderOptions();
                     break;
             }
-        }
-
-        private void renderAttributes()
-        {
-            CHAR_back.Render(Camera.GetScreenCenter());
         }
 
         private void renderOptions()

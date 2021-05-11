@@ -50,9 +50,6 @@ namespace GamJam2k21
         public Vector2i CursorOnGridPosition { set { cursorOnGidPos = value; } }
         public bool HasSelectedBlock { get => hasSelectedBlock; }
         public bool CanBeControlled { set { canBeControlled = value; } }
-        public int Gold { get => inventory.Gold; }
-        public int LadderCount { get => inventory.Ladders; }
-        public int BombCount { get => inventory.Bombs; }
 
         public Player(Transform transform, Vector2 size)
         {
@@ -112,17 +109,27 @@ namespace GamJam2k21
                 ResetDiggingCooldown();
                 if (block.IsDestroyed())
                 {
-                    if (block.HasOre())
-                        earnGoldFromBlock(block);
-
-                    level.DestoyBlockAtPosition(block, position);
+                    if(block.HasOre())
+                        getDrop(block);
+                    level.DestoyBlockAtPosition(block,position);
                 }
             }
         }
 
-        private void earnGoldFromBlock(Block block)
+        private void getDrop(Block block)
         {
-            inventory.Gold += block.GetDrop().Value;
+            Item drop = block.GetDrop();
+            if (inventory.HasFreeSpaceForItem(drop))
+            {
+                inventory.AddToInventory(new Item(drop));
+                var ore = block.Ore;
+                //player.PlayerStatistics.SetOresDestroyed(ore);
+                //Succesfully added item to inventory
+            }
+            else
+            {
+                //Inventory full
+            }
         }
 
         public void ResetDiggingCooldown()
@@ -134,21 +141,6 @@ namespace GamJam2k21
         {
             equippedPickaxe = ResourceManager.GetPickaxeByID(pickaxeId);
             animator.PickaxeSprite = equippedPickaxe.Sprite;
-        }
-
-        public void Pay(int amount)
-        {
-            inventory.Gold -= amount;
-        }
-
-        public void AddBomb()
-        {
-            inventory.Bombs++;
-        }
-
-        public void AddLadder()
-        {
-            inventory.Ladders++;
         }
 
         private void setMaxPlayerDepth()

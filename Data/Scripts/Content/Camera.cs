@@ -112,7 +112,7 @@ namespace GamJam2k21
 
         public static Vector2 GetRightUpperCorner(Vector2 offset = default)
         {
-            return new Vector2(position.X + screenSize.X * 0.5f + offset.X,
+            return new Vector2(position.X - screenSize.X * 0.5f + offset.X,
                                position.Y + screenSize.Y * 0.5f + offset.Y);
         }
 

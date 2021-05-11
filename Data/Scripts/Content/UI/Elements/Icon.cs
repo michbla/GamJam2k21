@@ -23,10 +23,5 @@ namespace GamJam2k21.Interface
             Transform visualTransform = new Transform(position + Offset);
             visual.RenderWithTransform(visualTransform);
         }
-
-        public void ChangeTexture(string newTextureName)
-        {
-            visual.Texture = ResourceManager.GetTexture(newTextureName);
-        }
     }
 }

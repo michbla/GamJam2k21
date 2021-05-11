@@ -9,8 +9,7 @@ namespace GamJam2k21
         bold,
         white,
         ui,
-        ui_icon,
-        golden
+        ui_icon
     }
     public class TextRenderer
     {
@@ -33,7 +32,6 @@ namespace GamJam2k21
             addFont(TextType.white, "textBitmapWhite");
             addFont(TextType.ui, "textBitmapUI");
             addFont(TextType.ui_icon, "textBitmapUI_icons");
-            addFont(TextType.golden, "textBitmapGold");
         }
 
         private static void addFont(TextType type, string textureName)

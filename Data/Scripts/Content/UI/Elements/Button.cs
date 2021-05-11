@@ -15,7 +15,6 @@ namespace GamJam2k21.Interface
             = new Dictionary<Vector2i, Sprite>();
 
         private Vector2i size;
-        private Vector2i objSize;
 
         private Text text;
 
@@ -29,20 +28,19 @@ namespace GamJam2k21.Interface
                       TextType type = TextType.bold)
             : base(offset)
         {
-            objSize = (size.X, size.Y % 10);
             this.size = size;
             makeButtonOfSize(size);
-            collider = new BoxCollider(Transform.Default, objSize);
+            collider = new BoxCollider(Transform.Default, size);
 
             state = ButtonState.normal;
             performedAction = false;
 
             if (text.Length >= 1)
             {
-                float charSize = (objSize.X - 0.1f) / text.Length;
-                if (charSize >= objSize.Y)
-                    charSize = objSize.Y - 0.05f;
-                Vector2 textOffset = calculateTextOffset(text, objSize, charSize);
+                float charSize = (size.X - 0.1f) / text.Length;
+                if (charSize >= size.Y)
+                    charSize = size.Y - 0.05f;
+                Vector2 textOffset = calculateTextOffset(text, size, charSize);
                 this.text = new Text(textOffset, text, type, charSize);
             }
         }
@@ -60,7 +58,7 @@ namespace GamJam2k21.Interface
             {
                 string buttonSize = size.X + "x" + size.Y;
                 Texture buttonTexture = ResourceManager.GetTexture("button_" + buttonSize);
-                Sprite buttonSprite = Sprite.Sheet(buttonTexture, (size.X,size.Y % 10), (1, 3));
+                Sprite buttonSprite = Sprite.Sheet(buttonTexture, size, (1, 3));
 
                 buttons.Add(size, buttonSprite);
             }
@@ -95,11 +93,6 @@ namespace GamJam2k21.Interface
                 text.Render(position + Offset - (0.0f, 0.1f));
             else
                 text.Render(position + Offset);
-        }
-
-        public void UpdateText(string newText)
-        {
-            text.UpdateText(newText);
         }
 
         public override void OnHoverOver()

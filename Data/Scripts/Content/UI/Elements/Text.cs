@@ -34,14 +34,5 @@ namespace GamJam2k21.Interface
             base.Render(position);
             renderer.PrintText(text, type, position + Offset, scale);
         }
-
-        public void UpdateText(string newText)
-        {
-            text = newText;
-        }
-        public void UpdateOffset(Vector2 newOffset)
-        {
-            Offset = newOffset;
-        }
     }
 }

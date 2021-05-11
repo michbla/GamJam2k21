@@ -34,7 +34,7 @@ namespace GamJam2k21
             return instance;
         }
         #endregion Singleton
-        public static void AddItem(int id, string name, float value, Sprite icon)
+        public static void AddItem(int id, string name, int value, Sprite icon)
         {
             items.Add(id, new Item(id, name, value, icon));
         }

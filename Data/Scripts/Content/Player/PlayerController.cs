@@ -29,6 +29,8 @@ namespace GamJam2k21
         private bool canMove = true;
         private bool isGrounded = true;
 
+        private bool jumpFromLadder = false;
+
         private BoxCollider bottomBox;
         private BoxCollider upperBox;
         private BoxCollider rightBox;
@@ -93,7 +95,6 @@ namespace GamJam2k21
             if (hasColl[2] && position.Y < collisionPos.Y)
                 position.Y = collisionPos.Y;
 
-            //Drabina mechanic
             if (isFloating && canMove)
             {
                 velocity.Y = 0.0f;
@@ -113,12 +114,19 @@ namespace GamJam2k21
             collisionPos = player.Position;
             for (var i = 0; i < 4; i++)
                 hasColl[i] = false;
+            isFloating = false;
+            jumpFromLadder = false;
         }
         private void checkCollisions()
         {
             foreach (var block in blocks)
-                if (block.DistanceToPlayer <= 5.0f)
-                    checkCollision(block.Collider);
+                if (block.DistanceToPlayer <= 5.0f && block.IsCollidable)
+                {
+                    if (block.Name == "Ladder")
+                        checkLadderCollision(block.Collider);
+                    else
+                        checkCollision(block.Collider);
+                }
         }
 
         private void doMovement()
@@ -145,14 +153,19 @@ namespace GamJam2k21
             else
                 velocity.X = 0.0f;
 
-            if (rememberGrounded > 0.0f
-                && Input.IsKeyDown(Keys.Space)
-                && !isFloating)
+            if (Input.IsKeyDown(Keys.Space)
+                && canJump())
             {
                 velocity.Y = 1.0f * jumpForce;
                 isJumping = true;
                 player.Animator.PlayJumpParticles();
             }
+        }
+
+        private bool canJump()
+        {
+            return (rememberGrounded > 0.0f && !isFloating)
+                || jumpFromLadder;
         }
 
         private void reactToGravity()
@@ -206,6 +219,25 @@ namespace GamJam2k21
             (bool, Direction, Vector2) lRes = leftBox.CheckCollision(collider);
             if (lRes.Item1 == true)
                 hasColl[3] = true;
+        }
+
+        private void checkLadderCollision(BoxCollider collider)
+        {
+            (bool, Direction, Vector2) upRes = upperBox.CheckCollision(collider);
+            (bool, Direction, Vector2) botRes = bottomBox.CheckCollision(collider);
+            (bool, Direction, Vector2) rRes = rightBox.CheckCollision(collider);
+            (bool, Direction, Vector2) lRes = leftBox.CheckCollision(collider);
+
+            if (upRes.Item1 == true || botRes.Item1 == true
+              || lRes.Item1 == true || rRes.Item1 == true)
+            {
+                isFloating = true;
+            }
+            if (botRes.Item1 == true)
+            {
+                jumpFromLadder = true;
+                rememberGrounded = 0.1f;
+            }
         }
     }
 }

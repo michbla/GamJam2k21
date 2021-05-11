@@ -6,6 +6,8 @@ namespace GamJam2k21
 {
     public class GameLevel
     {
+        private readonly Player player;
+
         public int[,] mapData;
         public int[,] oreData;
 
@@ -23,8 +25,9 @@ namespace GamJam2k21
         private readonly ParticleEmmiter damageParticles;
         private readonly ParticleEmmiter destructionParticles;
 
-        public GameLevel(int width, int depth)
+        public GameLevel(Player player, int width, int depth)
         {
+            this.player = player;
             this.width = width;
             this.depth = depth;
             mapData = new int[this.width, this.depth];
@@ -137,8 +140,9 @@ namespace GamJam2k21
             spawnChunk(3, 1);
         }
 
-        public void Update(Vector2 playerPos)
+        public void Update()
         {
+            Vector2 playerPos = player.Center;
             playerChunk = ((int)playerPos.X / 16, -(int)playerPos.Y / 16);
             if (playerChunk.X != lastPlayerChunk.X)
             {
@@ -174,8 +178,7 @@ namespace GamJam2k21
             for (var i = 0; i < currentBlocks.Count; i++)
             {
                 var block = currentBlocks[i];
-                float distance = (playerPos - (block.Position + (block.Size * 0.5f))).Length;
-                block.DistanceToPlayer = distance;
+                block.DistanceToPlayer = calculateDistanceToPlayer(block.Position);
                 block.Update();
             }
             lastPlayerChunk = playerChunk;
@@ -270,14 +273,22 @@ namespace GamJam2k21
                 bg.Render();
         }
 
-        public Block GetBlockAtPosition(Vector2 position)
+        public Block GetBlockInPlayersRange(Vector2 position)
+        {
+            var block = getBlockAtPosition(position);
+            if (block != null && isInPlayersRange(block, 2.0f))
+                return block;
+            return null;
+        }
+
+        private Block getBlockAtPosition(Vector2 position)
         {
             if (isOutOfBounds(position))
                 return null;
             for (var i = 0; i < currentBlocks.Count; i++)
             {
                 var block = currentBlocks[i];
-                if (isInPlayersRange(block, 2.0f) && isAtLocation(block, position))
+                if (isAtLocation(block, position))
                     return block;
             }
             return null;
@@ -291,9 +302,9 @@ namespace GamJam2k21
                 || position.Y < -depth;
         }
 
-        private bool isInPlayersRange(Block block, float Range)
+        private bool isInPlayersRange(Block block, float range)
         {
-            return block.DistanceToPlayer <= 2.4f;
+            return block.DistanceToPlayer <= range;
         }
 
         private bool isAtLocation(Block block, Vector2 location)
@@ -316,6 +327,23 @@ namespace GamJam2k21
                                 true);
             currentBlocks.Remove(block);
             mapData[position.X, -position.Y] = 0;
+        }
+
+        public void PlaceBlockAtPosition(Block block, Vector2i position)
+        {
+            if (calculateDistanceToPlayer(position) > 3.0f
+                || isOutOfBounds(position)
+                || getBlockAtPosition(position) != null)
+                return;
+            mapData[position.X, -position.Y] = ResourceManager.GetBlockID(block);
+            oreData[position.X, -position.Y] = 0;
+            spawnBlock(position.X, -position.Y);
+        }
+
+        private float calculateDistanceToPlayer(Vector2 position)
+        {
+            float distance = (player.Center - (position + (0.5f, 0.5f))).Length;
+            return distance;
         }
 
         public void playDamageParticles(Block block)

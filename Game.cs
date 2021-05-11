@@ -52,7 +52,7 @@ namespace GamJam2k21
 
             player = new Player(Transform.Default, (1.0f, 2.0f));
             player.Position = spawnPosition;
-            level = new GameLevel(128, 1000);
+            level = new GameLevel(player, 128, 1000);
             UI = new UI(player);
             UI.Initiate();
 
@@ -94,7 +94,7 @@ namespace GamJam2k21
             {
                 Camera.Update();
                 player.Update();
-                level.Update(player.Center);
+                level.Update();
                 //updateDayCycle();
             }
             if (state == GameState.summary)

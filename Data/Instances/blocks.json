@@ -1,9 +1,10 @@
 ﻿[
+
   {
     "block": {
       "id": 1,
       "textureName": "grass",
-      "name": "Drass",
+      "name": "Grass",
       "hardness": 0,
       "endurance": 100,
       "color": [ 17, 6, 1 ]
@@ -28,6 +29,28 @@
       "name": "Stone",
       "hardness": 1,
       "endurance": 150,
+      "color": [ 10, 10, 10 ]
+    }
+  },
+
+  {
+    "block": {
+      "id": 100,
+      "textureName": "ladder",
+      "name": "Ladder",
+      "hardness": 999,
+      "endurance": 1,
+      "color": [ 17, 6, 1 ]
+    }
+  },
+
+  {
+    "block": {
+      "id": 101,
+      "textureName": "bomb",
+      "name": "Bomb",
+      "hardness": 999,
+      "endurance": 1,
       "color": [ 10, 10, 10 ]
     }
   }

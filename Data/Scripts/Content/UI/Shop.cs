@@ -60,6 +60,9 @@ namespace GamJam2k21.Interface
                 tryBuingBomb();
             if (button3.CanPerformAction())
                 tryBuingLadder();
+
+            bombCount.UpdateText(countTotext(player.BombCount));
+            ladderCount.UpdateText(countTotext(player.LadderCount));
         }
 
         private void tryBuingPickaxe()
@@ -82,18 +85,17 @@ namespace GamJam2k21.Interface
             player.AddBomb();
             bombPrice += 100;
             button2.UpdateText(convertValueToString(bombPrice));
-            bombCount.UpdateText(countTotext(player.BombCount));
         }
 
         private void tryBuingLadder()
         {
+            ladderCount.UpdateText(countTotext(player.LadderCount));
             if (player.Gold < ladderPrice)
                 return;
             player.Pay(ladderPrice);
             player.AddLadder();
             ladderPrice += 50;
             button3.UpdateText(convertValueToString(ladderPrice));
-            ladderCount.UpdateText(countTotext(player.LadderCount));
         }
 
         public void Render()

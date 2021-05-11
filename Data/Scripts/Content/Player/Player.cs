@@ -82,6 +82,7 @@ namespace GamJam2k21
             test();
 
             handleDigging();
+            handlePlacing();
 
             controller.Blocks = level.currentBlocks;
             controller.Update();
@@ -103,7 +104,7 @@ namespace GamJam2k21
             animator.IsSwinging = false;
             hasSelectedBlock = false;
             Vector2i position = (cursorOnGidPos.X, cursorOnGidPos.Y);
-            Block block = level.GetBlockAtPosition(position);
+            Block block = level.GetBlockInPlayersRange(position);
             if (block == null || !block.CanBeDamaged(Hardness))
                 return;
             hasSelectedBlock = true;
@@ -128,6 +129,22 @@ namespace GamJam2k21
         private void earnGoldFromBlock(Block block)
         {
             inventory.Gold += block.GetDrop().Value;
+        }
+        private bool canPlaceBlock = true;
+        private void handlePlacing()
+        {
+            Vector2i position = (cursorOnGidPos.X, cursorOnGidPos.Y);
+            if (Input.IsMouseButtonDown(MouseButton.Button2) && canPlaceBlock)
+            {
+                canPlaceBlock = false;
+                if (inventory.Ladders > 0)
+                {
+                    inventory.Ladders--;
+                    level.PlaceBlockAtPosition(ResourceManager.GetBlockByID(100), position);
+                }
+            }
+            if (!Input.IsMouseButtonDown(MouseButton.Button2))
+                canPlaceBlock = true;
         }
 
         public void ResetDiggingCooldown()

@@ -11,9 +11,5 @@ namespace GamJam2k21
         public int Ladders = 0;
         public int Pickaxe = 0;
 
-        public Inventory()
-        {
-            
-        }
     }
 }

@@ -24,6 +24,8 @@ namespace GamJam2k21
 
         private Ore ore = null;
 
+        public bool IsCollidable = true;
+
         private BoxCollider collider;
         public string Name { get => name; }
         public int Hardness { get => hardness; }

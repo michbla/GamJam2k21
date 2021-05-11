@@ -85,15 +85,18 @@ namespace GamJam2k21
                 Close();
             if (Input.IsKeyPressed(Keys.F4))
                 switchFullscreen();
-
+                
+           
             UI.Update();
-
+            Time.UpdateInGameTime();
+            Time.GetTime();
             if (state == GameState.active)
             {
                 Camera.Update();
                 player.Update();
                 level.Update(player.Center);
                 //updateDayCycle();
+                Console.WriteLine();
             }
             if (state == GameState.summary)
             {

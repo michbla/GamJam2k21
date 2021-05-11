@@ -88,7 +88,7 @@ namespace GamJam2k21
             cursor = new Cursor();
 
             Time.GetInstance();
-            playTime = new Text((7.8f, -1.2f), Time.GetTime(), TextType.white, 1f);
+            playTime = new Text((7.4f, -1.2f), Time.GetTime(), TextType.white, 1f);
         }
         private int lastGold = 0;
         public void Update()

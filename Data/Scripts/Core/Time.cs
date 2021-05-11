@@ -8,9 +8,9 @@ namespace GamJam2k21
     {
         private struct InGameTime
         {
-            public int h;
             public int m;
             public int s;
+            public int ms;
         };
 
         private static InGameTime igt;
@@ -42,16 +42,17 @@ namespace GamJam2k21
         {
             timeElapsed += deltaTime;
             int totalseconds = (int)timeElapsed;
-            igt.h = totalseconds / 3600;
+            int ms = (int)((timeElapsed - (float)totalseconds)* 1000);
             igt.m = (totalseconds % 3600) / 60;
             igt.s = totalseconds % 60;
-
+            igt.ms = ms;
         }
 
         public static string GetTime()
         {
             string tf = "00";
-            return igt.h.ToString(tf) + ":" + igt.m.ToString(tf) + ":" + igt.s.ToString(tf);
+            string tfms = "000";
+            return igt.m.ToString(tf) + ":" + igt.s.ToString(tf) + ":" + igt.ms.ToString(tfms);
         }
 
         

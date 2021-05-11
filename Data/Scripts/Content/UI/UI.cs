@@ -37,6 +37,8 @@ namespace GamJam2k21
         private Button SHOP_button;
         private Button OPT_button;
 
+        private Text playTime;
+
         private string UI_state = "basic";
 
         private Icon Coin;
@@ -85,6 +87,9 @@ namespace GamJam2k21
                                              Vector2.One);
             blockSelection = new GameObject(selection, Transform.Default);
             cursor = new Cursor();
+
+            Time.GetInstance();
+            playTime = new Text((3f, -1.2f), Time.GetTime(), TextType.white, 1f);
         }
         private int lastGold = 0;
         public void Update()
@@ -131,6 +136,8 @@ namespace GamJam2k21
             buttonTest.Update(cursor.InWorldPos);
             barTest.Update(cursor.InWorldPos);
             subtractButton.Update(cursor.InWorldPos);
+
+            
             if (buttonTest.CanPerformAction())
                 barTest.SetValue(barTest.value + 0.1f);
             if (subtractButton.CanPerformAction())

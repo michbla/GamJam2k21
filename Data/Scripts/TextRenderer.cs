@@ -49,7 +49,7 @@ namespace GamJam2k21
             for(int i = 0; i < text.Length; i++){
                 Vector2i positionOnSheet;
                 positionOnSheet.Y = text[i] / 16;
-                positionOnSheet.X = (text[i] -1) % 16;
+                positionOnSheet.X = (text[i]) % 16 - 1;
                 if(positionOnSheet.X < 0)
                     positionOnSheet = (15, positionOnSheet.Y - 1);
 

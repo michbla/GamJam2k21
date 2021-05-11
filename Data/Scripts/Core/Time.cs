@@ -6,11 +6,19 @@ namespace GamJam2k21
 {
     public class Time
     {
+        private struct InGameTime
+        {
+            public int h;
+            public int m;
+            public int s;
+        };
+
+        private static InGameTime igt;
 
         private static float deltaTime;
         private static float timeElapsed;
 
-        private static InGameTime igt = new InGameTime();
+
         #region Singleton
         private Time() 
         {
@@ -33,55 +41,21 @@ namespace GamJam2k21
         public static void UpdateInGameTime()
         {
             timeElapsed += deltaTime;
-            igt.SetTime(timeElapsed);
+            int totalseconds = (int)timeElapsed;
+            igt.h = totalseconds / 3600;
+            igt.m = (totalseconds % 3600) / 60;
+            igt.s = totalseconds % 60;
 
         }
 
-        public static void GetTime()
+        public static string GetTime()
         {
-            Console.WriteLine(timeElapsed);//igt.GetHour() + " " + igt.GetMinute() + " " + igt.GetSecond()
+            string tf = "00";
+            return igt.h.ToString(tf) + ":" + igt.m.ToString(tf) + ":" + igt.s.ToString(tf);
         }
 
         
     }
 
-    public class InGameTime
-    {
-        private int hour;
-        private int minute;
-        private int second;
 
-        public InGameTime()
-        {
-            hour = 0;
-            minute = 0;
-            second = 0;
-        }
-
-        public void SetTime(float deltasum)
-        {
-            float delta = deltasum;
-            int secondstotal = (int)delta;
-            second = (int)secondstotal / (minute + 1);
-            if (second%5 == 0)
-            {
-                minute = second % 5;
-                second = 0;
-            }
-                
-            hour = minute / 60;
-        }
-        public int GetHour()
-        {
-            return hour;
-        }
-        public int GetMinute()
-        {
-            return minute;
-        }
-        public int GetSecond()
-        {
-            return second;
-        }
-    }
 }

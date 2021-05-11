@@ -37,12 +37,11 @@ namespace GamJam2k21
         private Button SHOP_button;
         private Button OPT_button;
 
-        private Text playTime;
-
         private string UI_state = "basic";
 
         private Icon Coin;
         private Text Gold = new Text((-8.75f, -2.0f), "     0", TextType.golden, 1.0f);
+        private Text playTime;
 
         private Shop shop;
 
@@ -89,7 +88,7 @@ namespace GamJam2k21
             cursor = new Cursor();
 
             Time.GetInstance();
-            playTime = new Text((3f, -1.2f), Time.GetTime(), TextType.white, 1f);
+            playTime = new Text((7.8f, -1.2f), Time.GetTime(), TextType.white, 1f);
         }
         private int lastGold = 0;
         public void Update()
@@ -102,6 +101,7 @@ namespace GamJam2k21
             if (player.Gold != lastGold)
                 setGold(player.Gold);
             lastGold = player.Gold;
+            playTime.UpdateText(Time.GetTime());
 
             if (!isInMenu())
             {
@@ -204,6 +204,7 @@ namespace GamJam2k21
 
                 Coin.Render(Camera.GetRightUpperCorner());
                 Gold.Render(Camera.GetRightUpperCorner());
+                playTime.Render(Camera.GetLeftUpperCorner());
             }
             else
             {

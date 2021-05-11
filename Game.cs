@@ -96,7 +96,6 @@ namespace GamJam2k21
                 player.Update();
                 level.Update(player.Center);
                 //updateDayCycle();
-                Console.WriteLine();
             }
             if (state == GameState.summary)
             {

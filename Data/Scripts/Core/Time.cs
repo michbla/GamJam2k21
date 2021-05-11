@@ -43,7 +43,7 @@ namespace GamJam2k21
             timeElapsed += deltaTime;
             int totalseconds = (int)timeElapsed;
             int ms = (int)((timeElapsed - (float)totalseconds)* 1000);
-            igt.m = (totalseconds % 3600);
+            igt.m = (totalseconds % 3600) / 5940;
             igt.s = totalseconds % 60;
             igt.ms = ms;
         }

@@ -30,8 +30,10 @@ namespace GamJam2k21
         private Button subtractButton;
         private ProgressBar barTest;
 
+        private Icon accessory;
+        private bool accessoryIsBomb = true;
+
         private Icon UIbackgound;
-        private Icon CHAR_back;
         private Icon OPT_back;
         private Button CHAR_button;
         private Button SHOP_button;
@@ -60,7 +62,6 @@ namespace GamJam2k21
 
             UIbackgound = new Icon((-6.0f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back"), (12.0f, 8.0f)));
 
-            CHAR_back = new Icon((-6.0f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_char"), (12.0f, 8.0f)));
             OPT_back = new Icon((-6.0f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (12.0f, 8.0f)));
 
             CHAR_button = new Button((-5.0f, 3.5f), (3, 1), "A", TextType.ui_icon);
@@ -70,6 +71,8 @@ namespace GamJam2k21
             Coin = new Icon((-2.5f, -2.5f), Sprite.Single(ResourceManager.GetTexture("coin"), (2.0f, 2.0f)));
 
             PickaxeFrame = new Icon((0.0f, -1.0f), Sprite.Single(ResourceManager.GetTexture("canvas"), Vector2.One));
+
+            accessory = new Icon((3.0f, -3.0f), Sprite.Single(ResourceManager.GetTexture("bomb"), Vector2.One));
 
             ui_elements.Add(CHAR_button);
             ui_elements.Add(SHOP_button);
@@ -111,6 +114,7 @@ namespace GamJam2k21
                 cursor.DisplayPickaxe = player.HasSelectedBlock;
                 player.CanBeControlled = true;
                 Camera.CanLookAround = true;
+                updateAccessory();
             }
             else
             {
@@ -143,7 +147,7 @@ namespace GamJam2k21
             barTest.Update(cursor.InWorldPos);
             subtractButton.Update(cursor.InWorldPos);
 
-            
+
             if (buttonTest.CanPerformAction())
                 barTest.SetValue(barTest.value + 0.1f);
             if (subtractButton.CanPerformAction())
@@ -193,6 +197,22 @@ namespace GamJam2k21
             return new string(charArray);
         }
 
+        private void updateAccessory()
+        {
+            if (accessoryIsBomb == player.IsHoldingBomb)
+                return;
+            accessoryIsBomb = player.IsHoldingBomb;
+            string newTexture = getAccessoryTexture();
+            accessory.ChangeTexture(newTexture);
+        }
+
+        private string getAccessoryTexture()
+        {
+            if (player.IsHoldingBomb)
+                return "bomb";
+            return "ladder";
+        }
+
         public void Render()
         {
             if (!isInMenu())
@@ -203,6 +223,8 @@ namespace GamJam2k21
                 renderEquippedPickaxe();
 
                 PickaxeFrame.Render(Camera.GetLeftUpperCorner());
+
+                accessory.Render(Camera.GetLeftUpperCorner());
 
                 buttonTest.Render(Camera.GetLeftLowerCorner());
                 subtractButton.Render(Camera.GetLeftLowerCorner());
@@ -226,7 +248,7 @@ namespace GamJam2k21
         {
             Sprite pickaxe = player.equippedPickaxe.Sprite;
             Transform pickaxeTransform = Transform.Default;
-            pickaxeTransform.Position = Camera.GetLeftUpperCorner() + (-2.5f, -5.5f);
+            pickaxeTransform.Position = Camera.GetLeftUpperCorner() + (-3.0f, -5.0f);
             pickaxeTransform.Scale = (2.0f, 2.0f);
             pickaxe.RenderWithTransform(pickaxeTransform);
         }

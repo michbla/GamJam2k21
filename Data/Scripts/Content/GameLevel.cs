@@ -187,6 +187,12 @@ namespace GamJam2k21
             destructionParticles.Update();
         }
 
+        private float calculateDistanceToPlayer(Vector2 position)
+        {
+            float distance = (player.Center - (position + (0.5f, 0.5f))).Length;
+            return distance;
+        }
+
         private void spawnChunk(int x, int y)
         {
             int posX = x * 16;
@@ -299,7 +305,7 @@ namespace GamJam2k21
             return position.X < 0
                 || position.Y > 0
                 || position.X > width
-                || position.Y < -depth;
+                || position.Y < -depth + 1;
         }
 
         private bool isInPlayersRange(Block block, float range)
@@ -313,8 +319,10 @@ namespace GamJam2k21
                 && block.Position.Y == location.Y;
         }
 
-        public void DestoyBlockAtPosition(Block block, Vector2i position)
+        public void DestroyBlockAtPosition(Block block, Vector2i position)
         {
+            if (isOutOfBounds(position))
+                return;
             destructionParticles.SpawnParticles(
                                 damagedBlockPosition,
                                 32,
@@ -329,21 +337,47 @@ namespace GamJam2k21
             mapData[position.X, -position.Y] = 0;
         }
 
+        public bool CanPlaceBlockAtPosition(Vector2i position)
+        {
+            return calculateDistanceToPlayer(position) <= 3.0f
+                && !isOutOfBounds(position)
+                && getBlockAtPosition(position) == null;
+        }
+
         public void PlaceBlockAtPosition(Block block, Vector2i position)
         {
-            if (calculateDistanceToPlayer(position) > 3.0f
-                || isOutOfBounds(position)
-                || getBlockAtPosition(position) != null)
-                return;
             mapData[position.X, -position.Y] = ResourceManager.GetBlockID(block);
             oreData[position.X, -position.Y] = 0;
             spawnBlock(position.X, -position.Y);
         }
 
-        private float calculateDistanceToPlayer(Vector2 position)
+        public void DestroyBlocksInRange(Vector2i position, int range)
         {
-            float distance = (player.Center - (position + (0.5f, 0.5f))).Length;
-            return distance;
+            for (int i = position.X - range; i < position.X + range; i++)
+                for (int j = position.Y - range; j < position.Y + range; j++)
+                {
+                    Block block = getBlockAtPosition((i, j));
+                    if (block != null && block.HasOre())
+                        player.AddGold(block.GetDrop().Value);
+                    DestroyBlockAtPosition(block, (i, j));
+                    destructionParticles.SpawnParticles(
+                                position,
+                                128,
+                                (0.5f, 0.5f),
+                                (1.0f,1.0f,1.0f),
+                                (0.0f, 0.0f),
+                                (2.0f, 2.0f),
+                                true,
+                                true,
+                                true,
+                                5.0f);
+                }
+        }
+
+        public void ActivateBombAtPosition(Vector2i position)
+        {
+            if(getBlockAtPosition(position).Name =="Bomb")
+                DestroyBlocksInRange(position, 3);
         }
 
         public void playDamageParticles(Block block)

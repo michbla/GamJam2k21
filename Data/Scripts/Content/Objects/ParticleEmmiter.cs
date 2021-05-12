@@ -31,11 +31,11 @@ namespace GamJam2k21
             Init();
         }
 
-        public void SpawnParticles(Vector2 pos, int newParticles, Vector2 offset, Vector3 color, Vector2 vel, Vector2 velStr, bool Y, bool X, bool randPos)
+        public void SpawnParticles(Vector2 pos, int newParticles, Vector2 offset, Vector3 color, Vector2 vel, Vector2 velStr, bool Y, bool X, bool randPos, float scale = 1.0f)
         {
             for (var i = 0; i < newParticles; i++)
                 if (FirstUnusedParticle() != -1)
-                    RespawnParticle(particles[i], pos, offset, color, vel, velStr, Y, X, randPos);
+                    RespawnParticle(particles[i], pos, offset, color, vel, velStr, Y, X, randPos, scale);
         }
 
         public void Update()
@@ -123,12 +123,12 @@ namespace GamJam2k21
             lastUsedParticle = 0;
             return -1;
         }
-        private void RespawnParticle(Particle particle, Vector2 pos, Vector2 offset, Vector3 color, 
-                                    Vector2 vel, Vector2 velStr, bool Y, bool X, bool randPos)
+        private void RespawnParticle(Particle particle, Vector2 pos, Vector2 offset, Vector3 color,
+                                    Vector2 vel, Vector2 velStr, bool Y, bool X, bool randPos, float scale = 1.0f)
         {
             var random = new Random();
-            float randX = ((random.Next() % 100) - 50) / 150.0f;
-            float randY = (random.Next() % 100 - 50) / 150.0f;
+            float randX = (((random.Next() % 100) - 50) / 150.0f * scale);
+            float randY = ((random.Next() % 100 - 50) / 150.0f * scale);
             if (randPos)
                 particle.position = (pos.X + randX + offset.X, pos.Y + randY + offset.Y);
             else

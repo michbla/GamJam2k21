@@ -7,8 +7,8 @@ namespace GamJam2k21
     public class Inventory
     {
         public int Gold = 0;
-        public int Bombs = 0;
-        public int Ladders = 0;
+        public int Bombs = 99;
+        public int Ladders = 99;
         public int Pickaxe = 0;
 
     }

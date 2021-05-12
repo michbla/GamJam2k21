@@ -33,6 +33,8 @@ namespace GamJam2k21
 
         private bool canBeControlled = true;
 
+        public bool IsHoldingBomb = true;
+
         public Skills Skills = new Skills();
 
         public Transform Transform { get => transform; }
@@ -83,6 +85,7 @@ namespace GamJam2k21
 
             handleDigging();
             handlePlacing();
+            handleSwitchingAccessory();
 
             controller.Blocks = level.currentBlocks;
             controller.Update();
@@ -121,7 +124,7 @@ namespace GamJam2k21
                     if (block.HasOre())
                         earnGoldFromBlock(block);
 
-                    level.DestoyBlockAtPosition(block, position);
+                    level.DestroyBlockAtPosition(block, position);
                 }
             }
         }
@@ -130,6 +133,12 @@ namespace GamJam2k21
         {
             inventory.Gold += block.GetDrop().Value;
         }
+
+        public void AddGold(int amount)
+        {
+            inventory.Gold += amount;
+        }
+
         private bool canPlaceBlock = true;
         private void handlePlacing()
         {
@@ -137,14 +146,43 @@ namespace GamJam2k21
             if (Input.IsMouseButtonDown(MouseButton.Button2) && canPlaceBlock)
             {
                 canPlaceBlock = false;
-                if (inventory.Ladders > 0)
-                {
-                    inventory.Ladders--;
-                    level.PlaceBlockAtPosition(ResourceManager.GetBlockByID(100), position);
-                }
+                if (IsHoldingBomb)
+                    tryPlaceBomb(position);
+                else
+                    tryPlaceLadder(position);
             }
             if (!Input.IsMouseButtonDown(MouseButton.Button2))
                 canPlaceBlock = true;
+        }
+
+        private void tryPlaceBomb(Vector2i position)
+        {
+            if (inventory.Bombs > 0 && level.CanPlaceBlockAtPosition(position))
+            {
+                inventory.Bombs--;
+                level.PlaceBlockAtPosition(ResourceManager.GetBlockByID(101), position);
+                level.ActivateBombAtPosition(position);
+            }
+        }
+
+        private void tryPlaceLadder(Vector2i position)
+        {
+            if (inventory.Ladders > 0 && level.CanPlaceBlockAtPosition(position))
+            {
+                inventory.Ladders--;
+                level.PlaceBlockAtPosition(ResourceManager.GetBlockByID(100), position);
+            }
+        }
+
+        private void handleSwitchingAccessory()
+        {
+            if (Input.IsKeyPressed(Keys.Q))
+                switchAccessory();
+        }
+
+        private void switchAccessory()
+        {
+            IsHoldingBomb = !IsHoldingBomb;
         }
 
         public void ResetDiggingCooldown()

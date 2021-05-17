@@ -46,12 +46,14 @@ namespace GamJam2k21
         private Text playTime;
 
         private Shop shop;
+        private Settings settings;
 
         private CharacterMenu charMenu;
 
-        public UI(Player player)
+        public UI(Player player, NativeWindow ns)
         {
             this.player = player;
+            settings = new Settings(ns);
         }
 
         public void Initiate()
@@ -78,6 +80,7 @@ namespace GamJam2k21
             ui_elements.Add(SHOP_button);
             ui_elements.Add(OPT_button);
 
+            
             shop = new Shop(player);
             charMenu = new CharacterMenu(player);
 
@@ -127,6 +130,9 @@ namespace GamJam2k21
 
                 charMenu.MouseLocation = cursor.InWorldPos;
                 charMenu.Update();
+
+                settings.MouseLocation = cursor.InWorldPos;
+                settings.Update();
 
                 if (CHAR_button.CanPerformAction())
                     UI_state = "char";
@@ -277,7 +283,7 @@ namespace GamJam2k21
                     shop.Render();
                     break;
                 case "options":
-                    renderOptions();
+                    settings.Render();
                     break;
             }
         }

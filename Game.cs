@@ -28,32 +28,32 @@ namespace GamJam2k21
         private UI UI;
 
         private bool isFullscreen = false;
-
+        NativeWindow nw;
         public DateTime time = new DateTime(1, 1, 1, 8, 0, 0);
 
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS) 
              : base(gWS, nWS)
         {
             state = GameState.active;
-            WindowBorder = WindowBorder.Hidden;
-
+            WindowBorder = WindowBorder.Fixed;
             Time.GetInstance();
             Input.GetInstance();
             Input.SetInputs(MouseState, KeyboardState);
             ResourceManager.GetInstance();
             Camera.Initiate();
+            nw = this;
         }
 
         protected override void OnLoad()
         {
             initScreenRender();
-
+            
             loader.LoadResources();
 
             player = new Player(Transform.Default, (1.0f, 2.0f));
             player.Position = spawnPosition;
             level = new GameLevel(player, 128, 1000);
-            UI = new UI(player);
+            UI = new UI(player, nw);
             UI.Initiate();
 
             player.Level = level;
@@ -61,7 +61,6 @@ namespace GamJam2k21
             Camera.Position = spawnPosition;
             Camera.SetTarget(player.Transform);
             Camera.WindowResolution = Size;
-
             base.OnLoad();
         }
 
@@ -83,8 +82,6 @@ namespace GamJam2k21
                 return;
             if (Input.IsKeyDown(Keys.Escape))
                 Close();
-            if (Input.IsKeyPressed(Keys.F4))
-                switchFullscreen();
                 
            
             UI.Update();
@@ -158,7 +155,7 @@ namespace GamJam2k21
         {
             CenterWindow();
             GL.Viewport(0, 0, Size.X, Size.Y);
-            Camera.WindowResolution = Size;
+           // Camera.WindowResolution = Size;
             Camera.SetProjection();
         }
 
@@ -196,7 +193,7 @@ namespace GamJam2k21
             if (isFullscreen)
                 return;
             Size = newSize;
-            Camera.WindowResolution = Size;
+            Camera.WindowResolution = newSize;
             setNewAspectRatio();
         }
 

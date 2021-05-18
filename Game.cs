@@ -164,15 +164,6 @@ namespace GamJam2k21
             base.OnMaximized(e);
         }
 
-        private void resizeWindow(Vector2i newSize)
-        {
-            if (isFullscreen)
-                return;
-            Size = newSize;
-            Camera.WindowResolution = newSize;
-            setNewAspectRatio();
-        }
-
         private float deltaSum = 0;
         private void updateDayCycle()
         {

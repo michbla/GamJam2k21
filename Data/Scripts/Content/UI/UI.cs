@@ -38,6 +38,7 @@ namespace GamJam2k21
         private Button CHAR_button;
         private Button SHOP_button;
         private Button OPT_button;
+        private Button EXIT_button;
 
         private string UI_state = "basic";
 
@@ -47,13 +48,14 @@ namespace GamJam2k21
 
         private Shop shop;
         private Settings settings;
-
+        private NativeWindow ns;
         private CharacterMenu charMenu;
 
-        public UI(Player player, NativeWindow ns)
+        public UI(Player player, NativeWindow _ns)
         {
             this.player = player;
-            settings = new Settings(ns);
+            settings = new Settings(_ns);
+            ns = _ns;
         }
 
         public void Initiate()
@@ -69,6 +71,7 @@ namespace GamJam2k21
             CHAR_button = new Button((-5.0f, 3.5f), (3, 1), "A", TextType.ui_icon);
             SHOP_button = new Button((-1.5f, 3.5f), (3, 1), "B", TextType.ui_icon);
             OPT_button = new Button((2.0f, 3.5f), (3, 1), "C", TextType.ui_icon);
+            EXIT_button = new Button((-1.5f, -3f), (3, 11), "Exit Game", TextType.ui); 
 
             Coin = new Icon((-2.5f, -2.5f), Sprite.Single(ResourceManager.GetTexture("coin"), (2.0f, 2.0f)));
 
@@ -79,6 +82,7 @@ namespace GamJam2k21
             ui_elements.Add(CHAR_button);
             ui_elements.Add(SHOP_button);
             ui_elements.Add(OPT_button);
+            ui_elements.Add(EXIT_button);
 
             
             shop = new Shop(player);
@@ -140,10 +144,14 @@ namespace GamJam2k21
                     UI_state = "shop";
                 if (OPT_button.CanPerformAction())
                     UI_state = "options";
+                if (EXIT_button.CanPerformAction())
+                    ns.Close();
             }
 
             if (Input.IsKeyPressed(Keys.E))
                 switchMenu();
+            if (Input.IsKeyPressed(Keys.Escape))
+                hideMenu();
 
             foreach (var e in ui_elements)
                 e.Update(cursor.InWorldPos);
@@ -170,6 +178,12 @@ namespace GamJam2k21
             displayMenu = !displayMenu;
             if (!displayMenu)
                 UI_state = "basic";
+        }
+
+        private void hideMenu()
+        {
+            displayMenu = false;
+            UI_state = "basic";
         }
 
         private void setGold(int newValue)
@@ -267,7 +281,7 @@ namespace GamJam2k21
             CHAR_button.Render(Camera.GetScreenCenter());
             SHOP_button.Render(Camera.GetScreenCenter());
             OPT_button.Render(Camera.GetScreenCenter());
-
+            
             renderUIBasedonState();
         }
 
@@ -277,6 +291,7 @@ namespace GamJam2k21
             {
                 case "basic":
                     UIbackgound.Render(Camera.GetScreenCenter());
+                    EXIT_button.Render(Camera.GetScreenCenter());
                     break;
                 case "char":
                     charMenu.Render();

@@ -79,8 +79,8 @@ namespace GamJam2k21
             Time.DeltaTime = (float)e.Time;
             if (!IsFocused)
                 return;
-            if (Input.IsKeyDown(Keys.Escape))
-                Close();
+            //if (Input.IsKeyDown(Keys.Escape))
+                //Close();
                 
            
             UI.Update();

@@ -27,7 +27,6 @@ namespace GamJam2k21
         private GameLevel level;
         private UI UI;
 
-        private bool isFullscreen = false;
         NativeWindow nw;
         public DateTime time = new DateTime(1, 1, 1, 8, 0, 0);
 
@@ -106,16 +105,9 @@ namespace GamJam2k21
             //TUTAJ KOD
             base.OnUpdateFrame(e);
         }
-        private bool wasUnFocused = false;
+        
         protected override void OnRenderFrame(FrameEventArgs e)
         {
-            if (!IsFocused)
-            {
-                wasUnFocused = true;
-                return;
-            }
-            handleAltTab();
-
             GL.Clear(ClearBufferMask.ColorBufferBit);
             Camera.RenderBackground();
 
@@ -136,26 +128,10 @@ namespace GamJam2k21
             base.OnRenderFrame(e);
         }
 
-        private void handleAltTab()
-        {
-            if (wasUnFocused && isFullscreen)
-            {
-                refreshScreen();
-                wasUnFocused = false;
-            }
-        }
-        private void switchFullscreen()
-        {
-            isFullscreen = !isFullscreen;
-            WindowState = isFullscreen ? WindowState.Fullscreen : WindowState.Normal;
-            setNewAspectRatio();
-        }
-
         private void setNewAspectRatio()
         {
             CenterWindow();
             GL.Viewport(0, 0, Size.X, Size.Y);
-           // Camera.WindowResolution = Size;
             Camera.SetProjection();
         }
 
@@ -195,14 +171,6 @@ namespace GamJam2k21
             Size = newSize;
             Camera.WindowResolution = newSize;
             setNewAspectRatio();
-        }
-
-        private void refreshScreen()
-        {
-            WindowState = WindowState.Normal;
-            CenterWindow();
-            WindowState = WindowState.Fullscreen;
-            GL.Viewport(0, 0, Size.X, Size.Y);
         }
 
         private float deltaSum = 0;

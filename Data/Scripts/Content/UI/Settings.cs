@@ -23,13 +23,13 @@ namespace GamJam2k21.Interface
         private Icon background;
 
         private bool isFullScreen = false;
-
+        private bool wasUnFocused = false;
 
         private NativeWindow ns;
         public Settings(NativeWindow _ns)
         {
             ns = _ns;
-            background = new Icon((-6f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_shop"), (12f, 8f)));
+            background = new Icon((-6f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (12f, 8f)));
             resButton360 = new Button((-5.5f, 2f), (2, 1), "360p", TextType.white);
             resButton480 = new Button((-2.5f, 2f), (2, 1), "480p", TextType.white);
             resButton720 = new Button((0.5f, 2f), (2, 1), "720p", TextType.white);
@@ -55,8 +55,16 @@ namespace GamJam2k21.Interface
                 changeResolution(480);
             if (fullScreen.CanPerformAction())
                 switchFullScreen();
+        }
 
-            
+        public void RenderUpdate()
+        {
+            if (!isFullScreen)
+                return;
+            if (!ns.IsFocused)
+                wasUnFocused = true;
+            else
+                handleAltTab();
         }
 
         private void changeResolution(int _res)
@@ -88,6 +96,23 @@ namespace GamJam2k21.Interface
             resButton720.Render(Camera.GetScreenCenter());
             resButton1080.Render(Camera.GetScreenCenter());
             fullScreen.Render(Camera.GetScreenCenter());
+        }
+
+        private void handleAltTab()
+        {
+            if (wasUnFocused && isFullScreen)
+            {
+                refreshScreen();
+                wasUnFocused = false;
+            }
+        }
+
+        private void refreshScreen()
+        {
+            ns.WindowState = WindowState.Normal;
+            ns.CenterWindow();
+            ns.WindowState = WindowState.Fullscreen;
+            GL.Viewport(0, 0, ns.Size.X, ns.Size.Y);
         }
     }
 }

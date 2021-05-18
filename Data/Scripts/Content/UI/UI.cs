@@ -221,6 +221,8 @@ namespace GamJam2k21
 
         public void Render()
         {
+            settings.RenderUpdate();
+
             if (!isInMenu())
             {
                 if (player.HasSelectedBlock)

@@ -26,7 +26,7 @@
   {
     "ore": {
       "id": 3,
-      "textureName": "Iron_Ore_V2",
+      "textureName": "Iron_Ore",
       "name": "Iron",
       "hardness": 2,
       "endurance": 125,

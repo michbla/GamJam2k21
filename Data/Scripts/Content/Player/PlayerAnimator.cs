@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using System;
 
-namespace GamJam2k21
+namespace GamJam2k21.PlayerElements
 {
     public class PlayerAnimator
     {

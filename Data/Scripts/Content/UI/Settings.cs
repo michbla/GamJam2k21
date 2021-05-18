@@ -7,7 +7,6 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 
-
 namespace GamJam2k21.Interface
 {
     class Settings

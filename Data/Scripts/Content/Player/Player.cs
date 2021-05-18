@@ -2,6 +2,7 @@
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
+using GamJam2k21.PlayerElements;
 
 namespace GamJam2k21
 {
@@ -23,19 +24,21 @@ namespace GamJam2k21
         public PlayerStatistics stats;
         public Inventory inventory;
 
-        private float diggingSpeed = 400.0f;
-        private float diggingSpeedBase = 400.0f;
+        public Skills Skills = new Skills();
+
         public bool isReadyToDamage = true;
+        private float diggingSpeedBase = 400.0f;
+        private float diggingSpeed = 400.0f;
         private float diggingCooldown = 0.0f;
         private readonly float DIG_CD_BASE = 10.0f;
+
+        private StaminaHandler stamina;
 
         public Pickaxe equippedPickaxe;
 
         private bool canBeControlled = true;
 
         public bool IsHoldingBomb = true;
-
-        public Skills Skills = new Skills();
 
         public Transform Transform { get => transform; }
         public Vector2 Position
@@ -58,6 +61,8 @@ namespace GamJam2k21
         public int Gold { get => inventory.Gold; }
         public int LadderCount { get => inventory.Ladders; }
         public int BombCount { get => inventory.Bombs; }
+        public float Stamina { get => stamina.Stamina; }
+        public float StaminaMax { get => stamina.StaminaMax; }
 
         public Player(Transform transform, Vector2 size)
         {
@@ -70,6 +75,8 @@ namespace GamJam2k21
             inventory = new Inventory();
             hasSelectedBlock = false;
             EquipPickaxe(0);
+
+            stamina = new StaminaHandler(this);
         }
 
         public void Render()
@@ -82,6 +89,8 @@ namespace GamJam2k21
             if (!canBeControlled)
                 return;
             test();
+
+            stamina.Update();
 
             handleDigging();
             handlePlacing();
@@ -223,7 +232,12 @@ namespace GamJam2k21
 
         private void updateSkills()
         {
-            diggingSpeed = diggingSpeedBase + Skills.SpeedPoints * 200.0f;
+            diggingSpeed = diggingSpeedBase + 100.0f + Skills.SpeedPoints * 300.0f;
+        }
+
+        public void resetDiggingSpeed()
+        {
+            diggingSpeed = diggingSpeedBase;
         }
 
         //TODO: REMOVE TESTS

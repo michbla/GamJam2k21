@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
-namespace GamJam2k21
+namespace GamJam2k21.PlayerElements
 {
     public class PlayerController
     {

@@ -8,8 +8,8 @@ namespace GamJam2k21.Interface
     public class ProgressBar : UI_Element
     {
         private static Sprite background;
-        private static Sprite fill;
         private static Sprite border;
+        private Sprite fill;
 
         private float valueMax;
         public float value;
@@ -17,7 +17,7 @@ namespace GamJam2k21.Interface
         public ProgressBar(Vector2 offset, float valueMax) : base(offset)
         {
             this.valueMax = valueMax;
-            value = valueMax * 0.5f;
+            value = valueMax;
             setSprites();
             collider = new BoxCollider(Transform.Default, ((int)valueMax * 0.0625f, 1.0f));
         }

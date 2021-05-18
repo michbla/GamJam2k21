@@ -26,9 +26,6 @@ namespace GamJam2k21
 
         private Text WIP = new Text((-6.4f, 0.0f), "WORK IN PROGRESS", TextType.white, 0.4f);
         private UI_Element PickaxeFrame;
-        private Button buttonTest;
-        private Button subtractButton;
-        private ProgressBar barTest;
 
         private Icon accessory;
         private bool accessoryIsBomb = true;
@@ -50,6 +47,9 @@ namespace GamJam2k21
         private Settings settings;
         private NativeWindow ns;
         private CharacterMenu charMenu;
+
+        private ProgressBar staminaBar;
+        private float staminaScale = 0.05f;
 
         public UI(Player player, NativeWindow _ns)
         {
@@ -79,21 +79,15 @@ namespace GamJam2k21
 
             accessory = new Icon((3.0f, -3.0f), Sprite.Single(ResourceManager.GetTexture("bomb"), Vector2.One));
 
+            makeNewStaminaBar();
+
             ui_elements.Add(CHAR_button);
             ui_elements.Add(SHOP_button);
             ui_elements.Add(OPT_button);
             ui_elements.Add(EXIT_button);
 
-            
             shop = new Shop(player);
             charMenu = new CharacterMenu(player);
-
-            //
-            buttonTest = new Button((3.0f, 2.0f), (2, 1), "+");
-            subtractButton = new Button((1.0f, 2.0f), (1, 1), "-");
-            barTest = new ProgressBar((3.0f, 1.0f), 5);
-            barTest.Colorize((1, 0, 0));
-            //
 
             Sprite selection = Sprite.Single(ResourceManager.GetTexture("blockSelection"),
                                              Vector2.One);
@@ -103,6 +97,7 @@ namespace GamJam2k21
             Time.GetInstance();
             playTime = new Text((7.4f, -2.2f), Time.GetTime(), TextType.tall_white_o, 1f);
         }
+        private float lastStamina = 0;
         private int lastGold = 0;
         public void Update()
         {
@@ -114,6 +109,11 @@ namespace GamJam2k21
             if (player.Gold != lastGold)
                 setGold(player.Gold);
             lastGold = player.Gold;
+
+            if (player.StaminaMax != lastStamina)
+                makeNewStaminaBar();
+            lastStamina = player.StaminaMax;
+
             playTime.UpdateText(Time.GetTime());
 
             if (!isInMenu())
@@ -122,6 +122,7 @@ namespace GamJam2k21
                 player.CanBeControlled = true;
                 Camera.CanLookAround = true;
                 updateAccessory();
+                staminaBar.SetValue(player.Stamina * staminaScale);
             }
             else
             {
@@ -155,18 +156,6 @@ namespace GamJam2k21
 
             foreach (var e in ui_elements)
                 e.Update(cursor.InWorldPos);
-
-            //
-            buttonTest.Update(cursor.InWorldPos);
-            barTest.Update(cursor.InWorldPos);
-            subtractButton.Update(cursor.InWorldPos);
-
-
-            if (buttonTest.CanPerformAction())
-                barTest.SetValue(barTest.value + 0.1f);
-            if (subtractButton.CanPerformAction())
-                barTest.SetValue(barTest.value - 0.1f);
-            //
         }
         private bool isInMenu()
         {
@@ -191,6 +180,13 @@ namespace GamJam2k21
             string money = convertValueToString(newValue);
             Gold.UpdateText(money);
             shop.Gold.UpdateText(money);
+        }
+
+        private void makeNewStaminaBar()
+        {
+            staminaBar = new ProgressBar((0.0f, -6.0f), player.StaminaMax * staminaScale);
+            staminaBar.Colorize((1.0f, 1.0f, 0.6f));
+            staminaBar.SetValue(player.Stamina * staminaScale);
         }
 
         private string convertValueToString(int amount)
@@ -248,13 +244,11 @@ namespace GamJam2k21
 
                 accessory.Render(Camera.GetLeftUpperCorner());
 
-                buttonTest.Render(Camera.GetLeftLowerCorner());
-                subtractButton.Render(Camera.GetLeftLowerCorner());
-                barTest.Render(Camera.GetLeftLowerCorner());
-
                 Coin.Render(Camera.GetRightUpperCorner());
                 Gold.Render(Camera.GetRightUpperCorner());
                 playTime.Render(Camera.GetLeftUpperCorner());
+
+                staminaBar.Render(Camera.GetScreenCenter());
             }
             else
             {
@@ -303,11 +297,6 @@ namespace GamJam2k21
                     settings.Render();
                     break;
             }
-        }
-
-        private void renderOptions()
-        {
-            OPT_back.Render(Camera.GetScreenCenter());
         }
     }
 }

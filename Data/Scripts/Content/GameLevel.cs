@@ -134,16 +134,25 @@ namespace GamJam2k21
 
         private void spawnInitialChunks()
         {
-            spawnChunk(4, 0);
-            spawnChunk(3, 0);
-            spawnChunk(4, 1);
-            spawnChunk(3, 1);
+            calculatePlayerChunk();
+            spawnChunk(playerChunk.X - 1, playerChunk.Y);
+            spawnChunk(playerChunk.X - 1, playerChunk.Y - 1);
+            spawnChunk(playerChunk.X - 1, playerChunk.Y + 1);
+            spawnChunk(playerChunk.X, playerChunk.Y);
+            spawnChunk(playerChunk.X, playerChunk.Y - 1);
+            spawnChunk(playerChunk.X, playerChunk.Y + 1);
+        }
+
+        private Vector2i calculatePlayerChunk()
+        {
+            Vector2 playerPos = player.Center;
+            playerChunk = ((int)playerPos.X / 16, -(int)playerPos.Y / 16);
+            return playerChunk;
         }
 
         public void Update()
         {
-            Vector2 playerPos = player.Center;
-            playerChunk = ((int)playerPos.X / 16, -(int)playerPos.Y / 16);
+            calculatePlayerChunk();
             if (playerChunk.X != lastPlayerChunk.X)
             {
                 if (playerChunk.X < lastPlayerChunk.X)

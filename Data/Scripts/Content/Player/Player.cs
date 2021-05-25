@@ -1,7 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
-using System.Collections.Generic;
 using GamJam2k21.PlayerElements;
 
 namespace GamJam2k21
@@ -24,8 +23,6 @@ namespace GamJam2k21
         public PlayerStatistics stats;
         public Inventory inventory;
 
-        public Skills Skills = new Skills();
-
         public bool isReadyToDamage = true;
         private float diggingSpeedBase = 400.0f;
         private float diggingSpeed = 400.0f;
@@ -39,6 +36,8 @@ namespace GamJam2k21
         private bool canBeControlled = true;
 
         public bool IsHoldingBomb = true;
+
+        public Skills Skills = new Skills();
 
         public Transform Transform { get => transform; }
         public Vector2 Position
@@ -54,7 +53,7 @@ namespace GamJam2k21
         public bool IsDigging { get => animator.IsSwinging; }
         public float Damage { get => equippedPickaxe.Damage; }
         public int Hardness { get => equippedPickaxe.Hardness; }
-        public GameLevel Level { set { level = value; } }
+        public GameLevel GameLevel { set { level = value; } }
         public Vector2i CursorOnGridPosition { set { cursorOnGidPos = value; } }
         public bool HasSelectedBlock { get => hasSelectedBlock; }
         public bool CanBeControlled { set { canBeControlled = value; } }
@@ -63,6 +62,7 @@ namespace GamJam2k21
         public int BombCount { get => inventory.Bombs; }
         public float Stamina { get => stamina.Stamina; }
         public float StaminaMax { get => stamina.StaminaMax; }
+        public int Level { get => stats.ExpLevel; }
 
         public Player(Transform transform, Vector2 size)
         {
@@ -71,7 +71,7 @@ namespace GamJam2k21
 
             animator = new PlayerAnimator(this, animFrameRate);
             controller = new PlayerController(this);
-            stats = new PlayerStatistics(0, 0, 0);
+            stats = new PlayerStatistics(this);
             inventory = new Inventory();
             hasSelectedBlock = false;
             EquipPickaxe(0);
@@ -132,6 +132,7 @@ namespace GamJam2k21
                 {
                     if (block.HasOre())
                         earnGoldFromBlock(block);
+                    stats.AddExp(block.Exp);
 
                     level.DestroyBlockAtPosition(block, position);
                 }
@@ -218,6 +219,11 @@ namespace GamJam2k21
         public void AddLadder()
         {
             inventory.Ladders++;
+        }
+
+        public void AddAttributePoint()
+        {
+            Skills.SkillPoints++;
         }
 
         private void setMaxPlayerDepth()

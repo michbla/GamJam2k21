@@ -44,6 +44,10 @@ namespace GamJam2k21
         private Text Gold = new Text((-6.8f, -1.4f), "     0", TextType.golden, 0.8f);
         private Text playTime;
 
+        private Text lowLevel = new Text((1.3f, -5.4f), "0", TextType.white, 1.0f);
+        private Text level = new Text((0.8f, -5.4f), "00", TextType.white, 1.0f);
+        private Text lvl = new Text((1.0f, -6.0f), "LVL", TextType.white, 0.6f);
+
         private Text levelReached = new Text((-5.0f, 0.2f), "   0M", TextType.white, 1.0f);
 
         private Shop shop;
@@ -84,7 +88,7 @@ namespace GamJam2k21
             coin = new Icon((-1.8f, -1.8f),
                 Sprite.Single(ResourceManager.GetTexture("coin_mid"), (1.5f, 1.5f)));
 
-            accessory = new Icon((3.0f, -3.0f),
+            accessory = new Icon((3.0f, -3.5f),
                 Sprite.Single(ResourceManager.GetTexture("bomb"), Vector2.One));
 
             makeNewStaminaBar();
@@ -110,6 +114,7 @@ namespace GamJam2k21
         private float lastStamina = 0;
         private int lastGold = 0;
         private int lastDepth = 0;
+        private int lastLevel = 0;
         public void Update()
         {
             cursor.Update();
@@ -125,6 +130,10 @@ namespace GamJam2k21
             if (levelReached != lastDepth)
                 setLevelReached(levelReached);
             lastDepth = levelReached;
+
+            if (player.Level != lastLevel)
+                setLevel(player.Level);
+            lastLevel = player.Level;
 
             if (player.StaminaMax != lastStamina)
                 makeNewStaminaBar();
@@ -211,6 +220,17 @@ namespace GamJam2k21
             levelReached.UpdateText(reached);
         }
 
+        private void setLevel(int newValue)
+        {
+            String s = newValue.ToString();
+            if (newValue < 10)
+                lowLevel.UpdateText(s);
+            else
+                level.UpdateText(s);
+            if (newValue == 40)
+                lvl.UpdateText("MAX");
+        }
+
         private void makeNewStaminaBar()
         {
             staminaBar = new ProgressBar((0.0f, -6.0f), player.StaminaMax * staminaScale);
@@ -284,6 +304,12 @@ namespace GamJam2k21
                 Gold.Render(Camera.GetRightUpperCorner());
                 playTime.Render(Camera.GetLeftUpperCorner());
                 levelReached.Render(Camera.GetRightLowerCorner());
+
+                if(player.Level < 10)
+                    lowLevel.Render(Camera.GetLeftUpperCorner());
+                else
+                    level.Render(Camera.GetLeftUpperCorner());
+                lvl.Render(Camera.GetLeftUpperCorner());
 
                 staminaBar.Render(Camera.GetScreenCenter());
             }

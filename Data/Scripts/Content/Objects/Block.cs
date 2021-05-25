@@ -13,6 +13,8 @@ namespace GamJam2k21
 
         private Vector3 effectsColor;
 
+        private float exp;
+
         private float distanceToPlayer;
 
         private Sprite destruction = Sprite.Sheet(
@@ -30,6 +32,7 @@ namespace GamJam2k21
         public string Name { get => name; }
         public int Hardness { get => hardness; }
         public Vector3 EffectsColor { get => effectsColor; }
+        public float Exp { get => exp; }
         public float DistanceToPlayer
         {
             get => distanceToPlayer;
@@ -43,7 +46,8 @@ namespace GamJam2k21
                      string name,
                      int hardness,
                      float endurance,
-                     Vector3 effectsColor)
+                     Vector3 effectsColor,
+                     float exp)
             : base(sprite, transform)
         {
             this.name = name;
@@ -52,6 +56,7 @@ namespace GamJam2k21
             baseEndurance = endurance;
             this.endurance = baseEndurance;
             destruction.Color = effectsColor;
+            this.exp = exp;
             collider = new BoxCollider(this.Transform, Vector2.One);
         }
 
@@ -62,6 +67,7 @@ namespace GamJam2k21
             effectsColor = copy.effectsColor;
             hardness = copy.hardness;
             baseEndurance = copy.baseEndurance;
+            exp = copy.exp;
             if (ore != null)
                 setOre(ore);
             endurance = baseEndurance;
@@ -76,6 +82,7 @@ namespace GamJam2k21
             if (ore.Hardness > hardness)
                 hardness = ore.Hardness;
             effectsColor = ore.Color;
+            exp += ore.Exp;
         }
 
         public override void Render()

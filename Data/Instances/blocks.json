@@ -7,7 +7,8 @@
       "name": "Grass",
       "hardness": 0,
       "endurance": 100,
-      "color": [ 17, 6, 1 ]
+      "color": [ 17, 6, 1 ],
+      "exp": 10
     }
   },
 
@@ -18,7 +19,8 @@
       "name": "Dirt",
       "hardness": 0,
       "endurance": 100,
-      "color": [ 17, 6, 1 ]
+      "color": [ 17, 6, 1 ],
+      "exp":  10
     }
   },
 
@@ -29,7 +31,8 @@
       "name": "Stone",
       "hardness": 1,
       "endurance": 150,
-      "color": [ 10, 10, 10 ]
+      "color": [ 10, 10, 10 ],
+      "exp":  20
     }
   },
 

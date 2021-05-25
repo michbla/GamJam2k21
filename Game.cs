@@ -55,7 +55,7 @@ namespace GamJam2k21
             UI = new UI(player, nw);
             UI.Initiate();
 
-            player.Level = level;
+            player.GameLevel = level;
 
             Camera.Position = spawnPosition;
             Camera.SetTarget(player.Transform);

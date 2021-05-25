@@ -50,9 +50,10 @@ namespace GamJam2k21
                                   int hardness,
                                   float endurance,
                                   Item drop,
-                                  Vector3 color)
+                                  Vector3 color,
+                                  float exp)
         {
-            ores.Add(id, new Ore(id, sprite, name, hardness, endurance, drop, color));
+            ores.Add(id, new Ore(id, sprite, name, hardness, endurance, drop, color, exp));
         }
 
         public static int getOreListCount()
@@ -90,9 +91,10 @@ namespace GamJam2k21
                                     string name,
                                     int hardness,
                                     float endurance,
-                                    Vector3 effectsColor)
+                                    Vector3 effectsColor,
+                                    float exp)
         {
-            blocks.Add(id, new Block(sprite, Transform.Default, name, hardness, endurance, effectsColor));
+            blocks.Add(id, new Block(sprite, Transform.Default, name, hardness, endurance, effectsColor, exp));
         }
 
         public static Block GetBlockByID(int id)

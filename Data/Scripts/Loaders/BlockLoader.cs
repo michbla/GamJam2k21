@@ -20,6 +20,7 @@ namespace GamJam2k21.Loaders
             public int hardness { get; set; }
             public int endurance { get; set; }
             public int[] color { get; set; }
+            public int exp { get; set; }
         }
 
         public void LoadBlocks()
@@ -40,7 +41,8 @@ namespace GamJam2k21.Loaders
                 block.name,
                 block.hardness,
                 (float)block.endurance,
-                (block.color[0] * 0.01f, block.color[1] * 0.01f, block.color[2] * 0.01f));
+                (block.color[0] * 0.01f, block.color[1] * 0.01f, block.color[2] * 0.01f),
+                (float)block.exp);
         }
     }
 }

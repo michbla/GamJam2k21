@@ -6,28 +6,42 @@ namespace GamJam2k21.PlayerElements
 {
     public class PlayerStatistics
     {
-        
+        private Player player;
+
         private int levelReached = 0;
-        private int blocksDestroyed = 0;
+
+        public int ExpLevel = 0;
+        private readonly int maxLevel = 40;
         private float exp = 0;
+        private float expToNextLevel = 100;
 
-        private static Dictionary<Ore, int> expList= new Dictionary<Ore, int>();
-
-        //niepotrzebne???
-        //private static Dictionary<string, int> blocksDug = new Dictionary<string, int>();
-
-        public PlayerStatistics(int levelReached, int blocksDestroyed, float exp)
+        public PlayerStatistics(Player player)
         {
-            this.levelReached = levelReached;
-            this.blocksDestroyed = blocksDestroyed;
-            this.exp = exp;
-            addToExpList();
+            this.player = player;
         }
 
-        public void SetOresDestroyed(Ore name)
+        public void AddExp(float value)
         {
-            blocksDestroyed += 1;
-            exp += expList[name];
+            if (ExpLevel == maxLevel)
+                return;
+            exp += value;
+            checkIfNextLevel();
+        }
+
+        private void checkIfNextLevel()
+        {
+            while(exp >= expToNextLevel)
+            {
+                exp -= expToNextLevel;
+                ExpLevel++;
+                expToNextLevel = calculateExpToNextLevel();
+                player.AddAttributePoint();
+            }
+        }
+
+        private float calculateExpToNextLevel()
+        {
+            return expToNextLevel * 2;
         }
 
         public void SetLevelReached(int newLevel)
@@ -43,24 +57,5 @@ namespace GamJam2k21.PlayerElements
         {
             return levelReached;
         }
-
-        public void addToExpList()
-        {
-            int oreCount = ResourceManager.getOreListCount();
-            for (int i=1;i<=oreCount;i++)
-            {
-                var ore = ResourceManager.GetOreByID(i);
-                expList.Add(ore, (int)ore.Drop.Value);
-            }
-        }
-      /*  private void addDugBlock(string block)
-        {
-            blocksDug[block]++;
-        } niepotrzebne*/
-        
-
     }
-
-
-    
 }

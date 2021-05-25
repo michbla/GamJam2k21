@@ -21,6 +21,7 @@ namespace GamJam2k21.Loaders
             public int endurance { get; set; }
             public int dropId { get; set; }
             public int[] color { get; set; }
+            public int exp { get; set; }
         }
 
         public void LoadOres()
@@ -44,7 +45,8 @@ namespace GamJam2k21.Loaders
                 ore.hardness,
                 (float)ore.endurance,
                 ResourceManager.GetItemByID(ore.dropId),
-                (ore.color[0] * 0.01f, ore.color[1] * 0.01f, ore.color[2] * 0.01f));
+                (ore.color[0] * 0.01f, ore.color[1] * 0.01f, ore.color[2] * 0.01f),
+                (float)ore.exp);
         }
     }
 }

@@ -7,7 +7,8 @@
       "hardness": 1,
       "endurance": 100,
       "dropId": 1,
-      "color": [ 8, 6, 7 ]
+      "color": [ 8, 6, 7 ],
+      "exp": 50
     }
   },
 
@@ -19,7 +20,8 @@
       "hardness": 1,
       "endurance": 110,
       "dropId": 2,
-      "color": [ 8, 6, 7 ]
+      "color": [ 8, 6, 7 ],
+      "exp": 100
     }
   },
 
@@ -31,7 +33,8 @@
       "hardness": 2,
       "endurance": 125,
       "dropId": 3,
-      "color": [ 8, 6, 7 ]
+      "color": [ 8, 6, 7 ],
+      "exp": 200
     }
   },
 
@@ -43,7 +46,8 @@
       "hardness": 3,
       "endurance": 135,
       "dropId": 4,
-      "color": [ 8, 6, 7 ]
+      "color": [ 8, 6, 7 ],
+      "exp":  400
     }
   },
 
@@ -55,7 +59,8 @@
       "hardness": 4,
       "endurance": 150,
       "dropId": 5,
-      "color": [ 8, 6, 7 ]
+      "color": [ 8, 6, 7 ],
+      "exp":  800
     }
   }
 ]

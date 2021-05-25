@@ -24,8 +24,7 @@ namespace GamJam2k21
 
         private Text WIP = new Text((-6.4f, 0.0f), "WORK IN PROGRESS", TextType.white, 0.4f);
 
-        private Icon accessory;
-        private bool accessoryIsBomb = true;
+        private AccessoryUI accessories;
 
         private Icon UIbackgound;
         private Icon SUM_back;
@@ -88,8 +87,7 @@ namespace GamJam2k21
             coin = new Icon((-1.8f, -1.8f),
                 Sprite.Single(ResourceManager.GetTexture("coin_mid"), (1.5f, 1.5f)));
 
-            accessory = new Icon((3.0f, -3.5f),
-                Sprite.Single(ResourceManager.GetTexture("bomb"), Vector2.One));
+            accessories = new AccessoryUI(player);
 
             makeNewStaminaBar();
 
@@ -146,8 +144,9 @@ namespace GamJam2k21
                 cursor.DisplayPickaxe = player.HasSelectedBlock;
                 player.CanBeControlled = true;
                 Camera.CanLookAround = true;
-                updateAccessory();
                 staminaBar.SetValue(player.Stamina * staminaScale);
+
+                accessories.Update();
             }
             else
             {
@@ -271,22 +270,6 @@ namespace GamJam2k21
             return spaces + d + 'M';
         }
 
-        private void updateAccessory()
-        {
-            if (accessoryIsBomb == player.IsHoldingBomb)
-                return;
-            accessoryIsBomb = player.IsHoldingBomb;
-            string newTexture = getAccessoryTexture();
-            accessory.ChangeTexture(newTexture);
-        }
-
-        private string getAccessoryTexture()
-        {
-            if (player.IsHoldingBomb)
-                return "bomb";
-            return "ladder";
-        }
-
         public void Render()
         {
             settings.RenderUpdate();
@@ -298,14 +281,14 @@ namespace GamJam2k21
 
                 renderEquippedPickaxe();
 
-                accessory.Render(Camera.GetLeftUpperCorner());
+                accessories.Render();
 
                 coin.Render(Camera.GetRightUpperCorner());
                 Gold.Render(Camera.GetRightUpperCorner());
                 playTime.Render(Camera.GetLeftUpperCorner());
                 levelReached.Render(Camera.GetRightLowerCorner());
 
-                if(player.Level < 10)
+                if (player.Level < 10)
                     lowLevel.Render(Camera.GetLeftUpperCorner());
                 else
                     level.Render(Camera.GetLeftUpperCorner());

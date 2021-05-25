@@ -43,7 +43,7 @@ namespace GamJam2k21
             timeElapsed += deltaTime;
             int totalseconds = (int)timeElapsed;
             int ms = (int)((timeElapsed - (float)totalseconds)* 1000);
-            igt.m = (totalseconds % 3600) / 5940;
+            igt.m = totalseconds /60;
             igt.s = totalseconds % 60;
             igt.ms = ms;
         }
@@ -51,8 +51,8 @@ namespace GamJam2k21
         public static string GetTime()
         {
             string tf = "00";
-            string tfms = "000";
-            return igt.m.ToString(tf) + ":" + igt.s.ToString(tf) + ":" + igt.ms.ToString(tfms);
+            string tfms = "0";
+            return igt.m.ToString(tf) + ":" + igt.s.ToString(tf) + ":" + (igt.ms / 100).ToString(tfms);
         }
 
         

@@ -107,7 +107,7 @@ namespace GamJam2k21
             cursor = new Cursor();
 
             Time.GetInstance();
-            playTime = new Text((7.4f, -2.2f), Time.GetTime(), TextType.tall_white_o, 1f);
+            playTime = new Text((8.4f, -2.2f), Time.GetTime(), TextType.tall_white_o, 1f);
         }
         private float lastStamina = 0;
         private int lastGold = 0;

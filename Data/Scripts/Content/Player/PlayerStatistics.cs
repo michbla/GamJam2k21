@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace GamJam2k21.PlayerElements
 {
     public class PlayerStatistics
@@ -10,10 +7,10 @@ namespace GamJam2k21.PlayerElements
 
         private int levelReached = 0;
 
-        public int ExpLevel = 0;
         private readonly int maxLevel = 40;
-        private float exp = 0;
-        private float expToNextLevel = 100;
+        public int ExpLevel = 0;
+        public float Exp = 0;
+        public float ExpToNextLevel = 100;
 
         public PlayerStatistics(Player player)
         {
@@ -24,24 +21,24 @@ namespace GamJam2k21.PlayerElements
         {
             if (ExpLevel == maxLevel)
                 return;
-            exp += value;
+            Exp += value;
             checkIfNextLevel();
         }
 
         private void checkIfNextLevel()
         {
-            while(exp >= expToNextLevel)
+            while(Exp >= ExpToNextLevel)
             {
-                exp -= expToNextLevel;
+                Exp -= ExpToNextLevel;
                 ExpLevel++;
-                expToNextLevel = calculateExpToNextLevel();
+                ExpToNextLevel = calculateExpToNextLevel();
                 player.AddAttributePoint();
             }
         }
 
         private float calculateExpToNextLevel()
         {
-            return expToNextLevel * 2;
+            return ExpToNextLevel * 2;
         }
 
         public void SetLevelReached(int newLevel)
@@ -49,10 +46,6 @@ namespace GamJam2k21.PlayerElements
             levelReached = newLevel; 
         }
 
-        public float getExp()
-        {
-            return exp;
-        }
         public int getLevelReached()
         {
             return levelReached;

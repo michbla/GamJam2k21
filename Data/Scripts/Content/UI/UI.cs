@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -47,6 +46,8 @@ namespace GamJam2k21
         private Text level = new Text((0.8f, -5.4f), "00", TextType.white, 1.0f);
         private Text lvl = new Text((1.0f, -6.0f), "LVL", TextType.white, 0.6f);
 
+        private ProgressBar expBar;
+
         private Text levelReached = new Text((-5.0f, 0.2f), "   0M", TextType.white, 1.0f);
 
         private Shop shop;
@@ -89,6 +90,7 @@ namespace GamJam2k21
 
             accessories = new AccessoryUI(player);
 
+            makeNewExpBar();
             makeNewStaminaBar();
 
             ui_elements.Add(CHAR_button);
@@ -136,6 +138,8 @@ namespace GamJam2k21
             if (player.StaminaMax != lastStamina)
                 makeNewStaminaBar();
             lastStamina = player.StaminaMax;
+
+            expBar.SetValue(player.ExpPercent * 2.0f);
 
             playTime.UpdateText(Time.GetTime());
 
@@ -237,6 +241,13 @@ namespace GamJam2k21
             staminaBar.SetValue(player.Stamina * staminaScale);
         }
 
+        private void makeNewExpBar()
+        {
+            expBar = new ProgressBar((1.9f, -7.0f), 2.5f);
+            expBar.Colorize((0.76f, 0.94f, 0.16f));
+            expBar.SetValue(player.ExpPercent * 2.5f );
+        }
+
         private string convertValueToString(int amount)
         {
             if (amount == 0)
@@ -293,6 +304,7 @@ namespace GamJam2k21
                 else
                     level.Render(Camera.GetLeftUpperCorner());
                 lvl.Render(Camera.GetLeftUpperCorner());
+                expBar.Render(Camera.GetLeftUpperCorner());
 
                 staminaBar.Render(Camera.GetScreenCenter());
             }

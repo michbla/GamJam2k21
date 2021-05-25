@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace GamJam2k21.PlayerElements
 {
     public class StaminaHandler

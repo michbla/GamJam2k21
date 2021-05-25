@@ -63,6 +63,8 @@ namespace GamJam2k21
         public float Stamina { get => stamina.Stamina; }
         public float StaminaMax { get => stamina.StaminaMax; }
         public int Level { get => stats.ExpLevel; }
+        public float Exp { get => stats.Exp; }
+        public float ExpPercent { get => stats.Exp / stats.ExpToNextLevel; }
 
         public Player(Transform transform, Vector2 size)
         {

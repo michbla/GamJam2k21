@@ -79,7 +79,7 @@ namespace GamJam2k21.Interface
 
         private void tryBuingBomb()
         {
-            if (player.Gold < bombPrice)
+            if (player.BombCount >= 99 || player.Gold < bombPrice)
                 return;
             player.Pay(bombPrice);
             player.AddBomb();
@@ -90,7 +90,7 @@ namespace GamJam2k21.Interface
         private void tryBuingLadder()
         {
             ladderCount.UpdateText(countTotext(player.LadderCount));
-            if (player.Gold < ladderPrice)
+            if (player.LadderCount >= 99 || player.Gold < ladderPrice)
                 return;
             player.Pay(ladderPrice);
             player.AddLadder();

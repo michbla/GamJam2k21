@@ -150,15 +150,29 @@ namespace GamJam2k21
                 player.CanBeControlled = false;
                 Camera.CanLookAround = false;
 
-                shop.MouseLocation = cursor.InWorldPos;
-                shop.Update();
+                if (UI_state == "basic")
+                {
+                    if (EXIT_button.CanPerformAction())
+                        ns.Close();
+                }
 
-                charMenu.MouseLocation = cursor.InWorldPos;
-                charMenu.Update();
+                if (UI_state == "shop")
+                {
+                    shop.MouseLocation = cursor.InWorldPos;
+                    shop.Update();
+                }
 
-                settings.MouseLocation = cursor.InWorldPos;
-                settings.Update();
+                if (UI_state == "char")
+                {
+                    charMenu.MouseLocation = cursor.InWorldPos;
+                    charMenu.Update();
+                }
 
+                if (UI_state == "options")
+                {
+                    settings.MouseLocation = cursor.InWorldPos;
+                    settings.Update();
+                }
 
                 if (CHAR_button.CanPerformAction())
                     UI_state = "char";
@@ -166,14 +180,12 @@ namespace GamJam2k21
                     UI_state = "shop";
                 if (OPT_button.CanPerformAction())
                     UI_state = "options";
-                if (EXIT_button.CanPerformAction())
-                    ns.Close();
             }
 
             if (Input.IsKeyPressed(Keys.E))
                 switchMenu();
             if (Input.IsKeyPressed(Keys.Escape))
-                hideMenu();
+                switchMenu();
 
             foreach (var e in ui_elements)
                 e.Update(cursor.InWorldPos);
@@ -188,12 +200,6 @@ namespace GamJam2k21
             displayMenu = !displayMenu;
             if (!displayMenu)
                 UI_state = "basic";
-        }
-
-        private void hideMenu()
-        {
-            displayMenu = false;
-            UI_state = "basic";
         }
 
         private void setGold(int newValue)
@@ -312,7 +318,7 @@ namespace GamJam2k21
             CHAR_button.Render(Camera.GetScreenCenter());
             SHOP_button.Render(Camera.GetScreenCenter());
             OPT_button.Render(Camera.GetScreenCenter());
-            
+
             renderUIBasedonState();
         }
 
@@ -340,8 +346,8 @@ namespace GamJam2k21
         {
             bool isSummary = true;
             Text GAMEOVER = new Text((-6.7f, 3.5f), "GAME OVER", TextType.ui, 1.5f);
-            Text PLAYTIME = new Text((-7f, 2.5f), "Run Time: ", TextType.ui, 0.75f); 
-            Text PlayTime =  new Text((-0.5f, 2.5f), Time.GetTime(), TextType.ui, 0.75f);
+            Text PLAYTIME = new Text((-7f, 2.5f), "Run Time: ", TextType.ui, 0.75f);
+            Text PlayTime = new Text((-0.5f, 2.5f), Time.GetTime(), TextType.ui, 0.75f);
             dimmBackground.Render(Camera.GetScreenCenter());
             SUM_back.Render(Camera.GetScreenCenter());
             {

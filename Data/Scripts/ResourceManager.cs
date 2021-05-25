@@ -77,6 +77,14 @@ namespace GamJam2k21
             return pickaxes[id];
         }
 
+        public static int GetPickaxeID(Pickaxe pick)
+        {
+            foreach (var entry in pickaxes)
+                if (entry.Value.Name == pick.Name)
+                    return entry.Key;
+            return 0;
+        }
+
         public static void AddBlock(int id,
                                     Sprite sprite,
                                     string name,

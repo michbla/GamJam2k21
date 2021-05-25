@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 using GamJam2k21.Interface;
@@ -25,13 +23,11 @@ namespace GamJam2k21
         private Icon dimmBackground;
 
         private Text WIP = new Text((-6.4f, 0.0f), "WORK IN PROGRESS", TextType.white, 0.4f);
-        private UI_Element PickaxeFrame;
 
         private Icon accessory;
         private bool accessoryIsBomb = true;
 
         private Icon UIbackgound;
-        private Icon OPT_back;
         private Icon SUM_back;
 
         private Button CHAR_button;
@@ -44,8 +40,8 @@ namespace GamJam2k21
 
         private string UI_state = "basic";
 
-        private Icon Coin;
-        private Text Gold = new Text((-8.75f, -2.0f), "     0", TextType.golden, 1.0f);
+        private Icon coin;
+        private Text Gold = new Text((-6.8f, -1.4f), "     0", TextType.golden, 0.8f);
         private Text playTime;
 
         private Text levelReached = new Text((-5.0f, 0.2f), "   0M", TextType.white, 1.0f);
@@ -71,11 +67,11 @@ namespace GamJam2k21
                                       Sprite.Single(ResourceManager.GetTexture("dimmBackground"),
                                                     (24.0f, 13.5f)));
 
-            UIbackgound = new Icon((-6.0f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back"), (12.0f, 8.0f)));
+            UIbackgound = new Icon((-6.0f, -4.5f),
+                Sprite.Single(ResourceManager.GetTexture("UI_back"), (12.0f, 8.0f)));
 
-            OPT_back = new Icon((-6.0f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (12.0f, 8.0f)));
-
-            SUM_back = new Icon((-7.5f, -5.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (15f, 11f)));
+            SUM_back = new Icon((-7.5f, -5.5f),
+                Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (15f, 11f)));
 
             CHAR_button = new Button((-5.0f, 3.5f), (3, 1), "A", TextType.ui_icon);
             SHOP_button = new Button((-1.5f, 3.5f), (3, 1), "B", TextType.ui_icon);
@@ -85,11 +81,11 @@ namespace GamJam2k21
             SUMMARY_button = new Button((-5F, -4F), (3, 11), "this run", TextType.ui);
             RANK_button = new Button((-5F, -4F), (3, 11), "ranking", TextType.ui);
 
-            Coin = new Icon((-2.5f, -2.5f), Sprite.Single(ResourceManager.GetTexture("coin"), (2.0f, 2.0f)));
+            coin = new Icon((-1.8f, -1.8f),
+                Sprite.Single(ResourceManager.GetTexture("coin_mid"), (1.5f, 1.5f)));
 
-            PickaxeFrame = new Icon((0.0f, -1.0f), Sprite.Single(ResourceManager.GetTexture("canvas"), Vector2.One));
-
-            accessory = new Icon((3.0f, -3.0f), Sprite.Single(ResourceManager.GetTexture("bomb"), Vector2.One));
+            accessory = new Icon((3.0f, -3.0f),
+                Sprite.Single(ResourceManager.GetTexture("bomb"), Vector2.One));
 
             makeNewStaminaBar();
 
@@ -282,11 +278,9 @@ namespace GamJam2k21
 
                 renderEquippedPickaxe();
 
-                PickaxeFrame.Render(Camera.GetLeftUpperCorner());
-
                 accessory.Render(Camera.GetLeftUpperCorner());
 
-                Coin.Render(Camera.GetRightUpperCorner());
+                coin.Render(Camera.GetRightUpperCorner());
                 Gold.Render(Camera.GetRightUpperCorner());
                 playTime.Render(Camera.GetLeftUpperCorner());
                 levelReached.Render(Camera.GetRightLowerCorner());
@@ -305,10 +299,13 @@ namespace GamJam2k21
 
         private void renderEquippedPickaxe()
         {
-            Sprite pickaxe = player.equippedPickaxe.Sprite;
+            Pickaxe pick = player.equippedPickaxe;
+            int id = ResourceManager.GetPickaxeID(pick);
+            String name = "pickaxe_shop_" + id;
+            Texture tex = ResourceManager.GetTexture(name);
+            Sprite pickaxe = Sprite.Single(tex, (3.0f, 5.0f));
             Transform pickaxeTransform = Transform.Default;
-            pickaxeTransform.Position = Camera.GetLeftUpperCorner() + (-3.0f, -5.0f);
-            pickaxeTransform.Scale = (2.0f, 2.0f);
+            pickaxeTransform.Position = Camera.GetLeftUpperCorner() + (0.0f, -4.5f);
             pickaxe.RenderWithTransform(pickaxeTransform);
         }
 

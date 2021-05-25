@@ -30,9 +30,9 @@ namespace GamJam2k21.PlayerElements
             exp += expList[name];
         }
 
-        public void addLevelReached()
+        public void SetLevelReached(int newLevel)
         {
-            levelReached += 1; 
+            levelReached = newLevel; 
         }
 
         public float getExp()

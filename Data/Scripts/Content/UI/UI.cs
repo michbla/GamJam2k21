@@ -48,7 +48,7 @@ namespace GamJam2k21
         private Text Gold = new Text((-8.75f, -2.0f), "     0", TextType.golden, 1.0f);
         private Text playTime;
 
-        
+        private Text levelReached = new Text((-5.0f, 0.2f), "   0M", TextType.white, 1.0f);
 
         private Shop shop;
         private Settings settings;
@@ -113,6 +113,7 @@ namespace GamJam2k21
         }
         private float lastStamina = 0;
         private int lastGold = 0;
+        private int lastDepth = 0;
         public void Update()
         {
             cursor.Update();
@@ -123,6 +124,11 @@ namespace GamJam2k21
             if (player.Gold != lastGold)
                 setGold(player.Gold);
             lastGold = player.Gold;
+
+            int levelReached = player.stats.getLevelReached();
+            if (levelReached != lastDepth)
+                setLevelReached(levelReached);
+            lastDepth = levelReached;
 
             if (player.StaminaMax != lastStamina)
                 makeNewStaminaBar();
@@ -197,6 +203,12 @@ namespace GamJam2k21
             shop.Gold.UpdateText(money);
         }
 
+        private void setLevelReached(int newValue)
+        {
+            string reached = convertDepthToString(newValue);
+            levelReached.UpdateText(reached);
+        }
+
         private void makeNewStaminaBar()
         {
             staminaBar = new ProgressBar((0.0f, -6.0f), player.StaminaMax * staminaScale);
@@ -226,6 +238,15 @@ namespace GamJam2k21
             char[] charArray = result.ToString().ToCharArray();
             Array.Reverse(charArray);
             return new string(charArray);
+        }
+
+        private string convertDepthToString(int depth)
+        {
+            string d = depth.ToString();
+            string spaces = "";
+            for (int i = 0; i < 4 - d.Length; i++)
+                spaces += ' ';
+            return spaces + d + 'M';
         }
 
         private void updateAccessory()
@@ -262,6 +283,7 @@ namespace GamJam2k21
                 Coin.Render(Camera.GetRightUpperCorner());
                 Gold.Render(Camera.GetRightUpperCorner());
                 playTime.Render(Camera.GetLeftUpperCorner());
+                levelReached.Render(Camera.GetRightLowerCorner());
 
                 staminaBar.Render(Camera.GetScreenCenter());
             }

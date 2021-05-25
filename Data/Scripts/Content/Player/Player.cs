@@ -225,8 +225,8 @@ namespace GamJam2k21
 
             if (lowestPosition > transform.Position.Y)
             {
-                lowestPosition = (int)transform.Position.Y;
-                stats.addLevelReached();
+                lowestPosition = (int)Math.Abs(transform.Position.Y) + 1;
+                stats.SetLevelReached(lowestPosition);
             }
         }
 

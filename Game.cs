@@ -79,8 +79,6 @@ namespace GamJam2k21
             Time.DeltaTime = (float)e.Time;
             if (!IsFocused)
                 return;
-            //if (Input.IsKeyDown(Keys.Escape))
-                //Close();
             if (player.stats.getLevelReached()==999)
             {
                 state = GameState.end;

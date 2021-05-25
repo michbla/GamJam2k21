@@ -81,26 +81,27 @@ namespace GamJam2k21
                 return;
             //if (Input.IsKeyDown(Keys.Escape))
                 //Close();
+            if (player.stats.getLevelReached()==999)
+            {
+                state = GameState.end;
                 
+            }
            
-            UI.Update();
-            Time.UpdateInGameTime();
-            Time.GetTime();
+            
             if (state == GameState.active)
             {
                 Camera.Update();
                 player.Update();
                 level.Update();
+                UI.Update();
+                Time.UpdateInGameTime();
+                Time.GetTime();
                 //updateDayCycle();
             }
-            if (state == GameState.summary)
+            if (state == GameState.end)
             {
-                //displaySummary = true;
-                //if (Input.IsKeyPressed(Keys.Enter))
-                //{
-                //    state = GameState.active;
-                //    displaySummary = false;
-                //}
+                Camera.Update();
+                UI.Update();
             }
             //TUTAJ KOD
             base.OnUpdateFrame(e);
@@ -120,6 +121,13 @@ namespace GamJam2k21
                 // else if (displaySummary)
                 //    userInterface.DrawDaySummary(day - 1);
                 UI.Render();
+            }
+
+            if (state == GameState.end)
+            {
+                level.Render();
+
+                UI.renderRunSummary();
             }
 
             //TUTAJ KOD

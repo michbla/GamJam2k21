@@ -32,16 +32,23 @@ namespace GamJam2k21
 
         private Icon UIbackgound;
         private Icon OPT_back;
+        private Icon SUM_back;
+
         private Button CHAR_button;
         private Button SHOP_button;
         private Button OPT_button;
         private Button EXIT_button;
+
+        private Button RANK_button;
+        private Button SUMMARY_button;
 
         private string UI_state = "basic";
 
         private Icon Coin;
         private Text Gold = new Text((-8.75f, -2.0f), "     0", TextType.golden, 1.0f);
         private Text playTime;
+
+        
 
         private Shop shop;
         private Settings settings;
@@ -68,10 +75,15 @@ namespace GamJam2k21
 
             OPT_back = new Icon((-6.0f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (12.0f, 8.0f)));
 
+            SUM_back = new Icon((-7.5f, -5.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (15f, 11f)));
+
             CHAR_button = new Button((-5.0f, 3.5f), (3, 1), "A", TextType.ui_icon);
             SHOP_button = new Button((-1.5f, 3.5f), (3, 1), "B", TextType.ui_icon);
             OPT_button = new Button((2.0f, 3.5f), (3, 1), "C", TextType.ui_icon);
-            EXIT_button = new Button((-1.5f, -3f), (3, 11), "Exit Game", TextType.ui); 
+            EXIT_button = new Button((-1.5f, -3f), (3, 11), "Exit Game", TextType.ui);
+
+            SUMMARY_button = new Button((-5F, -4F), (3, 11), "this run", TextType.ui);
+            RANK_button = new Button((-5F, -4F), (3, 11), "ranking", TextType.ui);
 
             Coin = new Icon((-2.5f, -2.5f), Sprite.Single(ResourceManager.GetTexture("coin"), (2.0f, 2.0f)));
 
@@ -85,6 +97,8 @@ namespace GamJam2k21
             ui_elements.Add(SHOP_button);
             ui_elements.Add(OPT_button);
             ui_elements.Add(EXIT_button);
+            ui_elements.Add(SUMMARY_button);
+            ui_elements.Add(RANK_button);
 
             shop = new Shop(player);
             charMenu = new CharacterMenu(player);
@@ -138,6 +152,7 @@ namespace GamJam2k21
 
                 settings.MouseLocation = cursor.InWorldPos;
                 settings.Update();
+
 
                 if (CHAR_button.CanPerformAction())
                     UI_state = "char";
@@ -297,6 +312,27 @@ namespace GamJam2k21
                     settings.Render();
                     break;
             }
+        }
+
+        public void renderRunSummary()
+        {
+            bool isSummary = true;
+            Text GAMEOVER = new Text((-6.7f, 3.5f), "GAME OVER", TextType.ui, 1.5f);
+            Text PLAYTIME = new Text((-7f, 2.5f), "Run Time: ", TextType.ui, 0.75f); 
+            Text PlayTime =  new Text((-0.5f, 2.5f), Time.GetTime(), TextType.ui, 0.75f);
+            dimmBackground.Render(Camera.GetScreenCenter());
+            SUM_back.Render(Camera.GetScreenCenter());
+            {
+                GAMEOVER.Render(Camera.GetScreenCenter());
+                PLAYTIME.Render(Camera.GetScreenCenter());
+                PlayTime.Render(Camera.GetScreenCenter());
+                RANK_button.Render(Camera.GetScreenCenter());
+                EXIT_button.Render(Camera.GetScreenCenter() + (2f, -1f));
+            }
+            cursor.DisplayPickaxe = false;
+            cursor.Render();
+            //TODO 
+            //move it to separate class
         }
     }
 }

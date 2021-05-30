@@ -23,7 +23,7 @@ namespace GamJam2k21
         ResourceLoader loader = new ResourceLoader();
 
         private Player player;
-        private Vector2 spawnPosition = (64.0f, 1.0f);
+        private Vector2 spawnPosition = (64.0f, -998.0f);
         private GameLevel level;
         private UI UI;
 
@@ -91,7 +91,7 @@ namespace GamJam2k21
                 Camera.Update();
                 player.Update();
                 level.Update();
-                UI.Update();
+                UI.Update(state);
                 Time.UpdateInGameTime();
                 Time.GetTime();
                 //updateDayCycle();
@@ -99,7 +99,7 @@ namespace GamJam2k21
             if (state == GameState.end)
             {
                 Camera.Update();
-                UI.Update();
+                UI.Update(state);
             }
             //TUTAJ KOD
             base.OnUpdateFrame(e);
@@ -124,8 +124,7 @@ namespace GamJam2k21
             if (state == GameState.end)
             {
                 level.Render();
-
-                UI.renderRunSummary();
+                UI.Render();
             }
 
             //TUTAJ KOD

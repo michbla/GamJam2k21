@@ -54,6 +54,7 @@ namespace GamJam2k21
         private Settings settings;
         private NativeWindow ns;
         private CharacterMenu charMenu;
+        private RunSummary runSummary;
 
         private ProgressBar staminaBar;
         private float staminaScale = 0.05f;
@@ -97,11 +98,10 @@ namespace GamJam2k21
             ui_elements.Add(SHOP_button);
             ui_elements.Add(OPT_button);
             ui_elements.Add(EXIT_button);
-            ui_elements.Add(SUMMARY_button);
-            ui_elements.Add(RANK_button);
 
             shop = new Shop(player);
             charMenu = new CharacterMenu(player);
+            runSummary = new RunSummary(ns, player);
 
             Sprite selection = Sprite.Single(ResourceManager.GetTexture("blockSelection"),
                                              Vector2.One);
@@ -115,7 +115,7 @@ namespace GamJam2k21
         private int lastGold = 0;
         private int lastDepth = 0;
         private int lastLevel = 0;
-        public void Update()
+        public void Update(GameState gs)
         {
             cursor.Update();
             blockSelection.Position = cursor.OnGridPos;
@@ -143,8 +143,14 @@ namespace GamJam2k21
 
             playTime.UpdateText(Time.GetTime());
 
+            if (gs == GameState.end)
+                UI_state = "summary";
             if (!isInMenu())
             {
+                if (UI_state == "summary")
+                    runSummary.MouseLocation = cursor.InWorldPos;
+
+                runSummary.Update();
                 cursor.DisplayPickaxe = player.HasSelectedBlock;
                 player.CanBeControlled = true;
                 Camera.CanLookAround = true;
@@ -188,12 +194,17 @@ namespace GamJam2k21
                     UI_state = "shop";
                 if (OPT_button.CanPerformAction())
                     UI_state = "options";
+                if (gs == GameState.end)
+                    UI_state = "summary";
             }
-
-            if (Input.IsKeyPressed(Keys.E))
-                switchMenu();
-            if (Input.IsKeyPressed(Keys.Escape))
-                switchMenu();
+            if (UI_state != "summary")
+            {
+                if (Input.IsKeyPressed(Keys.E))
+                    switchMenu();
+                if (Input.IsKeyPressed(Keys.Escape))
+                    switchMenu();
+            }
+            
 
             foreach (var e in ui_elements)
                 e.Update(cursor.InWorldPos);
@@ -284,8 +295,12 @@ namespace GamJam2k21
         public void Render()
         {
             settings.RenderUpdate();
+            if (UI_state == "summary")
+            { 
+                runSummary.Render(); 
+            }
 
-            if (!isInMenu())
+            else if (!isInMenu())
             {
                 if (player.HasSelectedBlock)
                     blockSelection.Render();

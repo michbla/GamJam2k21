@@ -23,7 +23,7 @@ namespace GamJam2k21
         ResourceLoader loader = new ResourceLoader();
 
         private Player player;
-        private Vector2 spawnPosition = (64.0f, -998.0f);
+        private Vector2 spawnPosition = (64.0f, -996.0f);
         private GameLevel level;
         private UI UI;
 

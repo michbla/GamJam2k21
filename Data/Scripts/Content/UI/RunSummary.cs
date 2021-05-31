@@ -22,10 +22,12 @@ namespace GamJam2k21.Interface
         private Button ExitGameButton;
         private Icon background;
 
+        private RankingLoader rankingLoader;
         private NativeWindow ns;
         private Player player;
         private Time t;
 
+        private bool isNewScoreSet = false;
         private bool isSummary = true;
         private bool isRanking = false;
         public RunSummary(NativeWindow _ns, Player _player)
@@ -43,30 +45,43 @@ namespace GamJam2k21.Interface
             t = Time.GetInstance();
             ns = _ns;
             player = _player;
+            rankingLoader = new RankingLoader();
+            rankingLoader.LoadRanking();
+            rankingLoader.PrintRanking();
         }
 
         public void Update()
         {
-            //Console.WriteLine("xD");
-            PlayTime.UpdateText(Time.GetTime());
-            Exp.UpdateText(player.stats.Exp.ToString());
+            string currTime = Time.GetTime();
+            float currExp = player.stats.Exp;
+            PlayTime.UpdateText(currTime);
+            Exp.UpdateText(currExp.ToString());
             SummaryRankSwitchButton.Update(MouseLocation);
             ExitGameButton.Update(MouseLocation);
-
+            
             if (SummaryRankSwitchButton.CanPerformAction())
             { 
                 isRanking = !isRanking;
-                isSummary = !isSummary;
+                isSummary = !isSummary;Console.WriteLine(currExp + " xD " + currTime);
             }
             if (ExitGameButton.CanPerformAction())
                 ns.Close();
 
             if (isRanking)
+            {
                 SummaryRankSwitchButton.UpdateText("This run");
+                if (!isNewScoreSet)
+                {
+                    Console.WriteLine(currExp + " xD " + currTime);
+                    rankingLoader.AddToRanking(currTime, currExp);
+                    rankingLoader.SaveRanking();
+                    isNewScoreSet = true;
+                }
+            }
             else
                 SummaryRankSwitchButton.UpdateText("Ranking");
             
-            Console.WriteLine(isSummary + " " + isRanking);
+            //Console.WriteLine(isSummary + " " + isRanking);
         }
 
         public void Render()
@@ -86,4 +101,5 @@ namespace GamJam2k21.Interface
 
         }
     }
-}
+}//TODO: FINISH RANKING
+

@@ -148,9 +148,11 @@ namespace GamJam2k21
             if (!isInMenu())
             {
                 if (UI_state == "summary")
+                {
                     runSummary.MouseLocation = cursor.InWorldPos;
-
-                runSummary.Update();
+                    runSummary.Update();
+                }
+                
                 cursor.DisplayPickaxe = player.HasSelectedBlock;
                 player.CanBeControlled = true;
                 Camera.CanLookAround = true;

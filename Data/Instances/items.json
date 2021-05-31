@@ -3,7 +3,7 @@
     "item": {
       "id": 1,
       "name": "Coal",
-      "value": 5,
+      "value": 999999,
       "textureName": "Coal_Item"
     }
   },

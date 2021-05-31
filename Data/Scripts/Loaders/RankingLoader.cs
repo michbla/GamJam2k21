@@ -4,6 +4,7 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OpenTK.Mathematics;
+using System.Text;
 
 namespace GamJam2k21
 {
@@ -12,29 +13,43 @@ namespace GamJam2k21
         public class Score
         {
             public int RunId { get; set; }
-            public string RunDate { get; set; }
+            //public string RunDate { get; set; }
             public string RunTime { get; set; }
             public float RunExp { get; set; }
         }
+
+
         public List<Score> Scores = new List<Score>();
 
-        public void AddToRanking(string time, float exp)
+        public int AddToRanking(string time, float exp)
         {
-            int id = Scores.Count + 1;
-            Score score = new Score();
-            score.RunId = id;
-            score.RunDate = DateTime.Now.ToString();
-            score.RunTime = time;
-            score.RunExp = exp;
-            Scores.Add(score);
+            int index = Scores.FindIndex(x => x.RunTime == time);
+            if (index == -1)
+            {
+                int id = Scores.Count + 1;
+                Score score = new Score();
+                score.RunId = id;
+                //score.RunDate = DateTime.Now.ToString("dd-MM-yyyy HH:mm");
+                score.RunTime = time;
+                score.RunExp = exp;
+                Scores.Add(score);
+                Scores.Sort(delegate (Score x, Score y)
+                {
+                    if (x.RunTime == null && y.RunTime == null) return 0;
+                    else if (x.RunTime == null) return -1;
+                    else if (y.RunTime == null) return 1;
+                    else return x.RunTime.CompareTo(y.RunTime);
+                });
+                index = Scores.FindIndex(x => x.RunTime == time);
+            }
+            return index;
         }
 
-        public void PrintRanking()
+
+        public string GetRank(int place)
         {
-            foreach (Score e in Scores)
-            {
-                Console.WriteLine("run " + e.RunId + ": " + e.RunDate + " " + e.RunTime + " " + e.RunExp);
-            }
+            string result = Scores[place].RunTime + " " + Scores[place].RunExp;
+            return result;
         }
 
         public void SaveRanking()

@@ -1,16 +1,29 @@
-﻿using System.Media;
-using GamJam2k21.Sound;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using GamJam2k21.Sound;
 using IrrKlang;
+using System;
 
 namespace GamJam2k21
 {
     public static class SoundManager
     {
-        private static ISoundEngine engine = new ISoundEngine();
+        private static ISoundEngine effectsEngine = new ISoundEngine();
+        private static ISoundEngine musicEngine = new ISoundEngine();
 
         private static Sounds s = new Sounds();
+
+        public static void Update()
+        {
+            effectsEngine.Update();
+        }
+
+        private static void playVaried(string soundPath)
+        {
+            ISound sound = effectsEngine.Play2D(soundPath);
+            Random r = new Random();
+            float speed = 1.0f + ((float)r.NextDouble() - 0.5f) * 0.5f;
+            sound.PlaybackSpeed = speed;
+            effectsEngine.Update();
+        }
 
         public static void PlayWalk(string BlockName)
         {
@@ -18,28 +31,27 @@ namespace GamJam2k21
                 return;
             if (BlockName == "Grass")
             {
-                engine.Play2D(s.walkOnGrass);
+                playVaried(s.walkOnGrass);
                 return;
             }
             if (BlockName == "Dirt")
             {
-                engine.Play2D(s.walkOnDirt);
+                playVaried(s.walkOnDirt);
                 return;
             }
             if (BlockName == "Ladder")
             {
-                engine.Play2D(s.walkOnLadder);
+                playVaried(s.walkOnLadder);
                 return;
             }
-
-            engine.Play2D(s.walkOnStone);
+            playVaried(s.walkOnStone);
         }
 
         public static void PlayFloat(string BlockName)
         {
             if (BlockName != "Ladder")
                 return;
-            engine.Play2D(s.walkOnLadder);
+            playVaried(s.walkOnLadder);
             return;
         }
     }

@@ -124,8 +124,11 @@ namespace GamJam2k21.Interface
 
         public bool CanPerformAction()
         {
+            if (Input.IsClickingAButton)
+                return false;
             if (IsClicked && !performedAction)
             {
+                Input.IsClickingAButton = true;
                 performedAction = true;
                 return true;
             }

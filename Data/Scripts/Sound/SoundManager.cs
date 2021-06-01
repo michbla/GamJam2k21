@@ -14,7 +14,6 @@ namespace GamJam2k21
 
         private static void play(SoundPlayer s)
         {
-            s.Stop();
             s.LoadAsync();
             s.Play();
         }

@@ -30,6 +30,8 @@ namespace GamJam2k21.Interface
 
         public virtual void Update(Vector2 mousePosition)
         {
+            if (Input.IsClickingAButton)
+                return;
             collider.SetPosition(colliderPosition);
             collider.Update();
             isHoveredOver = hasCollisionWithMouse(mousePosition);

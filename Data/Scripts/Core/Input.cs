@@ -8,6 +8,8 @@ namespace GamJam2k21
         private static MouseState mouseState;
         private static KeyboardState keyboardState;
 
+        public static bool IsClickingAButton = false;
+
         public static MouseState MouseState
         {
             get => mouseState;

@@ -117,6 +117,9 @@ namespace GamJam2k21
         private int lastLevel = 0;
         public void Update(GameState gs)
         {
+            if (Input.IsClickingAButton && !Input.IsMouseButtonDown(MouseButton.Button1))
+                Input.IsClickingAButton = false;
+
             cursor.Update();
             blockSelection.Position = cursor.OnGridPos;
             player.Animator.GiveMouseLocation(cursor.InWorldPos);

@@ -143,7 +143,16 @@ namespace GamJam2k21
 
         private void earnGoldFromBlock(Block block)
         {
-            inventory.Gold += block.GetDrop().Value;
+            int drop = block.GetDrop().Value;
+            if (checkLuck())
+                drop *= 2;
+            inventory.Gold += drop;
+        }
+
+        private bool checkLuck()
+        {
+            Random rand = new Random();
+            return rand.Next(16) < Skills.LuckPoints;
         }
 
         public void AddGold(int amount)

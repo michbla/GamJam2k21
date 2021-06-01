@@ -130,7 +130,7 @@ namespace GamJam2k21.PlayerElements
         private void renderFront()
         {
             if (isSwinging)
-                pickaxeSprite.RenderWithTransform(pickaxeTransform, Vector2i.Zero,isFlipped);
+                pickaxeSprite.RenderWithTransform(pickaxeTransform, Vector2i.Zero, isFlipped);
             frontArmAnimator.Render(armState);
         }
 
@@ -140,8 +140,13 @@ namespace GamJam2k21.PlayerElements
             updateElements();
         }
 
+        private float stepCooldown = 0.45f;
+        private float stepCooldownBase = 0.45f;
         private void updateState()
         {
+            if (stepCooldown >= 0.0f)
+                stepCooldown -= Time.DeltaTime;
+
             if (MathHelper.Abs(player.Velocity.Y) > 0.0f)
             {
                 wasInAir = true;
@@ -184,6 +189,12 @@ namespace GamJam2k21.PlayerElements
                         true,
                         false,
                         false);
+
+                    if (stepCooldown <= 0.0f)
+                    {
+                        SoundManager.PlayWalk(player.StandingOn);
+                        stepCooldown = stepCooldownBase;
+                    }
                 }
             }
             else
@@ -232,6 +243,7 @@ namespace GamJam2k21.PlayerElements
                                          true,
                                          false);
             wasInAir = false;
+            SoundManager.PlayWalk(player.StandingOn);
         }
 
         private void updateElements()
@@ -288,7 +300,7 @@ namespace GamJam2k21.PlayerElements
             return angle >= limits.X && angle <= limits.Y;
         }
 
-        private float newRotation(float angle,float difference)
+        private float newRotation(float angle, float difference)
         {
             if (isFlipped)
                 difference *= -1.0f;

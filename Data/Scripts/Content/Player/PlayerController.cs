@@ -65,8 +65,13 @@ namespace GamJam2k21.PlayerElements
                                        new Vector2(0.6f, 0.05f));
         }
 
+        private float ladderCooldown = 0.45f;
+        private float ladderCooldownBase = 0.45f;
         public void Update()
         {
+            if (ladderCooldown >= 0.0f)
+                ladderCooldown -= Time.DeltaTime;
+
             position = player.Position;
             isFloating = Input.IsKeyDown(Keys.K);
 
@@ -102,6 +107,13 @@ namespace GamJam2k21.PlayerElements
                     position.Y += Time.DeltaTime * climbingSpeed;
                 else if (Input.IsKeyDown(Keys.S) && !hasColl[2])
                     position.Y -= Time.DeltaTime * climbingSpeed;
+
+                if ((Input.IsKeyDown(Keys.W) || Input.IsKeyDown(Keys.S)) 
+                    && ladderCooldown <= 0.0f)
+                {
+                    SoundManager.PlayFloat(player.StandingOn);
+                    ladderCooldown = ladderCooldownBase;
+                }
             }
 
             player.Position = position;
@@ -116,16 +128,19 @@ namespace GamJam2k21.PlayerElements
                 hasColl[i] = false;
             isFloating = false;
             jumpFromLadder = false;
+            player.StandingOn = "None";
         }
         private void checkCollisions()
         {
             foreach (var block in blocks)
-                if (block.DistanceToPlayer <= 5.0f && block.IsCollidable)
+                if (block.DistanceToPlayer <= 10.0f && block.IsCollidable)
                 {
                     if (block.Name == "Ladder")
                         checkLadderCollision(block.Collider);
                     else
                         checkCollision(block.Collider);
+                    if ((isGrounded || isFloating) && player.StandingOn == "None")
+                        player.StandingOn = block.Name;
                 }
         }
 

@@ -39,6 +39,8 @@ namespace GamJam2k21
 
         public Skills Skills = new Skills();
 
+        public string StandingOn = "Grass";
+
         public Transform Transform { get => transform; }
         public Vector2 Position
         {

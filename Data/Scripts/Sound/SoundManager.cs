@@ -1,5 +1,7 @@
 ﻿using System.Media;
 using GamJam2k21.Sound;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace GamJam2k21
 {
@@ -12,10 +14,35 @@ namespace GamJam2k21
         private static SoundPlayer walkOnStone = new SoundPlayer(s.walkOnStone);
         private static SoundPlayer walkOnLadder = new SoundPlayer(s.walkOnLadder);
 
-        private static void play(SoundPlayer s)
+        private static bool isPlayingWalkSound = false;
+
+        public static void Init()
         {
-            s.LoadAsync();
-            s.Play();
+            walkOnGrass.LoadAsync();
+            walkOnDirt.LoadAsync();
+            walkOnStone.LoadAsync();
+            walkOnLadder.LoadAsync();
+        }
+
+        private static void playWalkOnThread(SoundPlayer s)
+        {
+            if (isPlayingWalkSound)
+                return;
+            isPlayingWalkSound = true;
+            Thread soundThread = new Thread(new ParameterizedThreadStart(play));
+            soundThread.Start(s);
+
+            Task.Run(() =>
+            {
+                soundThread.Join();
+                isPlayingWalkSound = false;
+            });
+        }
+
+        private static void play(object s)
+        {
+            SoundPlayer p = (SoundPlayer)s;
+            p.PlaySync();
         }
 
         public static void PlayWalk(string BlockName)
@@ -24,28 +51,28 @@ namespace GamJam2k21
                 return;
             if (BlockName == "Grass")
             {
-                play(walkOnGrass);
+                playWalkOnThread(walkOnGrass);
                 return;
             }
             if (BlockName == "Dirt")
             {
-                play(walkOnDirt);
+                playWalkOnThread(walkOnDirt);
                 return;
             }
             if (BlockName == "Ladder")
             {
-                play(walkOnLadder);
+                playWalkOnThread(walkOnLadder);
                 return;
             }
 
-            play(walkOnStone);
+            playWalkOnThread(walkOnStone);
         }
 
         public static void PlayFloat(string BlockName)
         {
             if (BlockName != "Ladder")
                 return;
-            play(walkOnLadder);
+            playWalkOnThread(walkOnLadder);
             return;
         }
     }

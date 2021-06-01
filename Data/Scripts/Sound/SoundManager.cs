@@ -27,24 +27,23 @@ namespace GamJam2k21
 
         public static void PlayWalk(string BlockName)
         {
-            if (BlockName == "None")
-                return;
-            if (BlockName == "Grass")
+            switch (BlockName)
             {
-                playVaried(s.walkOnGrass);
-                return;
+                case "Name":
+                    break;
+                case "Grass":
+                    playVaried(s.walkOnGrass);
+                    break;
+                case "Dirt":
+                    playVaried(s.walkOnDirt);
+                    break;
+                case "Ladder":
+                    playVaried(s.walkOnLadder);
+                    break;
+                default:
+                    playVaried(s.walkOnStone);
+                    break;
             }
-            if (BlockName == "Dirt")
-            {
-                playVaried(s.walkOnDirt);
-                return;
-            }
-            if (BlockName == "Ladder")
-            {
-                playVaried(s.walkOnLadder);
-                return;
-            }
-            playVaried(s.walkOnStone);
         }
 
         public static void PlayFloat(string BlockName)

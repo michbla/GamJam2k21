@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Threading.Tasks;
 
 namespace GamJam2k21.PlayerElements
 {
@@ -108,7 +109,7 @@ namespace GamJam2k21.PlayerElements
                 else if (Input.IsKeyDown(Keys.S) && !hasColl[2])
                     position.Y -= Time.DeltaTime * climbingSpeed;
 
-                if ((Input.IsKeyDown(Keys.W) || Input.IsKeyDown(Keys.S)) 
+                if ((Input.IsKeyDown(Keys.W) || Input.IsKeyDown(Keys.S))
                     && ladderCooldown <= 0.0f)
                 {
                     SoundManager.PlayFloat(player.StandingOn);
@@ -132,7 +133,9 @@ namespace GamJam2k21.PlayerElements
         }
         private void checkCollisions()
         {
-            foreach (var block in blocks)
+            Parallel.For(0, blocks.Count, (index) =>
+            {
+                var block = blocks[index];
                 if (block.DistanceToPlayer <= 10.0f && block.IsCollidable)
                 {
                     if (block.Name == "Ladder")
@@ -142,6 +145,8 @@ namespace GamJam2k21.PlayerElements
                     if ((isGrounded || isFloating) && player.StandingOn == "None")
                         player.StandingOn = block.Name;
                 }
+            }
+            );
         }
 
         private void doMovement()

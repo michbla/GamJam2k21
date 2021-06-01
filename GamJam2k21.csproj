@@ -22,4 +22,10 @@
     <PackageReference Include="System.Windows.Extensions" Version="5.0.0" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Reference Include="irrKlang.NET4">
+      <HintPath>Data\External\irrKlang.NET4.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
 </Project>

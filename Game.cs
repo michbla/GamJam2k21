@@ -23,7 +23,7 @@ namespace GamJam2k21
         ResourceLoader loader = new ResourceLoader();
 
         private Player player;
-        private Vector2 spawnPosition = (64.0f, 1.0f);
+        private Vector2 spawnPosition = (64.0f, -996.0f);
         private GameLevel level;
         private UI UI;
 
@@ -41,7 +41,6 @@ namespace GamJam2k21
             ResourceManager.GetInstance();
             Camera.Initiate();
             nw = this;
-            SoundManager.Init();
         }
 
         protected override void OnLoad()

@@ -2,48 +2,15 @@
 using GamJam2k21.Sound;
 using System.Threading;
 using System.Threading.Tasks;
+using IrrKlang;
 
 namespace GamJam2k21
 {
     public static class SoundManager
     {
+        private static ISoundEngine engine = new ISoundEngine();
+
         private static Sounds s = new Sounds();
-
-        private static SoundPlayer walkOnGrass = new SoundPlayer(s.walkOnGrass);
-        private static SoundPlayer walkOnDirt = new SoundPlayer(s.walkOnDirt);
-        private static SoundPlayer walkOnStone = new SoundPlayer(s.walkOnStone);
-        private static SoundPlayer walkOnLadder = new SoundPlayer(s.walkOnLadder);
-
-        private static bool isPlayingWalkSound = false;
-
-        public static void Init()
-        {
-            walkOnGrass.LoadAsync();
-            walkOnDirt.LoadAsync();
-            walkOnStone.LoadAsync();
-            walkOnLadder.LoadAsync();
-        }
-
-        private static void playWalkOnThread(SoundPlayer s)
-        {
-            if (isPlayingWalkSound)
-                return;
-            isPlayingWalkSound = true;
-            Thread soundThread = new Thread(new ParameterizedThreadStart(play));
-            soundThread.Start(s);
-
-            Task.Run(() =>
-            {
-                soundThread.Join();
-                isPlayingWalkSound = false;
-            });
-        }
-
-        private static void play(object s)
-        {
-            SoundPlayer p = (SoundPlayer)s;
-            p.PlaySync();
-        }
 
         public static void PlayWalk(string BlockName)
         {
@@ -51,28 +18,28 @@ namespace GamJam2k21
                 return;
             if (BlockName == "Grass")
             {
-                playWalkOnThread(walkOnGrass);
+                engine.Play2D(s.walkOnGrass);
                 return;
             }
             if (BlockName == "Dirt")
             {
-                playWalkOnThread(walkOnDirt);
+                engine.Play2D(s.walkOnDirt);
                 return;
             }
             if (BlockName == "Ladder")
             {
-                playWalkOnThread(walkOnLadder);
+                engine.Play2D(s.walkOnLadder);
                 return;
             }
 
-            playWalkOnThread(walkOnStone);
+            engine.Play2D(s.walkOnStone);
         }
 
         public static void PlayFloat(string BlockName)
         {
             if (BlockName != "Ladder")
                 return;
-            playWalkOnThread(walkOnLadder);
+            engine.Play2D(s.walkOnLadder);
             return;
         }
     }

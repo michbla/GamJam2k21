@@ -132,13 +132,18 @@ namespace GamJam2k21
                 block.Damage(Damage);
                 level.playDamageParticles(block);
                 ResetDiggingCooldown();
+                SoundManager.PlayHit(block.Name);
                 if (block.IsDestroyed())
                 {
                     if (block.HasOre())
+                    {
                         earnGoldFromBlock(block);
+                        SoundManager.PlayCoins();
+                    }
                     stats.AddExp(block.Exp);
 
                     level.DestroyBlockAtPosition(block, position);
+                    SoundManager.PlayDest(block.Name);
                 }
             }
         }

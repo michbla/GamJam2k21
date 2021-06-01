@@ -358,6 +358,8 @@ namespace GamJam2k21
             mapData[position.X, -position.Y] = ResourceManager.GetBlockID(block);
             oreData[position.X, -position.Y] = 0;
             spawnBlock(position.X, -position.Y);
+            if (block.Name == "Ladder")
+                SoundManager.PlayPlaceLadder();
         }
 
         public void DestroyBlocksInRange(Vector2i position, int range)
@@ -385,8 +387,11 @@ namespace GamJam2k21
 
         public void ActivateBombAtPosition(Vector2i position)
         {
-            if(getBlockAtPosition(position).Name =="Bomb")
+            if (getBlockAtPosition(position).Name == "Bomb")
+            {
                 DestroyBlocksInRange(position, 3);
+                SoundManager.PlayExplosion();
+            }
         }
 
         public void playDamageParticles(Block block)

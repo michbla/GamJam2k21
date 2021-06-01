@@ -139,11 +139,9 @@ namespace GamJam2k21.PlayerElements
                 if (block.DistanceToPlayer <= 10.0f && block.IsCollidable)
                 {
                     if (block.Name == "Ladder")
-                        checkLadderCollision(block.Collider);
+                        checkLadderCollision(block);
                     else
-                        checkCollision(block.Collider);
-                    if ((isGrounded || isFloating) && player.StandingOn == "None")
-                        player.StandingOn = block.Name;
+                        checkCollision(block);
                 }
             }
             );
@@ -220,9 +218,9 @@ namespace GamJam2k21.PlayerElements
                 velocity.X = 0.0f;
         }
 
-
-        private void checkCollision(BoxCollider collider)
+        private void checkCollision(Block block)
         {
+            BoxCollider collider = block.Collider;
             (bool, Direction, Vector2) upRes = upperBox.CheckCollision(collider);
             if (upRes.Item1 == true)
                 hasColl[0] = true;
@@ -235,14 +233,17 @@ namespace GamJam2k21.PlayerElements
                 isGrounded = true;
                 collisionPos.Y = collider.Position.Y + collider.Size.Y;
                 hasColl[2] = true;
+                if (player.StandingOn == "None")
+                    player.StandingOn = block.Name;
             }
             (bool, Direction, Vector2) lRes = leftBox.CheckCollision(collider);
             if (lRes.Item1 == true)
                 hasColl[3] = true;
         }
 
-        private void checkLadderCollision(BoxCollider collider)
+        private void checkLadderCollision(Block block)
         {
+            BoxCollider collider = block.Collider;
             (bool, Direction, Vector2) upRes = upperBox.CheckCollision(collider);
             (bool, Direction, Vector2) botRes = bottomBox.CheckCollision(collider);
             (bool, Direction, Vector2) rRes = rightBox.CheckCollision(collider);
@@ -252,6 +253,8 @@ namespace GamJam2k21.PlayerElements
               || lRes.Item1 == true || rRes.Item1 == true)
             {
                 isFloating = true;
+                if (player.StandingOn == "None")
+                    player.StandingOn = block.Name;
             }
             if (botRes.Item1 == true)
             {

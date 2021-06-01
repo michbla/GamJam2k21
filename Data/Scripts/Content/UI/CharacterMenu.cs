@@ -21,6 +21,8 @@ namespace GamJam2k21.Interface
 
         private Text pointsToSpend = new Text((3.8f, 2.2f), " 0", TextType.ui, 0.8f);
 
+        private bool buttonsActive = true;
+
         public CharacterMenu(Player player)
         {
             this.player = player;
@@ -58,6 +60,19 @@ namespace GamJam2k21.Interface
             for (int i = 0; i < attributeCount; i++)
                 if (attributeButtons[i].CanPerformAction())
                     tryAddAttribute(i);
+
+            if (player.Skills.SkillPoints > 0 && !buttonsActive)
+            {
+                buttonsActive = true;
+                foreach (var button in attributeButtons)
+                    button.IsActive = true;
+            }
+            if (player.Skills.SkillPoints == 0 && buttonsActive)
+            {
+                buttonsActive = false;
+                foreach (var button in attributeButtons)
+                    button.IsActive = false;
+            }
         }
 
         private string pointsToString(int points)
@@ -132,7 +147,7 @@ namespace GamJam2k21.Interface
             foreach (var points in attributePoints)
                 points.Render(Camera.GetScreenCenter());
 
-            if (player.Skills.SkillPoints > 0)
+            if (buttonsActive)
             {
                 foreach (var button in attributeButtons)
                     button.Render(Camera.GetScreenCenter());

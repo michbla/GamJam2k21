@@ -33,6 +33,7 @@ namespace GamJam2k21.PlayerElements
                 ExpLevel++;
                 ExpToNextLevel = calculateExpToNextLevel();
                 player.AddAttributePoint();
+                SoundManager.PlayLevelUp();
             }
         }
 

@@ -23,6 +23,8 @@ namespace GamJam2k21.Interface
 
         private bool performedAction;
 
+        public bool IsActive = true;
+
         public Button(Vector2 offset,
                       Vector2i size,
                       string text = "",
@@ -116,6 +118,11 @@ namespace GamJam2k21.Interface
             state = IsClicked ? ButtonState.clicked : ButtonState.normal;
         }
 
+        public override void OnClick()
+        {
+            base.OnClick();
+        }
+
         public override void OnUnClick()
         {
             base.OnUnClick();
@@ -126,10 +133,11 @@ namespace GamJam2k21.Interface
         {
             if (Input.IsClickingAButton)
                 return false;
-            if (IsClicked && !performedAction)
+            if (IsActive && IsClicked && !performedAction)
             {
                 Input.IsClickingAButton = true;
                 performedAction = true;
+                SoundManager.PlayButtonClick();
                 return true;
             }
             return false;

@@ -6,23 +6,28 @@ namespace GamJam2k21
 {
     public static class SoundManager
     {
-        private static ISoundEngine effectsEngine = new ISoundEngine();
-        private static ISoundEngine musicEngine = new ISoundEngine();
+        private static ISoundEngine engine = new ISoundEngine();
 
         private static Sounds s = new Sounds();
 
         public static void Update()
         {
-            effectsEngine.Update();
+            engine.Update();
         }
 
         private static void playVaried(string soundPath)
         {
-            ISound sound = effectsEngine.Play2D(soundPath);
+            ISound sound = engine.Play2D(soundPath);
             Random r = new Random();
             float speed = 1.0f + ((float)r.NextDouble() - 0.5f) * 0.5f;
             sound.PlaybackSpeed = speed;
-            effectsEngine.Update();
+            engine.Update();
+        }
+
+        private static void play(string soundPath)
+        {
+            engine.Play2D(soundPath);
+            engine.Update();
         }
 
         public static void PlayWalk(string BlockName)
@@ -52,6 +57,72 @@ namespace GamJam2k21
                 return;
             playVaried(s.walkOnLadder);
             return;
+        }
+
+        public static void PlayHit(string BlockName)
+        {
+            switch (BlockName)
+            {
+                case "Name":
+                    break;
+                case "Grass":
+                    playVaried(s.hitGrass);
+                    break;
+                case "Dirt":
+                    playVaried(s.hitDirt);
+                    break;
+                default:
+                    playVaried(s.hitStone);
+                    break;
+            }
+        }
+
+        public static void PlayDest(string BlockName)
+        {
+            switch (BlockName)
+            {
+                case "Name":
+                    break;
+                case "Grass":
+                    playVaried(s.destGrass);
+                    break;
+                case "Dirt":
+                    playVaried(s.destDirt);
+                    break;
+                default:
+                    playVaried(s.destStone);
+                    break;
+            }
+        }
+
+        public static void PlayPlaceLadder()
+        {
+            playVaried(s.placeLadder);
+        }
+
+        public static void PlayExplosion()
+        {
+            playVaried(s.explosion);
+        }
+
+        public static void PlayLevelUp()
+        {
+            play(s.levelUp);
+        }
+
+        public static void PlayCoins()
+        {
+            play(s.coins);
+        }
+
+        public static void PlayButtonClick()
+        {
+            play(s.click);
+        }
+
+        public static void PlayButtonUnClick()
+        {
+            play(s.unclick);
         }
     }
 }

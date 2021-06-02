@@ -72,19 +72,19 @@ namespace GamJam2k21
             float[,] iron = Noise2D.GenerateNoiseMap(width * 3, depth, 5, 200.0f);
             for (var i = 10; i < depth; i++)
                 for (var j = 0; j < width; j++)
-                    if (copper[j, i] > 0.83f)
+                    if (iron[j, i] > 0.83f)
                         oreData[j, i] = 3;
 
             float[,] gold = Noise2D.GenerateNoiseMap(width * 2, depth, 5, 200.0f);
             for (var i = 20; i < depth; i++)
                 for (var j = 0; j < width; j++)
-                    if (copper[j, i] > 0.84f)
+                    if (gold[j, i] > 0.84f)
                         oreData[j, i] = 4;
 
             float[,] diamond = Noise2D.GenerateNoiseMap(width * 2, depth, 5, 200.0f);
             for (var i = 35; i < depth; i++)
                 for (var j = 0; j < width; j++)
-                    if (copper[j, i] > 0.85f)
+                    if (diamond[j, i] > 0.85f)
                         oreData[j, i] = 5;
         }
 
@@ -112,24 +112,29 @@ namespace GamJam2k21
             {
                 for (var j = 0; j < width; j++)
                 {
-                    if (blockData[j, i] > 1.5f)
-                    {
-                        mapData[j, i] = 1;
-                    }
-                    else if (blockData[j, i] < 0.3f)
-                    {
-                        mapData[j, i] = 0;
-                    }
-                    else if (blockData[j, i] < 0.7f)
-                    {
-                        mapData[j, i] = 3;
-                    }
-                    else
-                    {
-                        mapData[j, i] = 2;
-                    }
+                    setMapDataBlock(blockData[j, i], j, i);
                 }
             }
+        }
+
+        private void setMapDataBlock(float blockData, int x, int y)
+        {
+            if(blockData > 1.5f)
+            {
+                mapData[x, y] = 1;//grass
+                return;
+            }
+            if(blockData < 0.3f)
+            {
+                mapData[x, y] = 0;//air
+                return;
+            }
+            if(y <= 100 && blockData > 0.7f)
+            {
+                mapData[x, y] = 2;//dirt
+                return;
+            }
+            mapData[x, y] = y / 100 + 3;//stones
         }
 
         private void spawnInitialChunks()
@@ -229,6 +234,24 @@ namespace GamJam2k21
 
         private string getBackgroundByDepth(int depth)
         {
+            if (depth > 890)
+                return "backgroundStone_10";
+            if (depth > 790)
+                return "backgroundStone_9";
+            if (depth > 690)
+                return "backgroundStone_8";
+            if (depth > 590)
+                return "backgroundStone_7";
+            if (depth > 490)
+                return "backgroundStone_6";
+            if (depth > 390)
+                return "backgroundStone_5";
+            if (depth > 290)
+                return "backgroundStone_4";
+            if (depth > 190)
+                return "backgroundStone_3";
+            if (depth > 90)
+                return "backgroundStone_2";
             if (depth > 1)
                 return "backgroundStone";
             return "backgroundDirt";

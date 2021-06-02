@@ -20,19 +20,127 @@
       "hardness": 0,
       "endurance": 100,
       "color": [ 17, 6, 1 ],
-      "exp":  10
+      "exp": 10
     }
   },
 
   {
     "block": {
       "id": 3,
-      "textureName": "stone",
+      "textureName": "stone_1",
       "name": "Stone",
       "hardness": 1,
       "endurance": 150,
       "color": [ 10, 10, 10 ],
-      "exp":  20
+      "exp": 20
+    }
+  },
+
+  {
+    "block": {
+      "id": 4,
+      "textureName": "stone_2",
+      "name": "Stone",
+      "hardness": 1,
+      "endurance": 300,
+      "color": [ 10, 9, 9 ],
+      "exp": 40
+    }
+  },
+
+  {
+    "block": {
+      "id": 5,
+      "textureName": "stone_3",
+      "name": "Stone",
+      "hardness": 1,
+      "endurance": 600,
+      "color": [ 2, 2, 2 ],
+      "exp": 80
+    }
+  },
+
+  {
+    "block": {
+      "id": 6,
+      "textureName": "stone_4",
+      "name": "Stone",
+      "hardness": 1,
+      "endurance": 1200,
+      "color": [ 10, 15, 10 ],
+      "exp": 160
+    }
+  },
+
+  {
+    "block": {
+      "id": 7,
+      "textureName": "stone_5",
+      "name": "Stone",
+      "hardness": 1,
+      "endurance": 2400,
+      "color": [ 5, 15, 5 ],
+      "exp": 320
+    }
+  },
+
+  {
+    "block": {
+      "id": 8,
+      "textureName": "stone_6",
+      "name": "Stone",
+      "hardness": 1,
+      "endurance": 4800,
+      "color": [ 1, 12, 1 ],
+      "exp": 640
+    }
+  },
+
+  {
+    "block": {
+      "id": 9,
+      "textureName": "stone_7",
+      "name": "Stone",
+      "hardness": 1,
+      "endurance": 9600,
+      "color": [ 15, 8, 8 ],
+      "exp": 1280
+    }
+  },
+
+  {
+    "block": {
+      "id": 10,
+      "textureName": "stone_8",
+      "name": "Stone",
+      "hardness": 1,
+      "endurance": 19200,
+      "color": [ 15, 5, 5 ],
+      "exp": 2560
+    }
+  },
+
+  {
+    "block": {
+      "id": 11,
+      "textureName": "stone_9",
+      "name": "Stone",
+      "hardness": 1,
+      "endurance": 38400,
+      "color": [ 10, 1, 1 ],
+      "exp": 5180
+    }
+  },
+
+  {
+    "block": {
+      "id": 12,
+      "textureName": "stone_99",
+      "name": "Stone",
+      "hardness": 1,
+      "endurance": 60000,
+      "color": [ 12, 1, 1 ],
+      "exp": 10000
     }
   },
 

@@ -95,14 +95,12 @@ namespace GamJam2k21
                 UI.Update(state);
                 Time.UpdateInGameTime();
                 Time.GetTime();
-                //updateDayCycle();
             }
             if (state == GameState.end)
             {
                 Camera.Update();
                 UI.Update(state);
             }
-            //TUTAJ KOD
             base.OnUpdateFrame(e);
         }
         
@@ -111,14 +109,10 @@ namespace GamJam2k21
             GL.Clear(ClearBufferMask.ColorBufferBit);
             Camera.RenderBackground();
 
-            //var color = setColorByTime();
             if (state == GameState.active || state == GameState.summary)
             {
                 level.Render();
                 player.Render();
-                //int day = getDay();
-                // else if (displaySummary)
-                //    userInterface.DrawDaySummary(day - 1);
                 UI.Render();
             }
 
@@ -128,17 +122,9 @@ namespace GamJam2k21
                 UI.Render();
             }
 
-            //TUTAJ KOD
 
             SwapBuffers();
             base.OnRenderFrame(e);
-        }
-
-        private void setNewAspectRatio()
-        {
-            CenterWindow();
-            GL.Viewport(0, 0, Size.X, Size.Y);
-            Camera.SetProjection();
         }
 
         protected override void OnUnload()
@@ -169,43 +155,5 @@ namespace GamJam2k21
             GL.Viewport(0, 0, Size.X, Size.Y);
             base.OnMaximized(e);
         }
-
-        private float deltaSum = 0;
-        private void updateDayCycle()
-        {
-            deltaSum += Time.DeltaTime;
-            if (deltaSum >= 1)
-            {
-                time = time.AddMinutes(60);
-                deltaSum = 0;
-            }
-            if (time.Hour >= 18)
-            {
-                state = GameState.summary;
-                time = time.AddDays(1);
-                time = time.AddHours(-10);
-            }
-
-        }
-
-        private int getDay()
-        {
-            int day = 0;
-            day = time.Day + (time.Month - 1) * 30 + (time.Year - 1) * 365;
-            return day;
-        }
-
-        private Vector3 setColorByTime()
-        {
-            double red, green, blue;
-            Vector3 color;
-            red = Math.Sin((float)(time.Hour * 60 + time.Minute) / 1000);
-            green = Math.Cos((float)(time.Hour * 60 + time.Minute) / 1000);
-            blue = Math.Cos((float)(time.Hour * 60 + time.Minute) / 1000);
-            color = new Vector3((float)red, (float)green, (float)blue);
-
-            return color;
-        }
-
     }
 }

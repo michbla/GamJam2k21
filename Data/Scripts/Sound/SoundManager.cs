@@ -7,6 +7,7 @@ namespace GamJam2k21
     public static class SoundManager
     {
         private static ISoundEngine engine = new ISoundEngine();
+        private static ISoundEngine backgroundEngine = new ISoundEngine();
 
         private static Sounds s = new Sounds();
 
@@ -14,6 +15,17 @@ namespace GamJam2k21
         {
             engine.Update();
         }
+
+        public static void StartBackgroundMusic()
+        {
+            backgroundEngine.SoundVolume = 0.3f;
+            backgroundEngine.Play2D(s.background, true);
+        }
+        public static void StopBackgroundMusic()
+        {
+            backgroundEngine.StopAllSounds();
+        }
+
 
         private static void playVaried(string soundPath)
         {

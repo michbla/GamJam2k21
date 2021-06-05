@@ -6,6 +6,8 @@ namespace GamJam2k21.Sound
         private static readonly string dir = "Data/Resources/Sound/";
         private static readonly string ext = ".wav";
 
+        public string background = dir + "background" + ext;
+
         public string hitGrass = dir + "hitGrass" + ext;
         public string destGrass = dir + "destGrass" + ext;
         public string walkOnGrass = dir + "walkOnGrass" + ext;

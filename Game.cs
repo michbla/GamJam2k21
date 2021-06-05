@@ -60,6 +60,9 @@ namespace GamJam2k21
             Camera.Position = spawnPosition;
             Camera.SetTarget(player.Transform);
             Camera.WindowResolution = Size;
+
+            SoundManager.StartBackgroundMusic();
+
             base.OnLoad();
         }
 

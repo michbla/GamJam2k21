@@ -57,6 +57,56 @@
       "hardness": 6,
       "damage": 960
     }
+  },
+
+  {
+    "pickaxe": {
+      "id": 6,
+      "textureName": "pickaxe5",
+      "name": "Ruby Pickaxe",
+      "hardness": 7,
+      "damage": 1800
+    }
+  },
+
+  {
+    "pickaxe": {
+      "id": 7,
+      "textureName": "pickaxe5",
+      "name": "Emerald Pickaxe",
+      "hardness": 8,
+      "damage": 3600
+    }
+  },
+
+  {
+    "pickaxe": {
+      "id": 8,
+      "textureName": "pickaxe5",
+      "name": "Netherite Pickaxe",
+      "hardness": 9,
+      "damage": 7000
+    }
+  },
+
+  {
+    "pickaxe": {
+      "id": 9,
+      "textureName": "pickaxe5",
+      "name": "Starstone Pickaxe",
+      "hardness": 10,
+      "damage": 14000
+    }
+  },
+
+  {
+    "pickaxe": {
+      "id": 10,
+      "textureName": "pickaxe5",
+      "name": "Arc Pickaxe",
+      "hardness": 11,
+      "damage": 28000
+    }
   }
 
 ]

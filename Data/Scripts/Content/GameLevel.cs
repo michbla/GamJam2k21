@@ -57,35 +57,27 @@ namespace GamJam2k21
         }
         private void fillOreData()
         {
-            float[,] coal = Noise2D.GenerateNoiseMap(width * 3, depth, 5, 200.0f);
-            for (var i = 0; i < depth; i++)
-                for (var j = 0; j < width; j++)
-                    if (coal[j, i] > 0.7f)
-                        oreData[j, i] = 1;
+            for (int i = 0; i < 10; i++)
+                generateOreLevel(i);
+        }
 
-            float[,] copper = Noise2D.GenerateNoiseMap(width * 2, depth, 5, 200.0f);
-            for (var i = 0; i < depth; i++)
-                for (var j = 0; j < width; j++)
-                    if (copper[j, i] > 0.8f)
-                        oreData[j, i] = 2;
+        private void generateOreLevel(int level)
+        {
+            int from = level * 100;
+            int to_1 = Math.Clamp(from + 100, 0, 999);
+            int to_2 = Math.Clamp(to_1 + 100, 0, 999);
+            generateOre(from, to_1, (level * 2 + 1), 0.3f);
+            generateOre(from, to_2, (level * 2 + 2), 0.2f);
+        }
 
-            float[,] iron = Noise2D.GenerateNoiseMap(width * 3, depth, 5, 200.0f);
-            for (var i = 10; i < depth; i++)
+        private void generateOre(int from, int to, int id, float frequency)
+        {
+            float rarity = 1.0f - frequency;
+            float[,] ore = Noise2D.GenerateNoiseMap(width * 3, depth, 5, 200.0f);
+            for (var i = from; i <= to; i++)
                 for (var j = 0; j < width; j++)
-                    if (iron[j, i] > 0.83f)
-                        oreData[j, i] = 3;
-
-            float[,] gold = Noise2D.GenerateNoiseMap(width * 2, depth, 5, 200.0f);
-            for (var i = 20; i < depth; i++)
-                for (var j = 0; j < width; j++)
-                    if (gold[j, i] > 0.84f)
-                        oreData[j, i] = 4;
-
-            float[,] diamond = Noise2D.GenerateNoiseMap(width * 2, depth, 5, 200.0f);
-            for (var i = 35; i < depth; i++)
-                for (var j = 0; j < width; j++)
-                    if (diamond[j, i] > 0.85f)
-                        oreData[j, i] = 5;
+                    if (ore[j, i] > rarity)
+                        oreData[j, i] = id;
         }
 
         private void generateGrassOnTop(float[,] blockData)
@@ -109,12 +101,8 @@ namespace GamJam2k21
         private void fillMapData(float[,] blockData)
         {
             for (var i = 0; i < depth; i++)
-            {
                 for (var j = 0; j < width; j++)
-                {
                     setMapDataBlock(blockData[j, i], j, i);
-                }
-            }
         }
 
         private void setMapDataBlock(float blockData, int x, int y)

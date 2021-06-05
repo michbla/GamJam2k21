@@ -75,6 +75,12 @@ namespace GamJam2k21.Interface
             pickaxeIcon.ChangeTexture("pickaxe_shop_" + pickaxeOnDisplayID);
             nextPickaxePrice = (int)Math.Pow(2, pickaxeOnDisplayID) * 500;
             button1.UpdateText(convertValueToString(nextPickaxePrice));
+            if (pickaxeOnDisplayID > 10)
+            {
+                button1.UpdateText(" MAX  ");
+                button1.IsActive = false;
+            }
+
         }
 
         private void tryBuingBomb()

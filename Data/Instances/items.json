@@ -3,7 +3,7 @@
     "item": {
       "id": 1,
       "name": "Coal",
-      "value": 999999,
+      "value": 15,
       "textureName": "Coal_Item"
     }
   },
@@ -12,7 +12,7 @@
     "item": {
       "id": 2,
       "name": "Copper",
-      "value": 6,
+      "value": 25,
       "textureName": "Copper_Item"
     }
   },
@@ -20,26 +20,161 @@
   {
     "item": {
       "id": 3,
-      "name": "Iron",
-      "value": 7,
-      "textureName": "Iron_Item_V2"
+      "name": "Elbait",
+      "value": 40,
+      "textureName": "Copper_Item"
     }
   },
 
   {
     "item": {
       "id": 4,
-      "name": "Gold",
-      "value": 10,
-      "textureName": "Gold_Item_V1"
+      "name": "Iron",
+      "value": 50,
+      "textureName": "Iron_Item_V2"
     }
   },
 
   {
     "item": {
       "id": 5,
+      "name": "Fluorite",
+      "value": 70,
+      "textureName": "Iron_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 6,
+      "name": "Gold",
+      "value": 120,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 7,
+      "name": "Lapis",
+      "value": 200,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 8,
       "name": "Diamond",
-      "value": 15,
+      "value": 240,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 9,
+      "name": "Flirite",
+      "value": 400,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 10,
+      "name": "Ruby",
+      "value": 600,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 11,
+      "name": "Malahite",
+      "value": 800,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 12,
+      "name": "Emerald",
+      "value": 1000,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 13,
+      "name": "Spinel",
+      "value": 1600,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 14,
+      "name": "Netherite",
+      "value": 2400,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 15,
+      "name": "Orbits",
+      "value": 3200,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 16,
+      "name": "Starstone",
+      "value": 4800,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 17,
+      "name": "Omnis",
+      "value": 8000,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 18,
+      "name": "Arc",
+      "value": 16000,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 19,
+      "name": "Charoite",
+      "value": 20000,
+      "textureName": "Diamond_Item_V2"
+    }
+  },
+
+  {
+    "item": {
+      "id": 20,
+      "name": "Arc_2",
+      "value": 30000,
       "textureName": "Diamond_Item_V2"
     }
   }

@@ -5,7 +5,7 @@
       "textureName": "Coal_Ore",
       "name": "Coal",
       "hardness": 1,
-      "endurance": 100,
+      "endurance": 10,
       "dropId": 1,
       "color": [ 8, 6, 7 ],
       "exp": 50
@@ -18,49 +18,244 @@
       "textureName": "Copper_Ore",
       "name": "Copper",
       "hardness": 1,
-      "endurance": 110,
+      "endurance": 15,
       "dropId": 2,
-      "color": [ 8, 6, 7 ],
-      "exp": 100
+      "color": [ 100, 40, 10 ],
+      "exp": 75
     }
   },
 
   {
     "ore": {
       "id": 3,
-      "textureName": "Iron_Ore",
-      "name": "Iron",
+      "textureName": "Elbait_Ore",
+      "name": "Elbait",
       "hardness": 2,
-      "endurance": 125,
+      "endurance": 20,
       "dropId": 3,
-      "color": [ 8, 6, 7 ],
-      "exp": 200
+      "color": [ 60, 70, 40 ],
+      "exp": 100
     }
   },
 
   {
     "ore": {
       "id": 4,
-      "textureName": "Gold_Ore",
-      "name": "Gold",
-      "hardness": 3,
-      "endurance": 135,
+      "textureName": "Iron_Ore",
+      "name": "Iron",
+      "hardness": 2,
+      "endurance": 30,
       "dropId": 4,
-      "color": [ 8, 6, 7 ],
-      "exp":  400
+      "color": [ 90, 80, 60 ],
+      "exp": 150
     }
   },
 
   {
     "ore": {
       "id": 5,
+      "textureName": "Fluorite_Ore",
+      "name": "Fluorite",
+      "hardness": 3,
+      "endurance": 45,
+      "dropId": 5,
+      "color": [ 60, 60, 65 ],
+      "exp": 200
+    }
+  },
+
+  {
+    "ore": {
+      "id": 6,
+      "textureName": "Gold_Ore",
+      "name": "Gold",
+      "hardness": 3,
+      "endurance": 60,
+      "dropId": 6,
+      "color": [ 90, 70, 30 ],
+      "exp": 300
+    }
+  },
+
+  {
+    "ore": {
+      "id": 7,
+      "textureName": "Lapis_Ore",
+      "name": "Lapis",
+      "hardness": 4,
+      "endurance": 90,
+      "dropId": 7,
+      "color": [ 10, 50, 80 ],
+      "exp": 400
+    }
+  },
+
+  {
+    "ore": {
+      "id": 8,
       "textureName": "Diamond_Ore",
       "name": "Diamond",
       "hardness": 4,
-      "endurance": 150,
-      "dropId": 5,
-      "color": [ 8, 6, 7 ],
-      "exp":  800
+      "endurance": 120,
+      "dropId": 8,
+      "color": [ 40, 90, 86 ],
+      "exp": 600
+    }
+  },
+
+  {
+    "ore": {
+      "id": 9,
+      "textureName": "Flirite_Ore",
+      "name": "Flirite",
+      "hardness": 5,
+      "endurance": 180,
+      "dropId": 9,
+      "color": [ 45, 85, 70 ],
+      "exp": 800
+    }
+  },
+
+  {
+    "ore": {
+      "id": 10,
+      "textureName": "Ruby_Ore",
+      "name": "Ruby",
+      "hardness": 5,
+      "endurance": 400,
+      "dropId": 10,
+      "color": [ 70, 10, 10 ],
+      "exp": 1200
+    }
+  },
+
+  {
+    "ore": {
+      "id": 11,
+      "textureName": "Malahite_Ore",
+      "name": "Malahite",
+      "hardness": 6,
+      "endurance": 600,
+      "dropId": 11,
+      "color": [ 20, 60, 30 ],
+      "exp": 1600
+    }
+  },
+
+  {
+    "ore": {
+      "id": 12,
+      "textureName": "Emerald_Ore",
+      "name": "Emerald",
+      "hardness": 6,
+      "endurance": 800,
+      "dropId": 12,
+      "color": [ 30, 80, 40 ],
+      "exp": 2400
+    }
+  },
+
+  {
+    "ore": {
+      "id": 13,
+      "textureName": "Spinel_Ore",
+      "name": "Spinel",
+      "hardness": 7,
+      "endurance": 1600,
+      "dropId": 13,
+      "color": [ 80, 10, 10 ],
+      "exp": 3200
+    }
+  },
+
+  {
+    "ore": {
+      "id": 14,
+      "textureName": "Netherite_Ore",
+      "name": "Netherite",
+      "hardness": 7,
+      "endurance": 2000,
+      "dropId": 14,
+      "color": [ 50, 30, 70 ],
+      "exp": 4800
+    }
+  },
+
+  {
+    "ore": {
+      "id": 15,
+      "textureName": "Orbits_Ore",
+      "name": "Orbits",
+      "hardness": 8,
+      "endurance": 3000,
+      "dropId": 15,
+      "color": [ 70, 80, 80 ],
+      "exp": 6400
+    }
+  },
+
+  {
+    "ore": {
+      "id": 16,
+      "textureName": "Starstones_Ore",
+      "name": "Starstone",
+      "hardness": 8,
+      "endurance": 6000,
+      "dropId": 16,
+      "color": [ 90, 90, 90 ],
+      "exp": 9600
+    }
+  },
+
+  {
+    "ore": {
+      "id": 17,
+      "textureName": "Omnis_Ore",
+      "name": "Omnis",
+      "hardness": 9,
+      "endurance": 12000,
+      "dropId": 17,
+      "color": [ 70, 80, 70 ],
+      "exp": 12800
+    }
+  },
+
+  {
+    "ore": {
+      "id": 18,
+      "textureName": "Arc_Ore",
+      "name": "Arc",
+      "hardness": 9,
+      "endurance": 20000,
+      "dropId": 18,
+      "color": [ 10, 90, 30 ],
+      "exp": 25000
+    }
+  },
+
+  {
+    "ore": {
+      "id": 19,
+      "textureName": "Charoite_Ore",
+      "name": "Charoite",
+      "hardness": 10,
+      "endurance": 30000,
+      "dropId": 19,
+      "color": [ 50, 40, 70 ],
+      "exp": 35000
+    }
+  },
+
+  {
+    "ore": {
+      "id": 20,
+      "textureName": "Arc2_Ore",
+      "name": "Arc",
+      "hardness": 10,
+      "endurance": 40000,
+      "dropId": 20,
+      "color": [ 50, 90, 20 ],
+      "exp": 50000
     }
   }
 ]

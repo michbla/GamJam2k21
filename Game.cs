@@ -27,41 +27,29 @@ namespace GamJam2k21
         private GameLevel level;
         private UI UI;
 
-        NativeWindow nw;
+        NativeWindow nativeWindow;
         public DateTime time = new DateTime(1, 1, 1, 8, 0, 0);
 
-        public Game(GameWindowSettings gWS, NativeWindowSettings nWS) 
+        public Game(GameWindowSettings gWS, NativeWindowSettings nWS)
              : base(gWS, nWS)
         {
-            state = GameState.active;
+            state = GameState.menu;
             WindowBorder = WindowBorder.Fixed;
             Time.GetInstance();
             Input.GetInstance();
             Input.SetInputs(MouseState, KeyboardState);
             ResourceManager.GetInstance();
-            Camera.Initiate();
-            nw = this;
+            Camera.Initiate(Size);
+            nativeWindow = this;
         }
 
         protected override void OnLoad()
         {
             initScreenRender();
-            
+
             loader.LoadResources();
 
-            player = new Player(Transform.Default, (1.0f, 2.0f));
-            player.Position = spawnPosition;
-            level = new GameLevel(player, 128, 1000);
-            UI = new UI(player, nw);
-            UI.Initiate();
-
-            player.GameLevel = level;
-
-            Camera.Position = spawnPosition;
-            Camera.SetTarget(player.Transform);
-            Camera.WindowResolution = Size;
-
-            SoundManager.StartBackgroundMusic();
+            initGame();
 
             base.OnLoad();
         }
@@ -76,22 +64,37 @@ namespace GamJam2k21
             CenterWindow();
         }
 
+        private void initGame()
+        {
+            state = GameState.active;
+
+            player = new Player(Transform.Default, (1.0f, 2.0f));
+            player.Position = spawnPosition;
+            level = new GameLevel(player, 128, 1000);
+            UI = new UI(player, nativeWindow);
+            UI.Initiate();
+
+            player.GameLevel = level;
+
+            Camera.Position = spawnPosition;
+            Camera.SetTarget(player.Transform);
+            Camera.WindowResolution = Size;
+
+            SoundManager.StartBackgroundMusic();
+        }
+
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             CursorVisible = false;
             Time.DeltaTime = (float)e.Time;
             if (!IsFocused)
                 return;
-            if (player.stats.getLevelReached()==999)
-            {
-                state = GameState.end;
-                
-            }
-
-            SoundManager.Update();
-            
             if (state == GameState.active)
             {
+                if (player.stats.getLevelReached() >= 1000)
+                    state = GameState.end;
+
+                SoundManager.Update();
                 Camera.Update();
                 player.Update();
                 level.Update();
@@ -106,7 +109,7 @@ namespace GamJam2k21
             }
             base.OnUpdateFrame(e);
         }
-        
+
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);

@@ -57,7 +57,7 @@ namespace GamJam2k21
                 background.Position = GetLeftLowerCorner();
         }
 
-        public static void Initiate()
+        public static void Initiate(Vector2i size)
         {
             GetInstance();
             screenSize = (24.0f, 13.5f);
@@ -68,6 +68,11 @@ namespace GamJam2k21
                                                     1.0f);
             viewBounds = (0.0f + screenSize.X * 0.5f,
                           128.0f - screenSize.X * 0.5f);
+
+            Vector2 halfSize = screenSize * 0.5f;
+            Position = halfSize;
+            SetTarget(new Transform(halfSize, Vector2.One));
+            WindowResolution = size;
         }
         public static void RenderBackground()
         {

@@ -55,6 +55,7 @@ namespace GamJam2k21
         private NativeWindow ns;
         private CharacterMenu charMenu;
         private RunSummary runSummary;
+        private MainMenu menu;
 
         private ProgressBar staminaBar;
         private float staminaScale = 0.05f;
@@ -62,7 +63,7 @@ namespace GamJam2k21
         public UI(Player player, NativeWindow _ns)
         {
             this.player = player;
-            settings = new Settings(_ns);
+            
             ns = _ns;
         }
 
@@ -93,7 +94,6 @@ namespace GamJam2k21
 
             makeNewExpBar();
             makeNewStaminaBar();
-
             ui_elements.Add(CHAR_button);
             ui_elements.Add(SHOP_button);
             ui_elements.Add(OPT_button);
@@ -102,6 +102,8 @@ namespace GamJam2k21
             shop = new Shop(player);
             charMenu = new CharacterMenu(player);
             runSummary = new RunSummary(ns, player);
+            menu = new MainMenu(ns, player);
+            settings = new Settings(ns, (1,1));
 
             Sprite selection = Sprite.Single(ResourceManager.GetTexture("blockSelection"),
                                              Vector2.One);
@@ -115,7 +117,7 @@ namespace GamJam2k21
         private int lastGold = 0;
         private int lastDepth = 0;
         private int lastLevel = 0;
-        public void Update(GameState gs)
+        public void Update()
         {
             if (Input.IsClickingAButton && !Input.IsMouseButtonDown(MouseButton.Button1))
                 Input.IsClickingAButton = false;
@@ -146,7 +148,13 @@ namespace GamJam2k21
 
             playTime.UpdateText(Time.GetTime());
 
-            if (gs == GameState.end)
+            if (Game.state == GameState.menu)
+            {
+                menu.MouseLocation = cursor.InWorldPos;
+                menu.Update();
+            }
+
+            if (Game.state == GameState.end)
                 UI_state = "summary";
             if (!isInMenu())
             {
@@ -172,7 +180,8 @@ namespace GamJam2k21
                 if (UI_state == "basic")
                 {
                     if (EXIT_button.CanPerformAction())
-                        ns.Close();
+                        //ns.Close();
+                        Game.state = GameState.postgame;
                 }
 
                 if (UI_state == "shop")
@@ -199,7 +208,7 @@ namespace GamJam2k21
                     UI_state = "shop";
                 if (OPT_button.CanPerformAction())
                     UI_state = "options";
-                if (gs == GameState.end)
+                if (Game.state == GameState.end)
                     UI_state = "summary";
             }
             if (UI_state != "summary")
@@ -300,37 +309,46 @@ namespace GamJam2k21
         public void Render()
         {
             settings.RenderUpdate();
+            
+
             if (UI_state == "summary")
             { 
                 runSummary.Render(); 
             }
-
-            else if (!isInMenu())
+            if (Game.state == GameState.menu)
             {
-                if (player.HasSelectedBlock)
-                    blockSelection.Render();
-
-                renderEquippedPickaxe();
-
-                accessories.Render();
-
-                coin.Render(Camera.GetRightUpperCorner());
-                Gold.Render(Camera.GetRightUpperCorner());
-                playTime.Render(Camera.GetLeftUpperCorner());
-                levelReached.Render(Camera.GetRightLowerCorner());
-
-                if (player.Level < 10)
-                    lowLevel.Render(Camera.GetLeftUpperCorner());
-                else
-                    level.Render(Camera.GetLeftUpperCorner());
-                lvl.Render(Camera.GetLeftUpperCorner());
-                expBar.Render(Camera.GetLeftUpperCorner());
-
-                staminaBar.Render(Camera.GetScreenCenter());
+                menu.Render();
             }
-            else
+
+            else if (Game.state == GameState.active)
             {
-                renderMenu();
+                if (!isInMenu())
+                {
+                    if (player.HasSelectedBlock)
+                        blockSelection.Render();
+
+                    renderEquippedPickaxe();
+
+                    accessories.Render();
+
+                    coin.Render(Camera.GetRightUpperCorner());
+                    Gold.Render(Camera.GetRightUpperCorner());
+                    playTime.Render(Camera.GetLeftUpperCorner());
+                    levelReached.Render(Camera.GetRightLowerCorner());
+
+                    if (player.Level < 10)
+                        lowLevel.Render(Camera.GetLeftUpperCorner());
+                    else
+                        level.Render(Camera.GetLeftUpperCorner());
+                    lvl.Render(Camera.GetLeftUpperCorner());
+                    expBar.Render(Camera.GetLeftUpperCorner());
+
+                    staminaBar.Render(Camera.GetScreenCenter());
+                }
+                else
+                {
+                    renderMenu();
+                }
             }
 
             cursor.Render();

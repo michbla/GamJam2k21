@@ -4,7 +4,7 @@ using OpenTK.Mathematics;
 
 namespace GamJam2k21
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {

@@ -12,6 +12,7 @@ namespace GamJam2k21.Interface
     class Settings
     {
         public Vector2 MouseLocation;
+        public Vector2 scale;
         private Button resButton360;
         private Button resButton480;
         private Button resButton720;
@@ -25,10 +26,11 @@ namespace GamJam2k21.Interface
         private bool wasUnFocused = false;
 
         private NativeWindow ns;
-        public Settings(NativeWindow _ns)
+        public Settings(NativeWindow _ns, Vector2 _scale)
         {
             ns = _ns;
-            background = new Icon((-6f, -4.5f), Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (12f, 8f)));
+            scale = _scale;
+            background = new Icon((-6f, -4.5f) * scale, Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (12f, 8f) * scale));
             resButton360 = new Button((-5.5f, 2f), (2, 1), "360p", TextType.white);
             resButton480 = new Button((-2.5f, 2f), (2, 1), "480p", TextType.white);
             resButton720 = new Button((0.5f, 2f), (2, 1), "720p", TextType.white);
@@ -89,7 +91,7 @@ namespace GamJam2k21.Interface
 
         public void Render()
         {
-            background.Render(Camera.GetScreenCenter());
+            background.Render(Camera.GetScreenCenter() * scale);
             resButton360.Render(Camera.GetScreenCenter());
             resButton480.Render(Camera.GetScreenCenter());
             resButton720.Render(Camera.GetScreenCenter());

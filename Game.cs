@@ -12,13 +12,13 @@ namespace GamJam2k21
         menu,
         active,
         paused,
-        summary,
+        postgame,
         end
     }
 
     public class Game : GameWindow
     {
-        public GameState state;
+        public static GameState state;
 
         ResourceLoader loader = new ResourceLoader();
 
@@ -41,6 +41,7 @@ namespace GamJam2k21
             ResourceManager.GetInstance();
             Camera.Initiate(Size);
             nativeWindow = this;
+
         }
 
         protected override void OnLoad()
@@ -63,10 +64,10 @@ namespace GamJam2k21
                          BlendingFactor.OneMinusSrcAlpha);
             CenterWindow();
         }
-
+        
         private void initGame()
         {
-            state = GameState.active;
+            state = GameState.menu;
 
             player = new Player(Transform.Default, (1.0f, 2.0f));
             player.Position = spawnPosition;
@@ -89,6 +90,22 @@ namespace GamJam2k21
             Time.DeltaTime = (float)e.Time;
             if (!IsFocused)
                 return;
+            Console.WriteLine(state);
+            UI.Update();
+            if (state == GameState.postgame)
+            {
+                SoundManager.StopBackgroundMusic();
+                UI.Update();
+                initGame();
+            } 
+
+            if (state == GameState.menu)
+            {
+                SoundManager.Update();
+                Camera.Update();
+                level.Update();
+               
+            }
             if (state == GameState.active)
             {
                 if (player.stats.getLevelReached() >= 1000)
@@ -98,14 +115,14 @@ namespace GamJam2k21
                 Camera.Update();
                 player.Update();
                 level.Update();
-                UI.Update(state);
+                
                 Time.UpdateInGameTime();
                 Time.GetTime();
             }
             if (state == GameState.end)
             {
                 Camera.Update();
-                UI.Update(state);
+                UI.Update();
             }
             base.OnUpdateFrame(e);
         }
@@ -115,7 +132,13 @@ namespace GamJam2k21
             GL.Clear(ClearBufferMask.ColorBufferBit);
             Camera.RenderBackground();
 
-            if (state == GameState.active || state == GameState.summary)
+            if (state == GameState.menu)
+            {
+                level.Render();
+                UI.Render();
+            }
+
+            if (state == GameState.active)
             {
                 level.Render();
                 player.Render();
@@ -123,6 +146,12 @@ namespace GamJam2k21
             }
 
             if (state == GameState.end)
+            {
+                level.Render();
+                UI.Render();
+            }
+
+            if (state == GameState.postgame)
             {
                 level.Render();
                 UI.Render();
@@ -143,6 +172,8 @@ namespace GamJam2k21
             ResourceManager.Clear();
             base.OnUnload();
         }
+
+        
 
         protected override void OnResize(ResizeEventArgs e)
         {

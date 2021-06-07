@@ -24,6 +24,7 @@ namespace GamJam2k21.Interface
 
         private Button SummaryRankSwitchButton;
         private Button ExitGameButton;
+        private Button NewGameButton;
         private Icon background;
         private Icon RankCanvas;
 
@@ -49,8 +50,9 @@ namespace GamJam2k21.Interface
             RankCanvas = new Icon((-10.5f, 0.9f), Sprite.Single(ResourceManager.GetTexture("itemFrame"), (14f, 1.8f)));
             rank = new Text((-6f, 2.5f), " ", TextType.ui, 0.5f);
 
-            SummaryRankSwitchButton = new Button((-5F, -4F), (3, 11), "this run", TextType.ui);
-            ExitGameButton = new Button((-1.5F, -5.5F), (3, 11), "Exit Game", TextType.ui);
+            SummaryRankSwitchButton = new Button((-1.5F, -4F), (3, 11), "this run", TextType.ui);
+            ExitGameButton = new Button((-4.5F, -5.5F), (3, 11), "Exit Game", TextType.ui);
+            NewGameButton = new Button((1.5F, -5.5F), (3, 11), "New Game", TextType.ui);
 
             t = Time.GetInstance();
             ns = _ns;
@@ -70,6 +72,7 @@ namespace GamJam2k21.Interface
             Exp.UpdateText(currExp.ToString());
             SummaryRankSwitchButton.Update(MouseLocation);
             ExitGameButton.Update(MouseLocation);
+            NewGameButton.Update(MouseLocation);
             
             if (SummaryRankSwitchButton.CanPerformAction())
             { 
@@ -79,6 +82,9 @@ namespace GamJam2k21.Interface
             }
             if (ExitGameButton.CanPerformAction())
                 ns.Close();
+            if (NewGameButton.CanPerformAction())
+                Game.state = GameState.postgame;
+            
 
             if (isRanking)
             {
@@ -140,6 +146,7 @@ namespace GamJam2k21.Interface
 
             SummaryRankSwitchButton.Render(Camera.GetScreenCenter());
             ExitGameButton.Render(Camera.GetScreenCenter());
+            NewGameButton.Render(Camera.GetScreenCenter());
 
         }
     }

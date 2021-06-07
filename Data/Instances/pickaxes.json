@@ -62,7 +62,7 @@
   {
     "pickaxe": {
       "id": 6,
-      "textureName": "pickaxe5",
+      "textureName": "pickaxe6",
       "name": "Ruby Pickaxe",
       "hardness": 7,
       "damage": 2500
@@ -72,7 +72,7 @@
   {
     "pickaxe": {
       "id": 7,
-      "textureName": "pickaxe5",
+      "textureName": "pickaxe7",
       "name": "Emerald Pickaxe",
       "hardness": 8,
       "damage": 4000
@@ -82,7 +82,7 @@
   {
     "pickaxe": {
       "id": 8,
-      "textureName": "pickaxe5",
+      "textureName": "pickaxe8",
       "name": "Netherite Pickaxe",
       "hardness": 9,
       "damage": 8000
@@ -92,7 +92,7 @@
   {
     "pickaxe": {
       "id": 9,
-      "textureName": "pickaxe5",
+      "textureName": "pickaxe9",
       "name": "Starstone Pickaxe",
       "hardness": 10,
       "damage": 15000
@@ -102,7 +102,7 @@
   {
     "pickaxe": {
       "id": 10,
-      "textureName": "pickaxe5",
+      "textureName": "pickaxe10",
       "name": "Arc Pickaxe",
       "hardness": 11,
       "damage": 30000

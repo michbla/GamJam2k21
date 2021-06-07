@@ -5,7 +5,7 @@
       "textureName": "pickaxe0",
       "name": "Wooden Pickaxe",
       "hardness": 1,
-      "damage": 30
+      "damage": 50
     }
   },
 
@@ -15,7 +15,7 @@
       "textureName": "pickaxe1",
       "name": "Stone Pickaxe",
       "hardness": 2,
-      "damage": 60
+      "damage": 100
     }
   },
 
@@ -25,7 +25,7 @@
       "textureName": "pickaxe2",
       "name": "Copper Pickaxe",
       "hardness": 3,
-      "damage": 120
+      "damage": 200
     }
   },
 
@@ -35,7 +35,7 @@
       "textureName": "pickaxe3",
       "name": "Iron Pickaxe",
       "hardness": 4,
-      "damage": 240
+      "damage": 400
     }
   },
 
@@ -45,7 +45,7 @@
       "textureName": "pickaxe4",
       "name": "GoldenPickaxe",
       "hardness": 5,
-      "damage": 480
+      "damage": 800
     }
   },
 
@@ -55,7 +55,7 @@
       "textureName": "pickaxe5",
       "name": "Diamond Pickaxe",
       "hardness": 6,
-      "damage": 960
+      "damage": 1500
     }
   },
 
@@ -65,7 +65,7 @@
       "textureName": "pickaxe5",
       "name": "Ruby Pickaxe",
       "hardness": 7,
-      "damage": 1800
+      "damage": 2500
     }
   },
 
@@ -75,7 +75,7 @@
       "textureName": "pickaxe5",
       "name": "Emerald Pickaxe",
       "hardness": 8,
-      "damage": 3600
+      "damage": 4000
     }
   },
 
@@ -85,7 +85,7 @@
       "textureName": "pickaxe5",
       "name": "Netherite Pickaxe",
       "hardness": 9,
-      "damage": 7000
+      "damage": 8000
     }
   },
 
@@ -95,7 +95,7 @@
       "textureName": "pickaxe5",
       "name": "Starstone Pickaxe",
       "hardness": 10,
-      "damage": 14000
+      "damage": 15000
     }
   },
 
@@ -105,7 +105,7 @@
       "textureName": "pickaxe5",
       "name": "Arc Pickaxe",
       "hardness": 11,
-      "damage": 28000
+      "damage": 30000
     }
   }
 

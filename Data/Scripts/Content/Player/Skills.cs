@@ -3,7 +3,7 @@ namespace GamJam2k21.PlayerElements
 {
     public class Skills
     {
-        public int SkillPoints = 10;
+        public int SkillPoints = 0;
 
         public int SpeedPoints = 0;
         public int EnergyPoints = 0;

@@ -11,7 +11,7 @@ namespace GamJam2k21.PlayerElements
         private float staminaBase = 100.0f;
         private float staminaRegenSpeedBase = 1.0f;
         private float staminaRegenSpeed = 1.0f;
-        private float staminaBurnRate = 20.0f;
+        private float staminaBurnRate = 10.0f;
 
 
         public StaminaHandler(Player player)
@@ -34,7 +34,7 @@ namespace GamJam2k21.PlayerElements
 
         private void staminaBurn()
         {
-            Stamina -= Time.DeltaTime * staminaBurnRate;
+            Stamina -= Time.DeltaTime * staminaBurnRate * staminaPercent(1.0f);
             if (Stamina <= 0.0f)
                 Stamina = 0.0f;
         }
@@ -49,8 +49,11 @@ namespace GamJam2k21.PlayerElements
         private void updateSkills()
         {
             StaminaMax = staminaBase + player.Skills.EnergyPoints * 20.0f;
-            staminaRegenSpeed = staminaRegenSpeedBase + player.Skills.RegenPoints * 1.0f;
+            staminaRegenSpeed = staminaRegenSpeedBase + player.Skills.RegenPoints + staminaPercent(5.0f);
         }
 
+        private float staminaPercent(float percent) {
+            return percent * 0.01f * StaminaMax;
+        }
     }
 }

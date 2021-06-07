@@ -10,7 +10,9 @@ namespace GamJam2k21.PlayerElements
         private readonly int maxLevel = 40;
         public int ExpLevel = 0;
         public float Exp = 0;
-        public float ExpToNextLevel = 100;
+        public float ExpToNextLevel = 200;
+
+        private static readonly float nextLevelExpMultiplier = 1.75f;
 
         public PlayerStatistics(Player player)
         {
@@ -39,7 +41,7 @@ namespace GamJam2k21.PlayerElements
 
         private float calculateExpToNextLevel()
         {
-            return ExpToNextLevel * 2;
+            return ExpToNextLevel * nextLevelExpMultiplier;
         }
 
         public void SetLevelReached(int newLevel)

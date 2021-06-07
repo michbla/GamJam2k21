@@ -180,8 +180,7 @@ namespace GamJam2k21
                 if (UI_state == "basic")
                 {
                     if (EXIT_button.CanPerformAction())
-                        //ns.Close();
-                        Game.state = GameState.postgame;
+                        ns.Close();
                 }
 
                 if (UI_state == "shop")

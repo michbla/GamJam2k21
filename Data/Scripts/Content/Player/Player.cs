@@ -92,7 +92,7 @@ namespace GamJam2k21
         {
             if (!canBeControlled)
                 return;
-            test();
+            //test();
 
             stamina.Update();
 

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>GamJam2k21</RootNamespace>
     <AssemblyName>GamJam2k21</AssemblyName>
     <TargetFramework>netcoreapp3.1</TargetFramework>

@@ -52,7 +52,7 @@ namespace GamJam2k21
         {
             string tf = "00";
             string tfms = "0";
-            return igt.m.ToString(tf) + ":" + igt.s.ToString(tf) + ":" + (igt.ms / 100).ToString(tfms);
+            return igt.m.ToString(tf) + ":" + igt.s.ToString(tf) + "." + (igt.ms / 100).ToString(tfms);
         }
 
         

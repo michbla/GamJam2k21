@@ -96,7 +96,7 @@ namespace GamJam2k21.PlayerElements
             rightBox.Update();
             leftBox.Update();
 
-            checkCollisions();
+            checkCollisionsParallel();
 
             if (hasColl[2] && position.Y < collisionPos.Y)
                 position.Y = collisionPos.Y;
@@ -131,18 +131,29 @@ namespace GamJam2k21.PlayerElements
             jumpFromLadder = false;
             player.StandingOn = "None";
         }
+
         private void checkCollisions()
+        {
+            foreach(var block in blocks) {
+                checkBlockCollision(block);
+            }
+        }
+
+        private void checkBlockCollision(Block block)
+        {
+            if (block.DistanceToPlayer <= 10.0f && block.IsCollidable)
+                if (block.Name == "Ladder")
+                    checkLadderCollision(block);
+                else
+                    checkCollision(block);
+        }
+
+        private void checkCollisionsParallel()
         {
             Parallel.For(0, blocks.Count, (index) =>
             {
                 var block = blocks[index];
-                if (block.DistanceToPlayer <= 10.0f && block.IsCollidable)
-                {
-                    if (block.Name == "Ladder")
-                        checkLadderCollision(block);
-                    else
-                        checkCollision(block);
-                }
+                checkBlockCollision(block);
             }
             );
         }

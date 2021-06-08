@@ -21,7 +21,7 @@ namespace GamJam2k21
 
         private Icon dimmBackground;
 
-        private Text WIP = new Text((-6.4f, 0.0f), "WORK IN PROGRESS", TextType.white, 0.4f);
+        private Text VER = new Text((-3.6f, 0.0f), "Ver.1.0a", TextType.white, 0.4f);
 
         private AccessoryUI accessories;
 
@@ -352,7 +352,7 @@ namespace GamJam2k21
 
             cursor.Render();
 
-            WIP.Render(Camera.GetRightLowerCorner());
+            VER.Render(Camera.GetRightLowerCorner());
         }
 
         private void renderEquippedPickaxe()
@@ -395,27 +395,6 @@ namespace GamJam2k21
                     settings.Render();
                     break;
             }
-        }
-
-        public void renderRunSummary()
-        {
-            bool isSummary = true;
-            Text GAMEOVER = new Text((-6.7f, 3.5f), "GAME OVER", TextType.ui, 1.5f);
-            Text PLAYTIME = new Text((-7f, 2.5f), "Run Time: ", TextType.ui, 0.75f);
-            Text PlayTime = new Text((-0.5f, 2.5f), Time.GetTime(), TextType.ui, 0.75f);
-            dimmBackground.Render(Camera.GetScreenCenter());
-            SUM_back.Render(Camera.GetScreenCenter());
-            {
-                GAMEOVER.Render(Camera.GetScreenCenter());
-                PLAYTIME.Render(Camera.GetScreenCenter());
-                PlayTime.Render(Camera.GetScreenCenter());
-                RANK_button.Render(Camera.GetScreenCenter());
-                EXIT_button.Render(Camera.GetScreenCenter() + (2f, -1f));
-            }
-            cursor.DisplayPickaxe = false;
-            cursor.Render();
-            //TODO 
-            //move it to separate class
         }
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 
 namespace GamJam2k21.Interface
@@ -46,7 +40,7 @@ namespace GamJam2k21.Interface
             EXP = new Text((-6.7f, 1.5F), "EXP: ", TextType.ui, 0.75f);
             Exp = new Text((1f, 1.5F), " ", TextType.ui, 0.75f);
             PlayTime = new Text((1f, 2.5f), Time.GetTime(), TextType.ui, 0.75f);
-            background = new Icon((-9f, -6f), Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (18f, 12f)));
+            background = new Icon((-9f, -6f), Sprite.Single(ResourceManager.GetTexture("UI_back_empty"), (18f, 12f)));
             RankCanvas = new Icon((-10.5f, 0.9f), Sprite.Single(ResourceManager.GetTexture("itemFrame"), (14f, 1.8f)));
             rank = new Text((-6f, 2.5f), " ", TextType.ui, 0.5f);
 
@@ -59,14 +53,12 @@ namespace GamJam2k21.Interface
             player = _player;
             rankingLoader = new RankingLoader();
             rankingLoader.LoadRanking();
-            //rankingLoader.PrintRanking();
         }
 
         public void Update()
         {
             string currTime = Time.GetTime();
             float currExp = player.stats.Exp;
-
             
             PlayTime.UpdateText(currTime);
             Exp.UpdateText(currExp.ToString());
@@ -78,7 +70,6 @@ namespace GamJam2k21.Interface
             { 
                 isRanking = !isRanking;
                 isSummary = !isSummary;
-                //Console.WriteLine(currExp + " xD " + currTime);
             }
             if (ExitGameButton.CanPerformAction())
                 ns.Close();
@@ -89,17 +80,14 @@ namespace GamJam2k21.Interface
             if (isRanking)
             {
                 SummaryRankSwitchButton.UpdateText("This run");
-                
             }
             else
                 SummaryRankSwitchButton.UpdateText("Ranking");
             if (!isNewScoreSet)
                 {
-                    //Console.WriteLine(currExp + " xD " + currTime);
                     PositionInRanking = rankingLoader.AddToRanking(currTime, currExp);
                     rankingLoader.SaveRanking();
                     isNewScoreSet = true;
-                //Console.WriteLine(PositionInRanking);
                 }
             
         }
@@ -151,6 +139,4 @@ namespace GamJam2k21.Interface
         }
     }
 }
-//TODO: CHANGE RANKPOSITION FRAME
-//      ADD BUTTON TO NEXT GAME
 

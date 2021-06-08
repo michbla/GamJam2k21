@@ -1,9 +1,5 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using OpenTK.Windowing.Desktop;
-
 
 namespace GamJam2k21.Interface
 {
@@ -30,13 +26,13 @@ namespace GamJam2k21.Interface
 
         public MainMenu(NativeWindow _ns, Player _player)
         {
-            background = new Icon((-9f, -6f), Sprite.Single(ResourceManager.GetTexture("UI_back_options"), (18f, 12f)));
+            background = new Icon((-9f, -6f), Sprite.Single(ResourceManager.GetTexture("UI_back_empty"), (18f, 12f)));
             logo = new Text((-8.2f, 3.5f), "KOPALNIARZE", TextType.ui, 1.5f);
-            newGame = new Button((-1.5f, 1.5f), (3, 11), "New Game", TextType.ui);
-            leaderBoard = new Button((-1.5f, 0f), (3, 11), "Leaderboard", TextType.ui);
-            options = new Button((-1.5f, -1.5f), (3, 11), "Options", TextType.ui);
-            exit = new Button((-1.5f, -3f), (3, 11), "Exit Game", TextType.ui);
-            back = new Button((-1.5f, -4.5f), (3, 11), "D", TextType.ui_icon);
+            newGame = new Button((-3.5f, 1.5f), (7, 1), "  New Game  ", TextType.ui);
+            leaderBoard = new Button((-3.5f, 0f), (7, 1), " Leaderboard ", TextType.ui);
+            options = new Button((-3.5f, -1.5f), (7, 1), "   Options   ", TextType.ui);
+            exit = new Button((-3.5f, -3f), (7, 1), " Exit Game ", TextType.ui);
+            back = new Button((-3.5f, -4.5f), (3, 11), "D", TextType.ui_icon);
 
             MENU_STATE = "menu";
             ns = _ns;
@@ -66,27 +62,23 @@ namespace GamJam2k21.Interface
 
             
             if (newGame.CanPerformAction())
-            {
                 Game.state = GameState.active;
-            }
+
             if (leaderBoard.CanPerformAction())
             {
                 Rl.LoadRanking();
                 MENU_STATE = "lboard";
             }
+
             if (options.CanPerformAction())
-            {
                 MENU_STATE = "settings";
-                
-            }
+
             if (exit.CanPerformAction())
-            {
                 ns.Close();
-            }
+
             if (back.CanPerformAction())
-            {
                 MENU_STATE = "menu";
-            }
+
         }
 
         private void RenderLB()
@@ -95,7 +87,7 @@ namespace GamJam2k21.Interface
             Text TIME_SCORE = new Text((-7.2f, 2.5f), "TIME    SCORE", TextType.ui, 0.70f);
             Text rank = new Text((-6f, 2.5f), " ", TextType.ui, 0.5f);
 
-            
+            background.Render(Camera.GetScreenCenter());
             SCOREBOARD.Render(Camera.GetScreenCenter());
             TIME_SCORE.Render(Camera.GetScreenCenter());
             for (int i = 0; i < 3; i++)
@@ -110,7 +102,6 @@ namespace GamJam2k21.Interface
 
         public void Render()
         { 
-            background.Render(Camera.GetScreenCenter());
             if (MENU_STATE == "menu")
             {
                 logo.Render(Camera.GetScreenCenter());
@@ -125,6 +116,7 @@ namespace GamJam2k21.Interface
             }
             if (MENU_STATE == "settings")
             {
+                background.Render(Camera.GetScreenCenter());
                 settings.Render();
                 back.Render(Camera.GetScreenCenter());
             }

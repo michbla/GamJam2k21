@@ -1,10 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using OpenTK.Mathematics;
-using System.Text;
 
 namespace GamJam2k21
 {
@@ -13,11 +9,9 @@ namespace GamJam2k21
         public class Score
         {
             public int RunId { get; set; }
-            //public string RunDate { get; set; }
             public string RunTime { get; set; }
             public float RunExp { get; set; }
         }
-
 
         public List<Score> Scores = new List<Score>();
 
@@ -29,7 +23,6 @@ namespace GamJam2k21
                 int id = Scores.Count + 1;
                 Score score = new Score();
                 score.RunId = id;
-                //score.RunDate = DateTime.Now.ToString("dd-MM-yyyy HH:mm");
                 score.RunTime = time;
                 score.RunExp = exp;
                 Scores.Add(score);
@@ -44,7 +37,6 @@ namespace GamJam2k21
             }
             return index;
         }
-
 
         public string GetRank(int place)
         {
@@ -63,7 +55,6 @@ namespace GamJam2k21
             string json = File.ReadAllText("Data/Instances/ranking.json");
             Scores = JsonSerializer.Deserialize<List<Score>>(json);
         }
-
 
     }
 }

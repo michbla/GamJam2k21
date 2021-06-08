@@ -2,7 +2,6 @@
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 
 namespace GamJam2k21
@@ -33,7 +32,6 @@ namespace GamJam2k21
         public Game(GameWindowSettings gWS, NativeWindowSettings nWS)
              : base(gWS, nWS)
         {
-            state = GameState.menu;
             WindowBorder = WindowBorder.Fixed;
             Time.GetInstance();
             Input.GetInstance();
@@ -41,13 +39,11 @@ namespace GamJam2k21
             ResourceManager.GetInstance();
             Camera.Initiate(Size);
             nativeWindow = this;
-
         }
 
         protected override void OnLoad()
         {
             initScreenRender();
-
             loader.LoadResources();
 
             initGame();
@@ -104,7 +100,6 @@ namespace GamJam2k21
                 SoundManager.Update();
                 Camera.Update();
                 level.Update();
-               
             }
             if (state == GameState.active)
             {
@@ -132,31 +127,12 @@ namespace GamJam2k21
             GL.Clear(ClearBufferMask.ColorBufferBit);
             Camera.RenderBackground();
 
-            if (state == GameState.menu)
-            {
-                level.Render();
-                UI.Render();
-            }
-
+            level.Render();
+            
             if (state == GameState.active)
-            {
-                level.Render();
                 player.Render();
-                UI.Render();
-            }
 
-            if (state == GameState.end)
-            {
-                level.Render();
-                UI.Render();
-            }
-
-            if (state == GameState.postgame)
-            {
-                level.Render();
-                UI.Render();
-            }
-
+            UI.Render();
 
             SwapBuffers();
             base.OnRenderFrame(e);
@@ -172,8 +148,6 @@ namespace GamJam2k21
             ResourceManager.Clear();
             base.OnUnload();
         }
-
-        
 
         protected override void OnResize(ResizeEventArgs e)
         {

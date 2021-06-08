@@ -92,7 +92,6 @@ namespace GamJam2k21
         {
             if (!canBeControlled)
                 return;
-            //test();
 
             stamina.Update();
 
@@ -262,23 +261,6 @@ namespace GamJam2k21
         public void resetDiggingSpeed()
         {
             diggingSpeed = diggingSpeedBase;
-        }
-
-        //TODO: REMOVE TESTS
-        private void test()
-        {
-            if (Input.IsKeyDown(Keys.D0))
-                EquipPickaxe(0);
-            if (Input.IsKeyDown(Keys.D1))
-                EquipPickaxe(1);
-            if (Input.IsKeyDown(Keys.D2))
-                EquipPickaxe(2);
-            if (Input.IsKeyDown(Keys.D3))
-                EquipPickaxe(3);
-            if (Input.IsKeyDown(Keys.D4))
-                EquipPickaxe(4);
-            if (Input.IsKeyDown(Keys.D5))
-                EquipPickaxe(5);
         }
 
     }
